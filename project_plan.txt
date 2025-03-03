@@ -1,0 +1,14 @@
+- naslov projekta,
+- člane skupine,
+- kaj je cilj projekta,
+- katera razvojna orodja uporabljamo za razvoj.
+
+### Naslov projekta
+
+### Člani ekipe
+Anej Bregant, Tom Li Dobnik, Alen Kolmanič
+
+### Cilj projekta
+
+### Razvojna orodja
+- GitHub
