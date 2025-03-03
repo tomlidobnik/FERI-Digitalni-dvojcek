@@ -12,3 +12,4 @@ Anej Bregant, Tom Li Dobnik, Alen Kolmanič
 
 ### Razvojna orodja
 - GitHub
+- Discord
