@@ -10,7 +10,7 @@ pub struct User {
     pub username: String,
     pub password: String,
 }
-#[derive(Deserialize)]
+#[derive(Debug, Clone, serde::Deserialize)]
 pub struct LoginRequest {
     pub username: String,
     pub password: String,
