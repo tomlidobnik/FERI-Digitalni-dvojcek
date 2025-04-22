@@ -1,8 +1,6 @@
 mod user_handler;
 use axum::{
     Router,
-    http::StatusCode,
-    response::IntoResponse,
     routing::{get, post},
 };
 use std::net::SocketAddr;
@@ -12,9 +10,6 @@ mod auth;
 mod db;
 pub mod models;
 pub mod schema;
-use crate::auth::verify_jwt;
-use axum_extra::extract::TypedHeader;
-use headers::{Authorization, authorization::Bearer};
 use log::info;
 
 #[tokio::main]
