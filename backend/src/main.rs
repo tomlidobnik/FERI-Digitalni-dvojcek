@@ -1,15 +1,13 @@
 mod user_handler;
-use axum::{Router, routing::get};
+use axum::{Router, routing::get, routing::post};
 use std::net::SocketAddr;
 use tower_http::cors::{Any, CorsLayer};
-use user_handler::hello_user_json;
+use user_handler::*;
 mod db;
-
-use db::connect_db;
 
 pub mod models;
 pub mod schema;
-use log::{error, info, warn};
+use log::info;
 
 #[tokio::main]
 async fn main() {
@@ -18,6 +16,7 @@ async fn main() {
 
     let app = Router::new()
         .route("/user", get(hello_user_json))
+        .route("/user/validate", post(validate_user))
         .layer(cors);
 
     let addr: SocketAddr = "0.0.0.0:8000".parse().unwrap();

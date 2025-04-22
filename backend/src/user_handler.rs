@@ -1,7 +1,35 @@
-use axum::{http::StatusCode, response::Json};
+use crate::db::connect_db;
+use crate::models::{LoginRequest, User};
+use crate::schema::users::dsl::*;
+use axum::{Json, http::StatusCode};
+use diesel::prelude::*;
+use log::error;
 use serde_json::json;
 
 pub async fn hello_user_json() -> Result<Json<serde_json::Value>, (StatusCode, String)> {
     let body = json!({ "message": "hello User" });
     Ok(Json(body))
+}
+
+pub async fn validate_user(
+    Json(payload): Json<LoginRequest>,
+) -> Result<(StatusCode, String), (StatusCode, String)> {
+    let mut connection = connect_db();
+
+    match users
+        .filter(username.eq(&payload.username))
+        .first::<User>(&mut connection)
+    {
+        Ok(user) => {
+            if user.password == payload.password {
+                Ok((StatusCode::OK, "Valid user".into()))
+            } else {
+                Err((StatusCode::UNAUTHORIZED, "Invalid password".into()))
+            }
+        }
+        Err(e) => {
+            error!("DB error: {:?}", e);
+            Err((StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))
+        }
+    }
 }

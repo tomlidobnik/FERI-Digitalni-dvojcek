@@ -1,6 +1,7 @@
 diesel::table! {
-    messages (id) {
+    users (id) {
         id -> Int4,
-        message -> Varchar,
+        username -> Text,
+        password -> Text,
     }
 }
