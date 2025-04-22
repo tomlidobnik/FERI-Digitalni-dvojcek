@@ -42,4 +42,8 @@ bin/
 .vscode/
 
 ### Mac OS ###
-.DS_Store
+.DS_Storjjje
+
+### DB config ###
+*.json
+**/db/config.json

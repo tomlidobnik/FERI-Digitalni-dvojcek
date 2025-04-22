@@ -6,7 +6,7 @@ function App() {
   const [message, setMessage] = useState('');
 
   const fetchMessage = () => {
-    fetch('http://localhost:8000')
+    fetch('http://localhost:8000/user')
       .then((response) => response.json())
       .then((data) => setMessage(data.message))
       .catch((error) => console.error('Error fetching message:', error));

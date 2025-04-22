@@ -8,3 +8,6 @@ docker-compose up --build
 docker-compose down
 docker-compose down --rmi all --volumes # to remove all
 ```
+
+## Excelidraw
+[Shema](https://excalidraw.com/#json=1OcuNvEky7hKNb6fpxw7c,p-O-1NmXBumjLYPRgYIwzA)
