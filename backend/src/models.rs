@@ -15,3 +15,16 @@ pub struct LoginRequest {
     pub username: String,
     pub password: String,
 }
+
+#[derive(Insertable)]
+#[diesel(table_name = crate::schema::users)]
+pub struct NewUser<'a> {
+    pub username: &'a str,
+    pub password: &'a str,
+}
+#[derive(Deserialize)]
+pub struct CreateUserRequest {
+    pub username: String,
+    pub password: String,
+}
+

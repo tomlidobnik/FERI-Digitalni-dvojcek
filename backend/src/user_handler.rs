@@ -1,7 +1,7 @@
 use crate::auth::create_jwt;
 use crate::auth::verify_jwt;
 use crate::db::connect_db;
-use crate::models::{LoginRequest, User};
+use crate::models::*;
 use crate::schema::users::dsl::*;
 use axum::{Json, http::StatusCode, response::IntoResponse};
 use axum_extra::extract::TypedHeader;
@@ -59,4 +59,37 @@ pub async fn generate_token(Json(payload): Json<LoginRequest>) -> impl IntoRespo
         Err((status, msg)) => (status, msg),
     }
 }
+pub async fn create_user(
+    Json(payload): Json<CreateUserRequest>,
+) -> Result<StatusCode, (StatusCode, String)> {
+    let mut conn = connect_db();
 
+    match users
+        .filter(username.eq(&payload.username))
+        .first::<User>(&mut conn)
+        .optional()
+    {
+        Ok(Some(_)) => Err((StatusCode::CONFLICT, "User already exists".into())),
+        Ok(None) => {
+            let new_user = NewUser {
+                username: &payload.username,
+                password: &payload.password,
+            };
+
+            match diesel::insert_into(users)
+                .values(&new_user)
+                .execute(&mut conn)
+            {
+                Ok(_) => Ok(StatusCode::CREATED),
+                Err(e) => {
+                    error!("Insert error: {:?}", e);
+                    Err((StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))
+                }
+            }
+        }
+        Err(e) => {
+            error!("DB error: {:?}", e);
+            Err((StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))
+        }
+    }
+}
