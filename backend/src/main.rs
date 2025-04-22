@@ -16,6 +16,7 @@ async fn main() {
 
     let app = Router::new()
         .route("/user", get(hello_user_json))
+        .route("/user/create", post(create_user))
         .route("/user/validate", post(validate_user))
         .layer(cors);
 
