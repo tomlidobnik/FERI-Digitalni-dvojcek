@@ -1,29 +1,17 @@
+use crate::auth::AuthenticatedUser;
 use crate::auth::create_jwt;
-use crate::auth::verify_jwt;
 use crate::db::connect_db;
 use crate::models::*;
 use crate::schema::users::dsl::*;
 use axum::{Json, http::StatusCode, response::IntoResponse};
-use axum_extra::extract::TypedHeader;
 use diesel::prelude::*;
-use headers::{Authorization, authorization::Bearer};
 use log::error;
 use serde_json::json;
 
-pub async fn hello_user_json(
-    header: Option<TypedHeader<Authorization<Bearer>>>,
-) -> impl IntoResponse {
-    match header {
-        Some(TypedHeader(Authorization(bearer))) => match verify_jwt(bearer.token()) {
-            Ok(data) => {
-                let other_username = data.claims.sub;
-                let body = json!({ "message": format!("hello {}", other_username) });
-                (StatusCode::OK, Json(body)).into_response()
-            }
-            Err(_) => (StatusCode::UNAUTHORIZED, "Invalid or expired token").into_response(),
-        },
-        None => (StatusCode::UNAUTHORIZED, "Authorization header missing").into_response(),
-    }
+pub async fn hello_user_json(user: AuthenticatedUser) -> impl IntoResponse {
+    let other_username = user.0.sub;
+    let body = json!({ "message": format!("Hello, {}", other_username) });
+    (StatusCode::OK, Json(body))
 }
 
 pub async fn validate_user(

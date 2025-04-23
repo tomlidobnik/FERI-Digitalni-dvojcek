@@ -1,18 +1,57 @@
+use axum::{
+    extract::FromRequestParts,
+    http::{StatusCode, request::Parts},
+};
+use headers::{Authorization, HeaderMapExt};
+
 use chrono::{Duration, Utc};
 use jsonwebtoken::{
-    DecodingKey, EncodingKey, Header, TokenData, Validation, decode, encode, errors::Result,
+    DecodingKey, EncodingKey, Header, TokenData, Validation, decode, encode,
+    errors::Error as JwtError,
 };
+use once_cell::sync::OnceCell;
 use serde::{Deserialize, Serialize};
+use std::env;
+
 fn get_secret() -> &'static [u8] {
-    dotenvy::dotenv().ok();
-    let secret = std::env::var("JWT_SECRET").expect("JWT_SECRET must be set");
-    Box::leak(secret.into_bytes().into_boxed_slice())
+    static SECRET: OnceCell<Box<[u8]>> = OnceCell::new();
+    SECRET.get_or_init(|| {
+        dotenvy::dotenv().ok();
+        env::var("JWT_SECRET")
+            .expect("JWT_SECRET must be set")
+            .into_bytes()
+            .into_boxed_slice()
+    })
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
     pub sub: String,
     pub exp: usize,
+}
+
+pub struct AuthenticatedUser(pub Claims);
+
+impl<S> FromRequestParts<S> for AuthenticatedUser
+where
+    S: Send + Sync,
+{
+    type Rejection = (StatusCode, &'static str);
+
+    async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
+        let token = parts
+            .headers
+            .typed_get::<Authorization<headers::authorization::Bearer>>()
+            .map(|Authorization(bearer)| bearer.token().to_string());
+
+        match token {
+            Some(t) => match verify_jwt(&t) {
+                Ok(data) => Ok(Self(data.claims)),
+                Err(_) => Err((StatusCode::UNAUTHORIZED, "Invalid or expired token")),
+            },
+            None => Err((StatusCode::UNAUTHORIZED, "Missing authorization header")),
+        }
+    }
 }
 
 pub fn create_jwt(user_id: &str) -> String {
@@ -22,7 +61,7 @@ pub fn create_jwt(user_id: &str) -> String {
         .timestamp() as usize;
 
     let claims = Claims {
-        sub: user_id.to_owned(),
+        sub: user_id.to_string(),
         exp: expiration,
     };
 
@@ -34,10 +73,11 @@ pub fn create_jwt(user_id: &str) -> String {
     .unwrap()
 }
 
-pub fn verify_jwt(token: &str) -> Result<TokenData<Claims>> {
+pub fn verify_jwt(token: &str) -> Result<TokenData<Claims>, JwtError> {
     decode::<Claims>(
         token,
         &DecodingKey::from_secret(get_secret()),
         &Validation::default(),
     )
 }
+
