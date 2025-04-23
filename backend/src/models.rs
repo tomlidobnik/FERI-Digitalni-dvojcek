@@ -28,3 +28,9 @@ pub struct CreateUserRequest {
     pub password: String,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Claims {
+    pub sub: String,
+    pub exp: usize,
+}
+pub struct AuthenticatedUser(pub Claims);

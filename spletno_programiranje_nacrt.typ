@@ -6,15 +6,20 @@
 #align(center)[
   #set align(horizon)
   #set text(18pt)
+
   = Načrt za spletno programiranje
   April 2025
 ]
 
 #pagebreak()
-#outline(title: [Kazalo],)
+#outline(
+  title: [Kazalo],
+)
 #set heading(numbering: "1.1.1")
 #pagebreak()
+
 = Uporabljene tehnologije
+
 - Rust kot jezik za API
 - Axum framework za pisanje API
 - Diesel.rs za ORM
@@ -22,6 +27,7 @@
 - React za čelni del
 
 = Opis podatkov, ki se bodo shranjevali/uporabljali
+
 - Uporabniki in njegove informacije
 - Lokacija (Točka na zemljevidu)
 - Lokacija (Poligon na zemljevidu)
