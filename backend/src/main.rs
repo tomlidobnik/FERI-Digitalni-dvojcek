@@ -1,13 +1,15 @@
-mod config;
-mod handlers;
-mod middleware;
 pub mod models;
-mod routers;
 pub mod schema;
 
-use routers::root;
+mod config;
+mod error;
+mod handlers;
+mod middleware;
+mod routers;
+
+
 #[tokio::main]
 async fn main() {
     config::parameters::init();
-    root::run_server().await;
+    routers::root::run_server().await;
 }
