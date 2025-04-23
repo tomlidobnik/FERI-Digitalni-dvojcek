@@ -28,7 +28,7 @@
 
 = Opis podatkov, ki se bodo shranjevali/uporabljali
 
-- Uporabniki in njegove informacije
+- Uporabniki in njegove informacije (uporabniško ime, profilna slika, povezave z drugimi uporabniki, ...)
 - Lokacija (Točka na zemljevidu)
 - Lokacija (Poligon na zemljevidu)
 - Dogodki in lastnosti za dogodge
@@ -39,11 +39,34 @@
 - Prijava uporabnika
 - Seje
 - Ustvarjanje dogodkov
-- Pregled dogodkov
+- Pregled dogodkov (Pogled nadzorne plošče)
+- Podrobnejši prikaz za posamezen dogodek (Pogled Nadzorne plošče)
 - Prijava na dogodek
 - Prikaz dogodkov na zemljevidu
 - Filtrirano iskanje dogodkov
 
 == Dodatne
 
-- Uporabnikovo dodajanje lokacij
+- Klepetalnice (med uporabniki in skupne klepetalnice za posamezen dogodek)
+- Uporabnikovo dodajanje lokacij (morajo biti preverjena in potrjena iz strani administarotja)
+
+= Roki
+
+== Sprint 1
+18 Apr - 25 Apr
+- Ustvarjanje izvajalnega okolja za spletno aplikacijo in vse ostale storitve.
+- Implementacija sej z JWT tokeni
+- Validacije gesel (API)
+- Ustvarjanje in shranjevanje uporabnika (API)
+
+== Sprint 2
+25 Apr - 9 Maj
+- Registracija uporabnika
+- Prijava uporabnika
+- Shranjevanje uporabnikov v podatkovno bazo
+- Urejanje profila
+- Nadzorna plošča (Dashboard)
+
+== Sprint 3
+12 Maj - 23 Maj
+Naloge za SCRUM sprint 3 še niso bile določene.
