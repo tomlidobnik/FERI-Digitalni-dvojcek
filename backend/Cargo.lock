@@ -42,6 +42,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "async-trait"
+version = "0.1.88"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e539d3fca749fcee5236ab05e93a52867dd549cc157c8cb7f99595f3cedffdb5"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -128,6 +139,7 @@ dependencies = [
 name = "backend"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
  "axum",
  "axum-extra",
  "chrono",
@@ -137,10 +149,12 @@ dependencies = [
  "hyper",
  "jsonwebtoken",
  "log",
+ "once_cell",
  "pretty_env_logger",
  "rand",
  "serde",
  "serde_json",
+ "thiserror",
  "tokio",
  "tower-http",
 ]
