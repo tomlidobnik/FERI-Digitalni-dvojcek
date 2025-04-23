@@ -1,7 +1,6 @@
-use crate::auth::AuthenticatedUser;
-use crate::auth::create_jwt;
-use crate::db::connect_db;
-use crate::models::*;
+use crate::config::db;
+use crate::middleware::auth::create_jwt;
+use crate::models::{AuthenticatedUser, CreateUserRequest, LoginRequest, NewUser, User};
 use crate::schema::users::dsl::*;
 use axum::{Json, http::StatusCode, response::IntoResponse};
 use diesel::prelude::*;
@@ -17,7 +16,7 @@ pub async fn hello_user_json(user: AuthenticatedUser) -> impl IntoResponse {
 pub async fn validate_user(
     Json(payload): Json<LoginRequest>,
 ) -> Result<(StatusCode, String), (StatusCode, String)> {
-    let mut connection = connect_db();
+    let mut connection = db::connect_db();
 
     match users
         .filter(username.eq(&payload.username))
@@ -50,7 +49,7 @@ pub async fn generate_token(Json(payload): Json<LoginRequest>) -> impl IntoRespo
 pub async fn create_user(
     Json(payload): Json<CreateUserRequest>,
 ) -> Result<StatusCode, (StatusCode, String)> {
-    let mut conn = connect_db();
+    let mut conn = db::connect_db();
 
     match users
         .filter(username.eq(&payload.username))

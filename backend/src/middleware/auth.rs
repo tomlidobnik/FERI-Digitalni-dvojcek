@@ -4,33 +4,23 @@ use axum::{
 };
 use headers::{Authorization, HeaderMapExt};
 
+use crate::config::parameters;
+use crate::models::{AuthenticatedUser, Claims};
 use chrono::{Duration, Utc};
 use jsonwebtoken::{
     DecodingKey, EncodingKey, Header, TokenData, Validation, decode, encode,
     errors::Error as JwtError,
 };
 use once_cell::sync::OnceCell;
-use serde::{Deserialize, Serialize};
-use std::env;
 
 fn get_secret() -> &'static [u8] {
     static SECRET: OnceCell<Box<[u8]>> = OnceCell::new();
     SECRET.get_or_init(|| {
-        dotenvy::dotenv().ok();
-        env::var("JWT_SECRET")
-            .expect("JWT_SECRET must be set")
+        parameters::get("JWT_SECRET")
             .into_bytes()
             .into_boxed_slice()
     })
 }
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Claims {
-    pub sub: String,
-    pub exp: usize,
-}
-
-pub struct AuthenticatedUser(pub Claims);
 
 impl<S> FromRequestParts<S> for AuthenticatedUser
 where
@@ -56,7 +46,7 @@ where
 
 pub fn create_jwt(user_id: &str) -> String {
     let expiration = Utc::now()
-        .checked_add_signed(Duration::hours(24))
+        .checked_add_signed(Duration::minutes(parameters::get_i64("JWT_TTL_IN_MINUTES")))
         .expect("valid timestamp")
         .timestamp() as usize;
 
@@ -80,4 +70,3 @@ pub fn verify_jwt(token: &str) -> Result<TokenData<Claims>, JwtError> {
         &Validation::default(),
     )
 }
-
