@@ -10,7 +10,7 @@ Ustvariti platformo, na kateri se lahko uporabniki prijavijo in objavijo svoje d
 ## Razvojna orodja
 - Git – za verzioniranje izvorne kode
 - GitHub – za shranjevanje in deljenje repozitorijev
-- Discord – za komunikacijo v timu
+- Discord, MS Teams – za komunikacijo v timu
 - Jira – za projektno načrtovanje in sledenje nalogam
 - Docker – za ustvarjanje in upravljanje zabojnikov (containerjev), poleg tudi uporaba Docker Compose
 - React – za razvoj čelnega dela (frontend)
@@ -20,3 +20,10 @@ Ustvariti platformo, na kateri se lahko uporabniki prijavijo in objavijo svoje d
 - Bruno - za testiranje programskega vmesnika
 - GitHub Actions - za avtomatizacijo testiranja, buildanja in deployanja
 - Markdown, Typst - za ustvarjanje dokumentacije
+- Notion - za deljenje dokumentov (beležnica)
+- Visual Studio Code, IntelliJ IDEA CE, Neovim - urejevalnik kode
+- gitflow, lazygit - organizacija git projekta
+- Azure - Strežnik
+- Lazydocker
+- Python - za screšanje podatkov
+- Fish, Ghostty, Tmux - terminal
