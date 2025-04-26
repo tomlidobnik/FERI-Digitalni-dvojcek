@@ -5,13 +5,14 @@ use pretty_env_logger;
 use std::net::SocketAddr;
 use tower_http::cors::{Any, CorsLayer};
 
-use super::event_router;
+use super::{event_router, location_router};
 
 pub async fn create_router() -> Router {
     let cors = CorsLayer::new().allow_origin(Any).allow_methods(Any);
     let api_routes = Router::new()
         .nest("/user", user_router::create_router())
-        .nest("/event", event_router::create_router());
+        .nest("/event", event_router::create_router())
+        .nest("/location", location_router::create_router());
     Router::new().nest("/api", api_routes).layer(cors)
 }
 
