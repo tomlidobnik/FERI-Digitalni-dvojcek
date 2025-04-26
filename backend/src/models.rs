@@ -45,6 +45,13 @@ pub struct Location {
     pub latitude: BigDecimal,
 }
 #[derive(Deserialize)]
+pub struct UpdateLocationRequest {
+    pub id: i32,
+    pub info: Option<String>,
+    pub longitude: BigDecimal,
+    pub latitude: BigDecimal,
+}
+#[derive(Deserialize)]
 pub struct CreateLocationRequest {
     pub info: Option<String>,
     pub longitude: BigDecimal,
