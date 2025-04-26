@@ -1,7 +1,7 @@
 use axum::{
+    Json,
     http::StatusCode,
     response::{IntoResponse, Response},
-    Json,
 };
 use serde_json::json;
 use thiserror::Error;
@@ -14,6 +14,8 @@ pub enum UserError {
     UserAlreadyExists,
     #[error("Invalid password")]
     InvalidPassword,
+    #[error("Email already used")]
+    EmailAlreadyExists,
 }
 
 impl IntoResponse for UserError {
@@ -22,6 +24,7 @@ impl IntoResponse for UserError {
             UserError::UserNotFound => StatusCode::NOT_FOUND,
             UserError::UserAlreadyExists => StatusCode::BAD_REQUEST,
             UserError::InvalidPassword => StatusCode::BAD_REQUEST,
+            UserError::EmailAlreadyExists => StatusCode::BAD_REQUEST,
         };
 
         let body = Json(json!({
