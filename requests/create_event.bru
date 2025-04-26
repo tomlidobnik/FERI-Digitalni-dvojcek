@@ -1,0 +1,22 @@
+meta {
+  name: create_event
+  type: http
+  seq: 6
+}
+
+post {
+  url: 0.0.0.0:8000/api/event/create
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqYW5lek4iLCJleHAiOjE3NDU2ODU5Mjl9.n5O6rteMRgDZBbzwg9EpBu3YDXnD1H6WxoZFcba6HMs
+}
+
+body:json {
+  {
+    "title": "Event",
+    "description": "Some event"
+  }
+}
