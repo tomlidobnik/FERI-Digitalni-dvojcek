@@ -1,4 +1,5 @@
 use crate::config::db;
+use crate::error::user_error::UserError;
 use crate::middleware::auth::create_jwt;
 use crate::models::{AuthenticatedUser, CreateUserRequest, LoginRequest, NewUser, User};
 use crate::schema::users::dsl::*;
@@ -6,7 +7,6 @@ use axum::{Json, http::StatusCode, response::IntoResponse};
 use diesel::prelude::*;
 use log::info;
 use serde_json::json;
-use crate::error::user_error::UserError;
 
 pub async fn hello_user_json(user: AuthenticatedUser) -> impl IntoResponse {
     info!("Called hello_user_json");
@@ -37,7 +37,9 @@ pub async fn validate_user(
     }
 }
 
-pub async fn generate_token(Json(payload): Json<LoginRequest>) -> Result<(StatusCode, String), UserError> {
+pub async fn generate_token(
+    Json(payload): Json<LoginRequest>,
+) -> Result<(StatusCode, String), UserError> {
     info!("Called generate_token for username: {}", payload.username);
     match validate_user(Json(payload.clone())).await {
         Ok((StatusCode::OK, _)) => {
@@ -49,21 +51,28 @@ pub async fn generate_token(Json(payload): Json<LoginRequest>) -> Result<(Status
     }
 }
 
-pub async fn create_user(
-    Json(payload): Json<CreateUserRequest>,
-) -> Result<StatusCode, UserError> {
+pub async fn create_user(Json(payload): Json<CreateUserRequest>) -> Result<StatusCode, UserError> {
     info!("Called create_user for username: {}", payload.username);
     let mut conn = db::connect_db();
 
     match users
-        .filter(username.eq(&payload.username))
+        .filter(username.eq(&payload.username).or(email.eq(&payload.email)))
         .first::<User>(&mut conn)
         .optional()
     {
-        Ok(Some(_)) => Err(UserError::UserAlreadyExists),
+        Ok(Some(existing_user)) => {
+            if existing_user.username == payload.username {
+                Err(UserError::UserAlreadyExists)
+            } else {
+                Err(UserError::EmailAlreadyExists)
+            }
+        }
         Ok(None) => {
             let new_user = NewUser {
                 username: &payload.username,
+                firstname: &payload.firstname,
+                lastname: &payload.lastname,
+                email: &payload.email,
                 password: &payload.password,
             };
 
