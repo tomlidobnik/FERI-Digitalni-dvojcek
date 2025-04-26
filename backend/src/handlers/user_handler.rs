@@ -69,11 +69,11 @@ pub async fn create_user(Json(payload): Json<CreateUserRequest>) -> Result<Statu
         }
         Ok(None) => {
             let new_user = NewUser {
-                username: &payload.username,
-                firstname: &payload.firstname,
-                lastname: &payload.lastname,
-                email: &payload.email,
-                password: &payload.password,
+                username: payload.username,
+                firstname: payload.firstname,
+                lastname: payload.lastname,
+                email: payload.email,
+                password: payload.password,
             };
 
             match diesel::insert_into(users)

@@ -1,0 +1,19 @@
+meta {
+  name: create_location
+  type: http
+  seq: 8
+}
+
+post {
+  url: 0.0.0.0:8000/api/location/create
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "info": "Location 1",
+    "longitude": "36.123456",
+    "latitude": "45.123456"
+  }
+}

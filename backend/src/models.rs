@@ -1,3 +1,4 @@
+use bigdecimal::BigDecimal;
 use diesel::prelude::*;
 use serde::Deserialize;
 use serde::Serialize;
@@ -34,12 +35,41 @@ pub struct CreateEventRequest {
     pub title: String,
     pub description: String,
 }
+#[derive(Queryable, Selectable, Serialize)]
+#[diesel(table_name = crate::schema::locations)]
+#[diesel(check_for_backend(diesel::pg::Pg))]
+pub struct Location {
+    pub id: i32,
+    pub info: Option<String>,
+    pub longitude: BigDecimal,
+    pub latitude: BigDecimal,
+}
+#[derive(Deserialize)]
+pub struct UpdateLocationRequest {
+    pub id: i32,
+    pub info: Option<String>,
+    pub longitude: BigDecimal,
+    pub latitude: BigDecimal,
+}
+#[derive(Deserialize)]
+pub struct CreateLocationRequest {
+    pub info: Option<String>,
+    pub longitude: BigDecimal,
+    pub latitude: BigDecimal,
+}
+#[derive(Insertable)]
+#[diesel(table_name = crate::schema::locations)]
+pub struct NewLocation {
+    pub info: Option<String>,
+    pub longitude: BigDecimal,
+    pub latitude: BigDecimal,
+}
 #[derive(Insertable)]
 #[diesel(table_name = crate::schema::events)]
-pub struct NewEvent<'a> {
+pub struct NewEvent {
     pub user_fk: Option<i32>,
-    pub title: &'a str,
-    pub description: &'a str,
+    pub title: String,
+    pub description: String,
 }
 
 #[derive(Debug, Clone, serde::Deserialize)]
@@ -50,12 +80,12 @@ pub struct LoginRequest {
 
 #[derive(Insertable)]
 #[diesel(table_name = crate::schema::users)]
-pub struct NewUser<'a> {
-    pub username: &'a str,
-    pub firstname: &'a str,
-    pub lastname: &'a str,
-    pub email: &'a str,
-    pub password: &'a str,
+pub struct NewUser {
+    pub username: String,
+    pub firstname: String,
+    pub lastname: String,
+    pub email: String,
+    pub password: String,
 }
 #[derive(Deserialize)]
 pub struct CreateUserRequest {

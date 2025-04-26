@@ -45,8 +45,8 @@ pub async fn create_event(
 
     let user_id: i32 = get_user_id(user).await?;
     let new_event = NewEvent {
-        title: &payload.title,
-        description: &payload.description,
+        title: payload.title,
+        description: payload.description,
         user_fk: Some(user_id),
     };
 
