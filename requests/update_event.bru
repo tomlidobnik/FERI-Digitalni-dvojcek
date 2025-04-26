@@ -1,0 +1,23 @@
+meta {
+  name: update_event
+  type: http
+  seq: 7
+}
+
+post {
+  url: 0.0.0.0:8000/api/event/update
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqYW5lek4iLCJleHAiOjE3NDU2ODgxMTN9.xdJVOs4x_URwQPRjDY1NQrHpDDnr6msCECTtrexoXpE
+}
+
+body:json {
+  {
+    "id": 1,
+    "title": "Updated Event Title",
+    "description": "Updated description of the event"
+  }
+}

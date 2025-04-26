@@ -24,6 +24,12 @@ pub struct Event {
     pub description: String,
 }
 #[derive(Deserialize)]
+pub struct UpdateEventRequest {
+    pub id: i32,
+    pub title: String,
+    pub description: String,
+}
+#[derive(Deserialize)]
 pub struct CreateEventRequest {
     pub title: String,
     pub description: String,
