@@ -11,12 +11,14 @@ services:
     ports:
       - "5433:5432"
 
-  backend:
-    build: ./backend
+  backend-dev:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
     restart: always
     environment:
       DATABASE_URL: postgres://user:password@db:5432/db
-      RUST_LOG: info
+      RUST_LOG: debug
     volumes:
       - ./backend:/usr/src/backend
     command: cargo watch -x run
@@ -24,9 +26,22 @@ services:
       - db
     ports:
       - "8000:8000"
-  
-  frontend:
-    build: ./frontend
+
+  backend-prod:
+    image: backend.slim
+    restart: always
+    environment:
+      DATABASE_URL: postgres://user:password@db:5432/db
+      RUST_LOG: info
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+
+  frontend-dev:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
     restart: always
     volumes:
       - ./frontend:/app
@@ -36,6 +51,16 @@ services:
     stdin_open: true
     tty: true
     command: npm run dev
+
+  frontend-prod:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    command: npx serve dist
+
 
 volumes:
   db_data:
