@@ -1,0 +1,198 @@
+{
+  "document": "doc.report.command",
+  "version": "ov/command/slim/1.1",
+  "engine": "darwin/arm64|Aurora|1.41.7|latest|latest",
+  "containerized": false,
+  "host_distro": {
+    "name": "",
+    "version": "",
+    "display_name": "other"
+  },
+  "type": "slim",
+  "state": "done",
+  "target_reference": "backend",
+  "system": {
+    "type": "Linux",
+    "release": "6.12.5-linuxkit",
+    "distro": {
+      "name": "Debian GNU/Linux",
+      "version": "11",
+      "display_name": "Debian GNU/Linux 11 (bullseye)"
+    }
+  },
+  "source_image": {
+    "identity": {
+      "id": "sha256:b8f497b8186859adca4f449e51f940827f0ca2145992dcd36e29b034aaec4b32",
+      "tags": [
+        "latest"
+      ],
+      "names": [
+        "backend:latest"
+      ],
+      "digests": [
+        "sha256:b8f497b8186859adca4f449e51f940827f0ca2145992dcd36e29b034aaec4b32"
+      ],
+      "full_digests": [
+        "backend@sha256:b8f497b8186859adca4f449e51f940827f0ca2145992dcd36e29b034aaec4b32"
+      ]
+    },
+    "size": 31398631,
+    "size_human": "31 MB",
+    "create_time": "2025-04-29T15:02:12Z",
+    "runtime_name": "docker",
+    "runtime_version": "27.5.1",
+    "architecture": "arm64",
+    "exposed_ports": [
+      "8000/tcp"
+    ],
+    "os": "linux",
+    "env_vars": [
+      "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    ],
+    "container_entry": {
+      "exe_path": ""
+    }
+  },
+  "minified_image_size": 9505547,
+  "minified_image_size_human": "9.5 MB",
+  "minified_image": "backend.slim",
+  "minified_image_id": "sha256:d35098275a691cc174684e164e79f6d8e3975fb4e7a69cd14aacb30a509fd859",
+  "minified_image_digest": "sha256:06c2938ce2563d3a6e9a4af847208084ae8c61a4c722aa3d18edd21906eb851d",
+  "minified_image_has_data": true,
+  "minified_by": 3.3031903371789126,
+  "artifact_location": "/opt/homebrew/bin/.mint-state/images/b8f497b8186859adca4f449e51f940827f0ca2145992dcd36e29b034aaec4b32/artifacts",
+  "container_report_name": "creport.json",
+  "seccomp_profile_name": "backend-seccomp.json",
+  "apparmor_profile_name": "backend-apparmor-profile",
+  "image_stack": [
+    {
+      "is_top_image": true,
+      "id": "sha256:b8f497b8186859adca4f449e51f940827f0ca2145992dcd36e29b034aaec4b32",
+      "full_name": "backend:latest",
+      "repo_name": "backend",
+      "version_tag": "latest",
+      "raw_tags": [
+        "backend:latest"
+      ],
+      "create_time": "2025-04-29T15:02:12Z",
+      "new_size": 93474816,
+      "new_size_human": "94 MB",
+      "instructions": [
+        {
+          "type": "RUN",
+          "time": "2025-04-28T00:00:00Z",
+          "is_nop": false,
+          "is_exec_form": true,
+          "local_image_exists": false,
+          "layer_index": 0,
+          "size": 86630400,
+          "size_human": "87 MB",
+          "command_snippet": "RUN []",
+          "command_all": "RUN []",
+          "system_commands": [
+            "[]"
+          ],
+          "comment": "debuerreotype 0.15",
+          "inst_set_time_bucket": "2025-04-28T02:00:00+02:00",
+          "inst_set_time_index": 0,
+          "inst_set_time_reverse_index": 2
+        },
+        {
+          "type": "RUN",
+          "time": "2025-04-29T14:41:06Z",
+          "is_nop": false,
+          "local_image_exists": false,
+          "layer_index": 0,
+          "size": 1605632,
+          "size_human": "1.6 MB",
+          "command_snippet": "RUN apt-get update && \\\n\tapt-get install -y ...",
+          "command_all": "RUN apt-get update && \\\n\tapt-get install -y libpq5 && \\\n\tapt-get clean && \\\n\trm -rf /var/lib/apt/lists/*",
+          "system_commands": [
+            "apt-get update",
+            "apt-get install -y libpq5",
+            "apt-get clean",
+            "rm -rf /var/lib/apt/lists/*"
+          ],
+          "comment": "buildkit.dockerfile.v0",
+          "is_buildkit_instruction": true,
+          "inst_set_time_bucket": "2025-04-29T16:30:00+02:00",
+          "inst_set_time_index": 1,
+          "inst_set_time_reverse_index": 1
+        },
+        {
+          "type": "COPY",
+          "time": "2025-04-29T15:02:12Z",
+          "is_nop": false,
+          "local_image_exists": false,
+          "layer_index": 0,
+          "size": 5230592,
+          "size_human": "5.2 MB",
+          "params": "/usr/src/backend/target/release/backend /usr/local/bin/backend",
+          "command_snippet": "COPY /usr/src/backend/target/release/backend...",
+          "command_all": "COPY /usr/src/backend/target/release/backend /usr/local/bin/backend",
+          "comment": "buildkit.dockerfile.v0",
+          "is_buildkit_instruction": true,
+          "inst_set_time_bucket": "2025-04-29T17:00:00+02:00",
+          "inst_set_time_index": 2,
+          "inst_set_time_reverse_index": 0
+        },
+        {
+          "type": "COPY",
+          "time": "2025-04-29T15:02:12Z",
+          "is_nop": false,
+          "local_image_exists": false,
+          "layer_index": 0,
+          "size": 8192,
+          "size_human": "8.2 kB",
+          "params": ".env .env",
+          "command_snippet": "COPY .env .env",
+          "command_all": "COPY .env .env",
+          "comment": "buildkit.dockerfile.v0",
+          "is_buildkit_instruction": true,
+          "inst_set_time_bucket": "2025-04-29T17:00:00+02:00",
+          "inst_set_time_index": 2,
+          "inst_set_time_reverse_index": 0
+        },
+        {
+          "type": "EXPOSE",
+          "time": "2025-04-29T15:02:12Z",
+          "is_nop": false,
+          "local_image_exists": false,
+          "layer_index": 0,
+          "size": 0,
+          "params": "8000/tcp",
+          "command_snippet": "EXPOSE 8000/tcp",
+          "command_all": "EXPOSE 8000/tcp",
+          "comment": "buildkit.dockerfile.v0",
+          "is_buildkit_instruction": true,
+          "inst_set_time_bucket": "2025-04-29T17:00:00+02:00",
+          "inst_set_time_index": 2,
+          "inst_set_time_reverse_index": 0
+        },
+        {
+          "type": "CMD",
+          "time": "2025-04-29T15:02:12Z",
+          "is_last_instruction": true,
+          "is_nop": false,
+          "is_exec_form": true,
+          "local_image_exists": true,
+          "layer_index": 0,
+          "size": 0,
+          "params": "[\"backend\"]\n",
+          "command_snippet": "CMD [\"backend\"]\n",
+          "command_all": "CMD [\"backend\"]\n",
+          "comment": "buildkit.dockerfile.v0",
+          "raw_tags": [
+            "backend:latest"
+          ],
+          "is_buildkit_instruction": true,
+          "inst_set_time_bucket": "2025-04-29T17:00:00+02:00",
+          "inst_set_time_index": 2,
+          "inst_set_time_reverse_index": 0
+        }
+      ]
+    }
+  ],
+  "image_created": true,
+  "image_build_engine": "internal"
+}
