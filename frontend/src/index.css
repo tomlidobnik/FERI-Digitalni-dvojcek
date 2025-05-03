@@ -1,13 +1,30 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: #F5ECD5;
+  --color-secondary: #F0BB78;
+  --color-tertiary: #A4B465;
+  --color-quaternary: #626F47;
+  --color-error: #A94A4A;
+  --color-warning: #FF9B17;
+
+  /* text colors */
+  --color-text: #212529;
+  --color-text-clickable: #212529;
+  --color-text-hover: #495057;
+  --color-text-active: #343a40;
+  --color-text-disabled: #adb5bd;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  width: 100%;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: var(--color-primary);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -17,24 +34,24 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--color-text-clickable);
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: var(--color-text-hover);
 }
 
 body {
-  margin: 0;
+  /*margin: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
-  min-height: 100vh;
+  min-height: 100vh;*/
 }
 
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  /*font-size: 3.2em;
+  line-height: 1.1;*/
 }
 
 button {
@@ -62,7 +79,7 @@ button:focus-visible {
     background-color: #ffffff;
   }
   a:hover {
-    color: #747bff;
+    color: var(--color-text-hover);
   }
   button {
     background-color: #f9f9f9;
