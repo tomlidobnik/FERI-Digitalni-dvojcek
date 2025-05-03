@@ -102,3 +102,9 @@ pub struct Claims {
     pub exp: usize,
 }
 pub struct AuthenticatedUser(pub Claims);
+
+#[derive(Serialize, Deserialize)]
+pub struct WsMessage {
+    pub message: String,
+    pub user: String,
+}

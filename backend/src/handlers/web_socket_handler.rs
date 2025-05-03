@@ -1,3 +1,4 @@
+use crate::models::WsMessage;
 use axum::{
     extract::{
         ConnectInfo,
@@ -33,20 +34,25 @@ async fn handle_socket(socket: WebSocket, addr: SocketAddr, connections: Connect
     let send_task = tokio::spawn(async move {
         while let Some(msg) = rx.recv().await {
             if sender.send(msg).await.is_err() {
+                eprintln!("Error sending message to WebSocket, closing connection");
                 break;
             }
         }
     });
     let connections_clone = connections.clone();
+
     let recv_task = tokio::spawn(async move {
         while let Some(Ok(msg)) = receiver.next().await {
-            if let Message::Text(text) = &msg {
-                broadcast_message(
-                    &Message::Text(format!("Broadcast: {}", text).into()),
-                    &connections_clone,
-                    addr,
-                )
-                .await;
+            if let Message::Text(text) = msg {
+                if let Ok(parsed) = serde_json::from_str::<WsMessage>(&text) {
+                    println!("Got message from {}: {}", parsed.user, parsed.message);
+
+                    let json = serde_json::to_string(&parsed).unwrap();
+                    broadcast_message(&Message::Text(Into::into(json)), &connections_clone, addr)
+                        .await;
+                } else {
+                    eprintln!("Invalid JSON format received: {}", text);
+                }
             }
         }
     });
