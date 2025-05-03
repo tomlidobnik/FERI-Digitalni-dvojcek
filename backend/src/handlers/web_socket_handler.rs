@@ -1,4 +1,6 @@
-use crate::models::WsMessage;
+use crate::models::{WsMessage, NewChatMessage};
+use crate::config::db;
+use crate::schema::chat_messages::dsl::chat_messages;
 use axum::{
     extract::{
         ConnectInfo,
@@ -6,10 +8,12 @@ use axum::{
     },
     response::IntoResponse,
 };
-use futures::{SinkExt, StreamExt};
+use diesel::prelude::*;
 use std::net::SocketAddr;
 use std::{collections::HashMap, sync::Arc};
 use tokio::sync::{Mutex, mpsc};
+use futures::{SinkExt, StreamExt};
+
 
 pub type Tx = mpsc::UnboundedSender<Message>;
 pub type Connections = Arc<Mutex<HashMap<SocketAddr, Tx>>>;
@@ -23,7 +27,11 @@ pub async fn handle_ws(
     ws.on_upgrade(move |socket| handle_socket(socket, addr, connections))
 }
 
-async fn handle_socket(socket: WebSocket, addr: SocketAddr, connections: Connections) {
+async fn handle_socket(
+    socket: WebSocket,
+    addr: SocketAddr,
+    connections: Connections,
+) {
     let (mut sender, mut receiver) = socket.split();
     let (tx, mut rx) = mpsc::unbounded_channel::<Message>();
 
@@ -45,7 +53,19 @@ async fn handle_socket(socket: WebSocket, addr: SocketAddr, connections: Connect
         while let Some(Ok(msg)) = receiver.next().await {
             if let Message::Text(text) = msg {
                 if let Ok(parsed) = serde_json::from_str::<WsMessage>(&text) {
-                    println!("Got message from {}: {}", parsed.user, parsed.message);
+                    println!("Got message from {}: {}", parsed.username, parsed.message);
+
+                    let new_msg = NewChatMessage {
+                        username: parsed.username.clone(),
+                        message: parsed.message.clone(),
+                    };
+                    tokio::task::spawn_blocking(move || {
+                        let mut conn = db::connect_db();
+                        diesel::insert_into(chat_messages)
+                            .values(&new_msg)
+                            .execute(&mut conn)
+                            .ok();
+                    }).await.ok();
 
                     let json = serde_json::to_string(&parsed).unwrap();
                     broadcast_message(&Message::Text(Into::into(json)), &connections_clone, addr)

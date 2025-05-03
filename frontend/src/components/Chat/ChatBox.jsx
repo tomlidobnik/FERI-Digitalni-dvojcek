@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import UsernameInput from "./UsernameInput";
 import ConnectControls from "./ConnectControls";
 import ChatMessages from "./ChatMessages";
@@ -10,13 +10,28 @@ const ChatBox = () => {
     const [isConnected, setIsConnected] = useState(false);
     const [messages, setMessages] = useState([]);
     const socketRef = useRef(null);
+    const messagesContainerRef = useRef(null);
+
+    useEffect(() => {
+        if (messagesContainerRef.current) {
+            messagesContainerRef.current.scrollTop =
+                messagesContainerRef.current.scrollHeight;
+        }
+    }, [messages]);
 
     const handleConnect = () => {
         if (!isConnected && username.trim()) {
             const socket = new WebSocket("ws://localhost:8000/ws");
             socketRef.current = socket;
 
-            socket.onopen = () => setIsConnected(true);
+            socket.onopen = () => {
+                setIsConnected(true);
+                fetch("http://localhost:8000/api/chat/history")
+                    .then((res) => res.json())
+                    .then((data) => {
+                        setMessages(data);
+                    });
+            };
             socket.onmessage = (event) => {
                 const received = JSON.parse(event.data);
                 setMessages((prev) => [...prev, received]);
@@ -36,7 +51,7 @@ const ChatBox = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (socketRef.current?.readyState === WebSocket.OPEN) {
-            const msg = { user: username, message };
+            const msg = { username: username, message };
             socketRef.current.send(JSON.stringify(msg));
             setMessages((prev) => [...prev, msg]);
             setMessage("");
@@ -59,7 +74,10 @@ const ChatBox = () => {
                     handleDisconnect={handleDisconnect}
                 />
             </div>
-            <ChatMessages messages={messages} />
+            <ChatMessages
+                messages={messages}
+                containerRef={messagesContainerRef}
+            />
             <ChatInput
                 message={message}
                 setMessage={setMessage}

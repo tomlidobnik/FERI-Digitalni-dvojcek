@@ -1,6 +1,15 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
+    chat_messages (id) {
+        id -> Int4,
+        username -> Text,
+        message -> Text,
+        created_at -> Timestamp,
+    }
+}
+
+diesel::table! {
     events (id) {
         id -> Int4,
         user_fk -> Nullable<Int4>,
@@ -31,4 +40,9 @@ diesel::table! {
 
 diesel::joinable!(events -> users (user_fk));
 
-diesel::allow_tables_to_appear_in_same_query!(events, locations, users,);
+diesel::allow_tables_to_appear_in_same_query!(
+    chat_messages,
+    events,
+    locations,
+    users,
+);
