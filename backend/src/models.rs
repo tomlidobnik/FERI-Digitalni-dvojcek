@@ -2,6 +2,7 @@ use bigdecimal::BigDecimal;
 use diesel::prelude::*;
 use serde::Deserialize;
 use serde::Serialize;
+use chrono::NaiveDateTime;
 
 #[derive(Queryable, Selectable, Serialize)]
 #[diesel(table_name = crate::schema::users)]
@@ -102,3 +103,26 @@ pub struct Claims {
     pub exp: usize,
 }
 pub struct AuthenticatedUser(pub Claims);
+
+#[derive(Serialize, Deserialize)]
+pub struct WsMessage {
+    pub message: String,
+    pub username: String,
+}
+
+#[derive(Queryable, Selectable,Serialize)]
+#[diesel(table_name = crate::schema::chat_messages)]
+#[diesel(check_for_backend(diesel::pg::Pg))]
+pub struct ChatMessage {
+    pub id: i32,
+    pub username: String,
+    pub message: String,
+    pub created_at: NaiveDateTime,
+}
+
+#[derive(Insertable, Deserialize)]
+#[diesel(table_name = crate::schema::chat_messages)]
+pub struct NewChatMessage {
+    pub username: String,
+    pub message: String,
+}
