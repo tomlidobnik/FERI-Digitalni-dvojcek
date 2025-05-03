@@ -14,9 +14,9 @@ function App() {
 
   return (
     <>
-      <h1>Login</h1>
-      <button onClick={fetchMessage}>Fetch New Message</button>
-      {message && <p>Message from backend: {message}</p>}
+        <h1>Login</h1>
+        <button onClick={fetchMessage}>Fetch New Message</button>
+        {message && <p>Message from backend: {message}</p>}
     </>
   );
 }
