@@ -1,5 +1,5 @@
 import React from "react";
-import ChatBox from "./components/Chat/ChatBox";
+import ChatBox from "../../components/Chat/ChatBox";
 
 const App = () => <ChatBox />;
 
