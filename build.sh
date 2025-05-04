@@ -1,19 +1,17 @@
 #!/bin/bash
 set -e
 
-echo "🔨 Building backend..."
-docker build --platform linux/amd64 -t backend:prod ./backend
+docker buildx create --use --name multi-arch-builder || docker buildx use multi-arch-builder
 
-echo "🔨 Building frontend..."
-docker build --platform linux/amd64 -t frontend:prod ./frontend
+echo "$BACKEND_ENV_FILE" > ./backend/.env
 
-echo "🏷 Tagging images..."
-docker tag backend:prod tomlidobnik/backend:prod
-docker tag frontend:prod tomlidobnik/frontend:prod
+echo "🔨 Building and pushing backend for linux/amd64..."
+docker buildx build --platform linux/amd64 -t tomlidobnik/backend:prod -f backend/Dockerfile ./backend --push
 
-echo "🚀 Pushing to Docker Hub..."
-docker push tomlidobnik/backend:prod
-docker push tomlidobnik/frontend:prod
+echo "$FRONTEND_ENV_FILE" > ./frontend/.env
 
-echo "✅ Done!"
+echo "🔨 Building and pushing frontend for linux/amd64..."
+docker buildx build --platform linux/amd64 -t tomlidobnik/frontend:prod -f frontend/Dockerfile ./frontend --push
+
+echo "✅ Build and push complete!"
 

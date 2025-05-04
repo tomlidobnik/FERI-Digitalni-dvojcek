@@ -1,21 +1,25 @@
-FROM debian:bullseye-slim AS builder-base
-RUN apt-get update && apt-get install -y curl build-essential libpq-dev pkg-config ca-certificates
+FROM rust:1.86-bullseye AS builder
 
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
-ENV PATH="/root/.cargo/bin:${PATH}"
+RUN apt-get update && apt-get install -y libpq-dev pkg-config ca-certificates
 
 WORKDIR /usr/src/backend
+
 COPY . .
 
-RUN cargo build --release
+RUN cargo build --release --target-dir /tmp/build
 
 FROM debian:bullseye-slim
+
 RUN apt-get update && apt-get install -y libpq5 && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder-base /usr/src/backend/target/release/backend /usr/local/bin/backend
-COPY .env .env
+COPY --from=builder /tmp/build/release/backend /usr/local/bin/backend
+
+COPY .env /app/.env
+
+WORKDIR /app
 
 EXPOSE 8000
+
 CMD ["backend"]
 
