@@ -12,6 +12,8 @@ const ChatBox = () => {
     const socketRef = useRef(null);
     const messagesContainerRef = useRef(null);
 
+    const API_URL = import.meta.env.VITE_API_URL;
+
     useEffect(() => {
         if (messagesContainerRef.current) {
             messagesContainerRef.current.scrollTop =
@@ -21,12 +23,12 @@ const ChatBox = () => {
 
     const handleConnect = () => {
         if (!isConnected && username.trim()) {
-            const socket = new WebSocket("ws://localhost:8000/ws");
+            const socket = new WebSocket(`ws://${API_URL}/ws`);
             socketRef.current = socket;
 
             socket.onopen = () => {
                 setIsConnected(true);
-                fetch("http://localhost:8000/api/chat/history")
+                fetch(`http://${API_URL}/api/chat/history`)
                     .then((res) => res.json())
                     .then((data) => {
                         setMessages(data);

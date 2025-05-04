@@ -6,6 +6,7 @@ COPY package*.json ./
 RUN npm ci --legacy-peer-deps
 
 COPY . .
+ENV VITE_API_URL=copycats.mooo.com:8000
 RUN npm run build
 
 FROM node:23-alpine
