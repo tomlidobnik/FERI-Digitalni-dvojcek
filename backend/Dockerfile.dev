@@ -6,7 +6,10 @@ RUN apt-get update && apt-get install -y libpq-dev pkg-config && \
 
 WORKDIR /usr/src/backend
 
+COPY Cargo.toml Cargo.lock ./
+RUN mkdir src && echo "fn main() {}" > src/main.rs
+RUN cargo fetch
+
 COPY . .
 
 CMD ["cargo", "watch", "-x", "run"]
-
