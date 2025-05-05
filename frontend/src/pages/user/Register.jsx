@@ -20,9 +20,9 @@ export default function Register() {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen select-none bg-tertiary text-text">
-            <div className="flex flex-col items-center justify-center p-8 bg-primary rounded-4xl shadow-2xl">
-                <h1 className="text-4xl mb-4 font-bold w-96">Registracija</h1>
+        <div className="flex flex-col md:items-center md:justify-center h-screen select-none bg-tertiary text-text min-h-fit">
+            <div className="flex flex-col  p-8 bg-primary md:rounded-4xl md:h-fit h-screen md:shadow-2xl">
+                <h1 className="text-4xl mb-4 font-bold md:w-96 w-full text-left">Registracija</h1>
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full">
                     <div className="flex flex-col gap-0.5">
                         <label className="font-semibold text-xl">Uporabniško ime</label>
@@ -86,7 +86,7 @@ export default function Register() {
                     </div>
 
                     <button type="submit" className="bg-tertiary text-text font-semibold text-2xl rounded-2xl hover:bg-quaternary active:bg-tertiary p-3 mt-1" >Nadaljuj</button>
-                    <div className="w-full text-center text-text">
+                    <div className="w-full text-center text-text md:mb-0 mb-3">
                         Že imaš račun? 
                         <Link to="/login" className="font-semibold"> Prijavi se.</Link>
                     </div>
