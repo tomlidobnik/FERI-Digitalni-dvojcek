@@ -10,7 +10,7 @@ use tokio::sync::Mutex;
 use tower_http::cors::{Any, CorsLayer};
 
 pub async fn create_router(connections: Connections) -> Router {
-    let cors = CorsLayer::new().allow_origin(Any).allow_methods(Any);
+    let cors = CorsLayer::new().allow_origin(Any).allow_methods(Any).allow_headers(Any);
 
     let ws_routes = Router::new().route("/", get({
         let connections = connections.clone();

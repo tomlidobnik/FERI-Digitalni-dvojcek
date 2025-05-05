@@ -1,7 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 export default function Register() {
+    const navigate = useNavigate();
+
     const { 
         register,
         handleSubmit,
@@ -11,7 +13,36 @@ export default function Register() {
 
     const onSubmit = async (data) => {
         try{
-            console.log(data);
+            const userData = {
+                username: data.username,
+                firstname: data.firstname,
+                lastname: data.lastname,
+                email: data.email,
+                password: data.password,
+            };
+            const response = await fetch(`http://${import.meta.env.VITE_API_URL}/api/user/create`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(userData),
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                if (errorData.error) {
+                    setError("root", {
+                        message: errorData.error,
+                    });
+                } else {
+                    setError("root", {
+                        message: "Napaka pri registraciji uporabnika",
+                    });
+                }
+                return;
+            }else {
+                navigate("/login");
+            }
+            //console.log("User registered successfully");
         }catch (error) {
             setError("root", {
                 message: "Napaka pri registraciji uporabnika",
@@ -42,10 +73,10 @@ export default function Register() {
 
                     <div className="flex flex-col gap-0.5">
                         <label className="font-semibold text-xl">Priimek</label>
-                        <input {...register("secondname",{
+                        <input {...register("lastname",{
                             required: "Priimek je obvezno",
                         })} type="text" className="bg-black/10 p-3 text-xl  rounded-2xl shadow-md focus:border-tertiary focus:outline-tertiary focus:outline-0 border-black/20 border-4"/>
-                        {errors.secondname && <span className="text-error">{errors.secondname.message}</span>}
+                        {errors.lastname && <span className="text-error">{errors.lastname.message}</span>}
                     </div>
 
                     <div className="flex flex-col gap-0.5">
@@ -86,12 +117,11 @@ export default function Register() {
                     </div>
 
                     <button type="submit" className="bg-tertiary text-text font-semibold text-2xl rounded-2xl hover:bg-quaternary active:bg-tertiary p-3 mt-1" >Nadaljuj</button>
+                    {errors.root && <span className="text-error w-full text-center">{errors.root.message}</span>}
                     <div className="w-full text-center text-text md:mb-0 mb-3">
                         Že imaš račun? 
                         <Link to="/login" className="font-semibold"> Prijavi se.</Link>
                     </div>
-
-                    {errors.root && <span className="text-error">{errors.root.message}</span>}
                 </form>
             </div>
         </div>
