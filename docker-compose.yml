@@ -28,7 +28,7 @@ services:
       - "8000:8000"
 
   backend-prod:
-    image: backend.slim
+    image: tomlidobnik/backend:prod
     restart: always
     environment:
       DATABASE_URL: postgres://user:password@db:5432/db
@@ -53,14 +53,10 @@ services:
     command: npm run dev
 
   frontend-prod:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: tomlidobnik/frontend:prod
     restart: always
     ports:
       - "3000:3000"
-    command: npx serve dist
-
 
 volumes:
   db_data:

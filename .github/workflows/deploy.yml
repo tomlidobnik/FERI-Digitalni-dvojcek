@@ -1,0 +1,55 @@
+name: Build and deploy
+
+on:
+  push:
+    branches:
+      - "develop"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Make build.sh executable
+        run: chmod +x ./build.sh
+
+      - name: Run build script to build images
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: ./build.sh
+
+      - name: Deploy to Azure via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: 132.220.216.19
+          username: copycats
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            if [ ! -d "/home/copycats/FERI-Digitalni-dvojcek" ]; then
+              git clone git@github.com:tomlidobnik/FERI-Digitalni-dvojcek.git /home/copycats/FERI-Digitalni-dvojcek
+            fi
+            export PATH=$PATH:/snap/bin
+            
+            cd /home/copycats/FERI-Digitalni-dvojcek
+            git switch develop
+            git pull origin
+            
+            docker --version
+            docker pull tomlidobnik/backend:prod
+            docker pull tomlidobnik/frontend:prod
+            
+            docker-compose --version
+            docker-compose down
+            docker-compose up -d --build db backend-prod frontend-prod
+
