@@ -19,6 +19,15 @@ diesel::table! {
 }
 
 diesel::table! {
+    friends (id) {
+        id -> Int4,
+        user1_fk -> Nullable<Int4>,
+        user2_fk -> Nullable<Int4>,
+        status -> Int4,
+    }
+}
+
+diesel::table! {
     locations (id) {
         id -> Int4,
         info -> Nullable<Text>,
@@ -40,9 +49,4 @@ diesel::table! {
 
 diesel::joinable!(events -> users (user_fk));
 
-diesel::allow_tables_to_appear_in_same_query!(
-    chat_messages,
-    events,
-    locations,
-    users,
-);
+diesel::allow_tables_to_appear_in_same_query!(chat_messages, events, friends, locations, users,);
