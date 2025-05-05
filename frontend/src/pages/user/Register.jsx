@@ -117,11 +117,11 @@ export default function Register() {
                     </div>
 
                     <button type="submit" className="bg-tertiary text-text font-semibold text-2xl rounded-2xl hover:bg-quaternary active:bg-tertiary p-3 mt-1" >Nadaljuj</button>
-                    {errors.root && <span className="text-error w-full text-center">{errors.root.message}</span>}
-                    <div className="w-full text-center text-text md:mb-0 mb-3">
+                    <div className="w-full text-center text-text md:mb-0">
                         Že imaš račun? 
                         <Link to="/login" className="font-semibold"> Prijavi se.</Link>
                     </div>
+                    {errors.root && <span className="text-error font-semibold w-full text-center">{errors.root.message}</span>}
                 </form>
             </div>
         </div>

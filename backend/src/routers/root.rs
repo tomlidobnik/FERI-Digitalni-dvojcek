@@ -18,10 +18,10 @@ pub async fn create_router(connections: Connections) -> Router {
     }));
 
     let api_routes = Router::new()
-        .nest("/user", user_router::create_router())
-        .nest("/event", event_router::create_router())
-        .nest("/location", location_router::create_router())
-        .nest("/chat", chat_router::create_router());
+        .nest("/user", user_router::create_router().layer(cors.clone()))
+        .nest("/event", event_router::create_router().layer(cors.clone()))
+        .nest("/location", location_router::create_router().layer(cors.clone()))
+        .nest("/chat", chat_router::create_router().layer(cors.clone()));
 
     Router::new()
         .nest("/ws", ws_routes)
