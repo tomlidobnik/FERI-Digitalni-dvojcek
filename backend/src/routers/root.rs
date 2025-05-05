@@ -10,7 +10,7 @@ use tokio::sync::Mutex;
 use tower_http::cors::{Any, CorsLayer};
 
 pub async fn create_router(connections: Connections) -> Router {
-    let cors = CorsLayer::new().allow_origin(Any).allow_methods(Any);
+    let cors = CorsLayer::new().allow_origin(Any).allow_methods(Any).allow_headers(Any);
 
     let ws_routes = Router::new().route("/", get({
         let connections = connections.clone();
@@ -18,10 +18,10 @@ pub async fn create_router(connections: Connections) -> Router {
     }));
 
     let api_routes = Router::new()
-        .nest("/user", user_router::create_router())
-        .nest("/event", event_router::create_router())
-        .nest("/location", location_router::create_router())
-        .nest("/chat", chat_router::create_router());
+        .nest("/user", user_router::create_router().layer(cors.clone()))
+        .nest("/event", event_router::create_router().layer(cors.clone()))
+        .nest("/location", location_router::create_router().layer(cors.clone()))
+        .nest("/chat", chat_router::create_router().layer(cors.clone()));
 
     Router::new()
         .nest("/ws", ws_routes)

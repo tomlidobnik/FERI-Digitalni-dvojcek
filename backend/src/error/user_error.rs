@@ -8,13 +8,13 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum UserError {
-    #[error("User not found")]
+    #[error("Uporabnik ni bil najden")]
     UserNotFound,
-    #[error("User already exists")]
+    #[error("Uporabnik že obstaja")]
     UserAlreadyExists,
-    #[error("Invalid password")]
+    #[error("Neveljavno geslo")]
     InvalidPassword,
-    #[error("Email already used")]
+    #[error("E-naslov že obstaja")]
     EmailAlreadyExists,
 }
 
