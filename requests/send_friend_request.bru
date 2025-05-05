@@ -1,0 +1,22 @@
+meta {
+  name: send_friend_request
+  type: http
+  seq: 11
+}
+
+post {
+  url: 0.0.0.0:8000/api/user/friends/send
+  body: json
+  auth: bearer
+}
+
+body:json {
+  {
+    "username": "janezTEST"
+  }
+}
+
+script:pre-request {
+  const token = bru.getVar("token");
+  req.setHeader("Authorization", `Bearer ${token}`);
+}

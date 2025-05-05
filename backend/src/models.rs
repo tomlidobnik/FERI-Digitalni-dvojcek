@@ -1,8 +1,8 @@
 use bigdecimal::BigDecimal;
+use chrono::NaiveDateTime;
 use diesel::prelude::*;
 use serde::Deserialize;
 use serde::Serialize;
-use chrono::NaiveDateTime;
 
 #[derive(Queryable, Selectable, Serialize)]
 #[diesel(table_name = crate::schema::users)]
@@ -14,6 +14,16 @@ pub struct User {
     pub lastname: String,
     pub email: String,
     pub password: String,
+}
+
+#[derive(Queryable, Selectable, Serialize)]
+#[diesel(table_name = crate::schema::friends)]
+#[diesel(check_for_backend(diesel::pg::Pg))]
+pub struct Friend {
+    pub id: i32,
+    pub user1_fk: Option<i32>,
+    pub user2_fk: Option<i32>,
+    pub status: i32,
 }
 
 #[derive(Queryable, Selectable, Serialize)]
@@ -78,6 +88,10 @@ pub struct LoginRequest {
     pub username: String,
     pub password: String,
 }
+#[derive(Debug, Clone, serde::Deserialize)]
+pub struct FriendRequest {
+    pub username: String,
+}
 
 #[derive(Insertable)]
 #[diesel(table_name = crate::schema::users)]
@@ -110,7 +124,7 @@ pub struct WsMessage {
     pub username: String,
 }
 
-#[derive(Queryable, Selectable,Serialize)]
+#[derive(Queryable, Selectable, Serialize)]
 #[diesel(table_name = crate::schema::chat_messages)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct ChatMessage {
@@ -126,3 +140,4 @@ pub struct NewChatMessage {
     pub username: String,
     pub message: String,
 }
+
