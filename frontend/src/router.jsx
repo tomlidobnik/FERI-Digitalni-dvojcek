@@ -4,6 +4,7 @@ import Login from './pages/user/Login.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 import { ErrorBoundary } from 'react-error-boundary';
 import ErrorPage from './pages/ErrorPage.jsx'; // Import the ErrorPage component
+import Register from './pages/user/Register.jsx';
 
 // Routers
 const router = createBrowserRouter([
@@ -20,6 +21,14 @@ const router = createBrowserRouter([
             </ErrorBoundary>
         ),
     },
+    {
+        path: '/register',
+        element: (
+            <ErrorBoundary FallbackComponent={ErrorPage}>
+                <Register />
+            </ErrorBoundary>
+        ),
+    }
 ]);
 
 export default router;
