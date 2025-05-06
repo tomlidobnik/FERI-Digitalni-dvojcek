@@ -1,5 +1,3 @@
-use tower_http::cors::{Any, CorsLayer};
-
 use crate::handlers::user_handler::{create_user, generate_token, hello_user_json, validate_user};
 use crate::routers::friend_router;
 
@@ -16,4 +14,3 @@ pub fn create_router() -> Router {
         .route("/token", post(generate_token))
         .nest("/friends", friend_router::create_router())
 }
-

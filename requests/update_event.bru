@@ -5,13 +5,13 @@ meta {
 }
 
 post {
-  url: 0.0.0.0:8000/api/event/update
+  url: https://0.0.0.0:8000/api/event/update
   body: json
   auth: bearer
 }
 
 auth:bearer {
-  token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqYW5lek4iLCJleHAiOjE3NDU2ODgxMTN9.xdJVOs4x_URwQPRjDY1NQrHpDDnr6msCECTtrexoXpE
+  token: 
 }
 
 body:json {
@@ -20,4 +20,9 @@ body:json {
     "title": "Updated Event Title",
     "description": "Updated description of the event"
   }
+}
+
+script:pre-request {
+  const token = bru.getVar("token");
+  req.setHeader("Authorization", `Bearer ${token}`);
 }

@@ -3,7 +3,7 @@ name: Build and deploy
 on:
   push:
     branches:
-      - "develop"
+      - "*"
 
 jobs:
   deploy:
@@ -29,6 +29,8 @@ jobs:
         run: ./build.sh
 
       - name: Deploy to Azure via SSH
+        env:
+          BACKEND_ENV_FILE: ${{ secrets.BACKEND_ENV_FILE }}
         uses: appleboy/ssh-action@master
         with:
           host: 132.220.216.19
@@ -40,15 +42,21 @@ jobs:
               git clone git@github.com:tomlidobnik/FERI-Digitalni-dvojcek.git /home/copycats/FERI-Digitalni-dvojcek
             fi
             export PATH=$PATH:/snap/bin
-            
+
             cd /home/copycats/FERI-Digitalni-dvojcek
             git switch develop
             git pull origin
-            
+
+            echo "$BACKEND_ENV_FILE" > ./backend/.env
+            cd ./backend
+            mkcert -install
+            mkcert -key-file key.pem -cert-file cert.pem copycats.mooo.com 132.220.216.19 ::1
+            cd ..
+
             docker --version
             docker pull tomlidobnik/backend:prod
             docker pull tomlidobnik/frontend:prod
-            
+
             docker-compose --version
             docker-compose down
             docker-compose up -d --build db backend-prod frontend-prod

@@ -20,7 +20,5 @@ RUN apt-get update && apt-get install -y libpq5 ca-certificates && \
 
 COPY --from=builder /app/target/release/backend /usr/local/bin/app
 
-COPY .env /app/.env
-
 EXPOSE 8000
 ENTRYPOINT ["/usr/local/bin/app"]
