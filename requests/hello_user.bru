@@ -5,11 +5,16 @@ meta {
 }
 
 get {
-  url: 0.0.0.0:8000/api/user
+  url: https://0.0.0.0:8000/api/user
   body: none
   auth: bearer
 }
 
 auth:bearer {
-  token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqYW5leiIsImV4cCI6MTc0NTQxMjYyOX0.viOBXlvEN-7ZBxfPVcVfv-cBGo8W5KqVtBmj2ZRVmAo
+  token: 
+}
+
+script:pre-request {
+  const token = bru.getVar("token");
+  req.setHeader("Authorization", `Bearer ${token}`);
 }
