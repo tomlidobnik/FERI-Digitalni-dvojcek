@@ -28,7 +28,7 @@
 
   color-scheme: light dark;
   color: var(--color-text);
-  background-color: var(--color-primary);
+  background-color: var(--color-tertiary);
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;

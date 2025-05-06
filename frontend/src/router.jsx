@@ -5,6 +5,7 @@ import NotFoundPage from './pages/NotFoundPage.jsx';
 import { ErrorBoundary } from 'react-error-boundary';
 import ErrorPage from './pages/ErrorPage.jsx'; // Import the ErrorPage component
 import Register from './pages/user/Register.jsx';
+import ChatBox from "./components/Chat/ChatBox";
 
 // Routers
 const router = createBrowserRouter([
@@ -26,6 +27,14 @@ const router = createBrowserRouter([
         element: (
             <ErrorBoundary FallbackComponent={ErrorPage}>
                 <Register />
+            </ErrorBoundary>
+        ),
+    },
+    {
+        path: '/chat',
+        element: (
+            <ErrorBoundary FallbackComponent={ErrorPage}>
+                <ChatBox />
             </ErrorBoundary>
         ),
     }
