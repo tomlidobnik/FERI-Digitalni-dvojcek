@@ -8,6 +8,7 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 use tower_http::cors::{Any, CorsLayer};
+use axum_server::tls_rustls::RustlsConfig;
 
 pub async fn create_router(connections: Connections) -> Router {
     let cors = CorsLayer::new().allow_origin(Any).allow_methods(Any).allow_headers(Any);
@@ -36,11 +37,10 @@ pub async fn run_server() {
 
     let connections: Connections = Arc::new(Mutex::new(HashMap::new()));
     let app = create_router(connections).await;
+    let config = RustlsConfig::from_pem_file("cert.pem", "key.pem").await.unwrap();
 
-    axum::serve(
-        tokio::net::TcpListener::bind(addr).await.unwrap(),
-        app.into_make_service_with_connect_info::<SocketAddr>(),
-    )
-    .await
-    .unwrap();
+    axum_server::bind_rustls(addr, config)
+        .serve(app.into_make_service_with_connect_info::<SocketAddr>())
+        .await
+        .unwrap();
 }
