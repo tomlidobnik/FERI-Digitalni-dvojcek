@@ -37,6 +37,10 @@ services:
       - db
     ports:
       - "8000:8000"
+    volumes:
+      - ./backend/.env:/app/.env:ro
+      - ./backend/key.pem:/app/key.pem:ro
+      - ./backend/cert.pem:/app/cert.pem:ro
 
   frontend-dev:
     build:

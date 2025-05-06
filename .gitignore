@@ -19,3 +19,6 @@ venv/
 **/db/config.json
 
 **/slim.report.json
+
+**/cert.pem
+**/key.pem
