@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - name: Checkout code
@@ -28,36 +28,28 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: ./build.sh
 
-      - name: Deploy to Azure via SSH
+      - name: Deploy to PI
         env:
           BACKEND_ENV_FILE: ${{ secrets.BACKEND_ENV_FILE }}
-        uses: appleboy/ssh-action@master
-        with:
-          host: 132.220.216.19
-          username: copycats
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            if [ ! -d "/home/copycats/FERI-Digitalni-dvojcek" ]; then
-              git clone git@github.com:tomlidobnik/FERI-Digitalni-dvojcek.git /home/copycats/FERI-Digitalni-dvojcek
-            fi
-            export PATH=$PATH:/snap/bin
+        run: |
+          if [ ! -d "/home/pi/FERI-Digitalni-dvojcek" ]; then
+            git clone git@github.com:tomlidobnik/FERI-Digitalni-dvojcek.git /home/pi/FERI-Digitalni-dvojcek
+          fi
 
-            cd /home/copycats/FERI-Digitalni-dvojcek
-            git switch develop
-            git pull origin
+          cd /home/pi/FERI-Digitalni-dvojcek
+          git switch develop
+          git pull origin
+          git reset --hard origin/develop
 
-            echo "$BACKEND_ENV_FILE" > ./backend/.env
-            cd ./backend
-            mkcert -install
-            mkcert -key-file key.pem -cert-file cert.pem copycats.mooo.com 132.220.216.19 ::1
-            cd ..
+          cd ./backend
+          echo "$BACKEND_ENV_FILE" > .env
+          mkcert -install
+          mkcert -key-file key.pem -cert-file cert.pem tom.thehomeserver.net
+          cd ..
 
-            docker --version
-            docker pull tomlidobnik/backend:prod
-            docker pull tomlidobnik/frontend:prod
+          docker pull tomlidobnik/backend:prod
+          docker pull tomlidobnik/frontend:prod
 
-            docker-compose --version
-            docker-compose down
-            docker-compose up -d --build db backend-prod frontend-prod
+          docker-compose down
+          docker-compose up -d --build db backend-prod frontend-prod
 
