@@ -25,3 +25,5 @@ thiserror = "2.0.12"
 bigdecimal = { version = "0.4.8", features = ["serde"] }
 futures = "0.3.31"
 features = "0.10.0"
+axum-server = { version = "0.7.2", features = ["rustls", "tls-rustls"] }
+rustls = "0.23.27"

@@ -5,5 +5,11 @@
   "ignore": [
     "node_modules",
     ".git"
-  ]
+  ],
+  "size": 0.0022230148315429688,
+  "filesCount": 9,
+  "clientCertificates": {
+    "enabled": true,
+    "certs": []
+  }
 }

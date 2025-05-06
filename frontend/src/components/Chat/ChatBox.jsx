@@ -23,12 +23,12 @@ const ChatBox = () => {
 
     const handleConnect = () => {
         if (!isConnected && username.trim()) {
-            const socket = new WebSocket(`ws://${API_URL}/ws`);
+            const socket = new WebSocket(`wss://${API_URL}/ws`);
             socketRef.current = socket;
 
             socket.onopen = () => {
                 setIsConnected(true);
-                fetch(`http://${API_URL}/api/chat/history`)
+                fetch(`https://${API_URL}/api/chat/history`)
                     .then((res) => res.json())
                     .then((data) => {
                         setMessages(data);
