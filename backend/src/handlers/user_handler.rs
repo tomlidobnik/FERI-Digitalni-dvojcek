@@ -7,6 +7,7 @@ use axum::{Json, http::StatusCode, response::IntoResponse};
 use diesel::prelude::*;
 use log::info;
 use serde_json::json;
+use bcrypt::{hash, verify, DEFAULT_COST};
 
 pub async fn hello_user_json(user: AuthenticatedUser) -> impl IntoResponse {
     info!("Called hello_user_json");
@@ -26,7 +27,7 @@ pub async fn validate_user(
         .first::<User>(&mut connection)
     {
         Ok(user) => {
-            if user.password == payload.password {
+            if verify(payload.password, &user.password).unwrap(){
                 Ok((StatusCode::OK, "Valid user".into()))
             } else {
                 Err(UserError::InvalidPassword)
@@ -68,12 +69,13 @@ pub async fn create_user(Json(payload): Json<CreateUserRequest>) -> Result<Statu
             }
         }
         Ok(None) => {
+
             let new_user = NewUser {
                 username: payload.username,
                 firstname: payload.firstname,
                 lastname: payload.lastname,
                 email: payload.email,
-                password: payload.password,
+                password: hash(payload.password, DEFAULT_COST).unwrap(),
             };
 
             match diesel::insert_into(users)

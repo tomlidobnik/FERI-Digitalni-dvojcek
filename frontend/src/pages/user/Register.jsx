@@ -52,7 +52,7 @@ export default function Register() {
 
     return (
         <div className="flex flex-col md:items-center md:justify-center h-screen select-none bg-tertiary text-text min-h-fit">
-            <div className="flex flex-col  p-8 bg-primary md:rounded-4xl md:h-fit h-screen md:shadow-2xl">
+            <div className="flex flex-col  p-8 bg-primary md:rounded-4xl md:h-fit h-screen md:shadow-2xl md:my-8">
                 <h1 className="text-4xl mb-4 font-bold md:w-96 w-full text-left">Registracija</h1>
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full">
                     <div className="flex flex-col gap-0.5">
@@ -60,7 +60,9 @@ export default function Register() {
                         <input {...register("username", {
                             required: "Uporabniško ime je obvezno",
                         })} type="text" className="bg-black/10 p-3 text-xl rounded-2xl shadow-md focus:border-tertiary focus:outline-tertiary focus:outline-0 border-black/20 border-4"/>
-                        {errors.username && <span className="text-error">{errors.username.message}</span>}
+                        <div className="text-error h-2">
+                            {errors.username && <>{errors.username.message}</>}
+                        </div>
                     </div>
 
                     <div className="flex flex-col gap-0.5">
@@ -68,7 +70,9 @@ export default function Register() {
                         <input {...register("firstname", {
                             required: "Ime je obvezno",
                         })} type="text" className="bg-black/10 p-3 text-xl  rounded-2xl shadow-md focus:border-tertiary focus:outline-tertiary focus:outline-0 border-black/20 border-4"/>
-                        {errors.firstname && <span className="text-error">{errors.firstname.message}</span>}
+                        <div className="text-error h-2">
+                            {errors.firstname && <>{errors.firstname.message}</>}
+                        </div>
                     </div>
 
                     <div className="flex flex-col gap-0.5">
@@ -76,7 +80,9 @@ export default function Register() {
                         <input {...register("lastname",{
                             required: "Priimek je obvezno",
                         })} type="text" className="bg-black/10 p-3 text-xl  rounded-2xl shadow-md focus:border-tertiary focus:outline-tertiary focus:outline-0 border-black/20 border-4"/>
-                        {errors.lastname && <span className="text-error">{errors.lastname.message}</span>}
+                        <div className="text-error h-2">
+                            {errors.lastname && <>{errors.lastname.message}</>}
+                        </div>
                     </div>
 
                     <div className="flex flex-col gap-0.5">
@@ -88,7 +94,9 @@ export default function Register() {
                                 message: "E-naslov ni veljaven"
                             }
                         })} type="text" className="bg-black/10 p-3 text-xl  rounded-2xl shadow-md focus:border-tertiary focus:outline-tertiary focus:outline-0 border-black/20 border-4"/>
-                        {errors.email && <span className="text-error">{errors.email.message}</span>}
+                        <div className="text-error h-2">
+                            {errors.email && <>{errors.email.message}</>}
+                        </div>
                     </div>
 
                     <div className="flex flex-col gap-0.5">
@@ -100,7 +108,9 @@ export default function Register() {
                                 message: "Geslo mora imeti vsaj 8 znakov"
                             },
                         })} type="password"className="bg-black/10 p-3 text-xl rounded-2xl shadow-md focus:border-tertiary focus:outline-tertiary focus:outline-0 border-black/20 border-4"/>
-                        {errors.password && <span className="text-error">{errors.password.message}</span>}
+                        <div className="text-error h-2">
+                            {errors.password && <>{errors.password.message}</>}
+                        </div>
                     </div>
 
                     <div className="flex flex-col gap-1">
@@ -113,7 +123,9 @@ export default function Register() {
                                 }
                             }
                         })} type="password" className="bg-black/10 p-3 text-xl  rounded-2xl shadow-md focus:border-tertiary focus:outline-tertiary focus:outline-0 border-black/20 border-4"/>
-                        {errors.passwordAgain && <span className="text-error">{errors.passwordAgain.message}</span>}
+                        <div className="text-error h-5">
+                            {errors.passwordAgain && <>{errors.passwordAgain.message}</>}
+                        </div>
                     </div>
 
                     <button type="submit" className="bg-tertiary text-text font-semibold text-2xl rounded-2xl hover:bg-quaternary active:bg-tertiary p-3 mt-1" >Nadaljuj</button>
@@ -121,7 +133,9 @@ export default function Register() {
                         Že imaš račun? 
                         <Link to="/login" className="font-semibold"> Prijavi se.</Link>
                     </div>
-                    {errors.root && <span className="text-error font-semibold w-full text-center">{errors.root.message}</span>}
+                    <div className="text-error h-2 font-semibold w-full text-center">
+                            {errors.root && <>{errors.root.message}</>}
+                    </div>
                 </form>
             </div>
         </div>
