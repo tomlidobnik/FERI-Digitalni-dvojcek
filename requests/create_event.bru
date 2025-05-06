@@ -5,13 +5,13 @@ meta {
 }
 
 post {
-  url: 0.0.0.0:8000/api/event/create
+  url: https://0.0.0.0:8000/api/event/create
   body: json
   auth: bearer
 }
 
 auth:bearer {
-  token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqYW5lek4iLCJleHAiOjE3NDU2ODU5Mjl9.n5O6rteMRgDZBbzwg9EpBu3YDXnD1H6WxoZFcba6HMs
+  token: 
 }
 
 body:json {
@@ -19,4 +19,9 @@ body:json {
     "title": "Event",
     "description": "Some event"
   }
+}
+
+script:pre-request {
+  const token = bru.getVar("token");
+  req.setHeader("Authorization", `Bearer ${token}`);
 }
