@@ -123,6 +123,18 @@ pub struct WsMessage {
     pub message: String,
     pub username: String,
 }
+#[derive(Serialize, Deserialize)]
+pub struct PublicUserDataRequest {
+    pub username: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct UserResponse {
+    pub username: String,
+    pub first_name: String,
+    pub last_name: String,
+    pub email: String,
+}
 
 #[derive(Queryable, Selectable, Serialize)]
 #[diesel(table_name = crate::schema::chat_messages)]
@@ -140,4 +152,3 @@ pub struct NewChatMessage {
     pub username: String,
     pub message: String,
 }
-

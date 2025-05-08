@@ -1,19 +1,46 @@
 use crate::config::db;
 use crate::error::user_error::UserError;
 use crate::middleware::auth::create_jwt;
-use crate::models::{AuthenticatedUser, CreateUserRequest, LoginRequest, NewUser, User};
+use crate::models::{
+    AuthenticatedUser, CreateUserRequest, LoginRequest, NewUser, PublicUserDataRequest, User,
+    UserResponse,
+};
 use crate::schema::users::dsl::*;
 use axum::{Json, http::StatusCode, response::IntoResponse};
+use bcrypt::{DEFAULT_COST, hash, verify};
 use diesel::prelude::*;
-use log::info;
+use log::{error, info};
 use serde_json::json;
-use bcrypt::{hash, verify, DEFAULT_COST};
 
 pub async fn hello_user_json(user: AuthenticatedUser) -> impl IntoResponse {
     info!("Called hello_user_json");
     let other_username = user.0.sub;
     let body = json!({ "message": format!("Hello, {}", other_username) });
     (StatusCode::OK, Json(body))
+}
+
+pub async fn private_user_data(user: AuthenticatedUser) -> impl IntoResponse {
+    info!("Called private_user_data for user: {}", user.0.sub);
+    let mut connection = db::connect_db();
+    let result = users
+        .filter(username.eq(&user.0.sub))
+        .first::<User>(&mut connection);
+
+    match result {
+        Ok(user) => {
+            let user_response = UserResponse {
+                username: user.username,
+                first_name: user.firstname,
+                last_name: user.lastname,
+                email: user.email,
+            };
+            Json(user_response).into_response()
+        }
+        Err(err) => {
+            error!("Database error: {}", err);
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
+        }
+    }
 }
 
 pub async fn validate_user(
@@ -27,7 +54,7 @@ pub async fn validate_user(
         .first::<User>(&mut connection)
     {
         Ok(user) => {
-            if verify(payload.password, &user.password).unwrap(){
+            if verify(payload.password, &user.password).unwrap() {
                 Ok((StatusCode::OK, "Valid user".into()))
             } else {
                 Err(UserError::InvalidPassword)
@@ -69,7 +96,6 @@ pub async fn create_user(Json(payload): Json<CreateUserRequest>) -> Result<Statu
             }
         }
         Ok(None) => {
-
             let new_user = NewUser {
                 username: payload.username,
                 firstname: payload.firstname,

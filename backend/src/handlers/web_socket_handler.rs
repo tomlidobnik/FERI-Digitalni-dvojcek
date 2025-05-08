@@ -1,5 +1,5 @@
-use crate::models::{WsMessage, NewChatMessage};
 use crate::config::db;
+use crate::models::{NewChatMessage, WsMessage};
 use crate::schema::chat_messages::dsl::chat_messages;
 use axum::{
     extract::{
@@ -9,11 +9,11 @@ use axum::{
     response::IntoResponse,
 };
 use diesel::prelude::*;
+use futures::{SinkExt, StreamExt};
+use log::{error, info};
 use std::net::SocketAddr;
 use std::{collections::HashMap, sync::Arc};
 use tokio::sync::{Mutex, mpsc};
-use futures::{SinkExt, StreamExt};
-
 
 pub type Tx = mpsc::UnboundedSender<Message>;
 pub type Connections = Arc<Mutex<HashMap<SocketAddr, Tx>>>;
@@ -23,15 +23,11 @@ pub async fn handle_ws(
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
     connections: Connections,
 ) -> impl IntoResponse {
-    println!("WebSocket connection from {}", addr);
+    info!("WebSocket connection from {}", addr);
     ws.on_upgrade(move |socket| handle_socket(socket, addr, connections))
 }
 
-async fn handle_socket(
-    socket: WebSocket,
-    addr: SocketAddr,
-    connections: Connections,
-) {
+async fn handle_socket(socket: WebSocket, addr: SocketAddr, connections: Connections) {
     let (mut sender, mut receiver) = socket.split();
     let (tx, mut rx) = mpsc::unbounded_channel::<Message>();
 
@@ -42,7 +38,7 @@ async fn handle_socket(
     let send_task = tokio::spawn(async move {
         while let Some(msg) = rx.recv().await {
             if sender.send(msg).await.is_err() {
-                eprintln!("Error sending message to WebSocket, closing connection");
+                error!("Error sending message to WebSocket, closing connection");
                 break;
             }
         }
@@ -53,7 +49,7 @@ async fn handle_socket(
         while let Some(Ok(msg)) = receiver.next().await {
             if let Message::Text(text) = msg {
                 if let Ok(parsed) = serde_json::from_str::<WsMessage>(&text) {
-                    println!("Got message from {}: {}", parsed.username, parsed.message);
+                    info!("Got message from {}: {}", parsed.username, parsed.message);
 
                     let new_msg = NewChatMessage {
                         username: parsed.username.clone(),
@@ -65,13 +61,15 @@ async fn handle_socket(
                             .values(&new_msg)
                             .execute(&mut conn)
                             .ok();
-                    }).await.ok();
+                    })
+                    .await
+                    .ok();
 
                     let json = serde_json::to_string(&parsed).unwrap();
                     broadcast_message(&Message::Text(Into::into(json)), &connections_clone, addr)
                         .await;
                 } else {
-                    eprintln!("Invalid JSON format received: {}", text);
+                    error!("Invalid JSON format received: {}", text);
                 }
             }
         }
@@ -89,6 +87,7 @@ async fn handle_socket(
 }
 
 async fn broadcast_message(message: &Message, connections: &Connections, sender_addr: SocketAddr) {
+    info!("Called broadcast_message",);
     let conns = connections.lock().await;
     for (addr, tx) in conns.iter() {
         if addr != &sender_addr {

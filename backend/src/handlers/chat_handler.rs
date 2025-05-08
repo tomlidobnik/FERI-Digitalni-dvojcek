@@ -1,8 +1,10 @@
+use crate::{config::db, models::ChatMessage, schema::chat_messages::dsl::*};
 use axum::{Json, http::StatusCode, response::IntoResponse};
 use diesel::prelude::*;
-use crate::{models::ChatMessage, schema::chat_messages::dsl::*, config::db};
+use log::{error, info};
 
 pub async fn get_chat_history() -> impl IntoResponse {
+    info!("Called get_chat_history");
     let mut conn = db::connect_db();
 
     let result = chat_messages
@@ -12,8 +14,9 @@ pub async fn get_chat_history() -> impl IntoResponse {
     match result {
         Ok(messages) => Json(messages).into_response(),
         Err(err) => {
-            eprintln!("Database error: {}", err);
+            error!("Database error: {}", err);
             StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
 }
+

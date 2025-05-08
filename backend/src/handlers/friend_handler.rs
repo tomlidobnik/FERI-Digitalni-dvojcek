@@ -5,6 +5,8 @@ use crate::schema::users::dsl::*;
 use axum::{Json, http::StatusCode, response::IntoResponse};
 use diesel::prelude::*;
 
+use log::info;
+
 async fn get_user_id(user: String) -> Result<i32, StatusCode> {
     let mut conn = db::connect_db();
     let user_id: i32 = users
@@ -17,6 +19,7 @@ async fn get_user_id(user: String) -> Result<i32, StatusCode> {
 }
 
 pub async fn list_friends(user: AuthenticatedUser) -> impl IntoResponse {
+    info!("Called list_friends for user: {}", user.0.sub);
     let mut conn = db::connect_db();
     let this_user_id = match get_user_id(user.0.sub).await {
         Ok(this_id) => this_id,
@@ -59,6 +62,7 @@ pub async fn friend_request(
     user: AuthenticatedUser,
     Json(payload): Json<FriendRequest>,
 ) -> Result<StatusCode, StatusCode> {
+    info!("Called friend_request for user: {}", user.0.sub);
     let mut conn = db::connect_db();
     let this_user_id = get_user_id(user.0.sub).await?;
     let friend_user_id = get_user_id(payload.username).await?;

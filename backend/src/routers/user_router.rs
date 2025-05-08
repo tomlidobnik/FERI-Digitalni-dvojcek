@@ -1,4 +1,4 @@
-use crate::handlers::user_handler::{create_user, generate_token, hello_user_json, validate_user};
+use crate::handlers::user_handler::*;
 use crate::routers::friend_router;
 
 use axum::{
@@ -12,5 +12,7 @@ pub fn create_router() -> Router {
         .route("/create", post(create_user))
         .route("/validate", post(validate_user))
         .route("/token", post(generate_token))
+        .route("/public_data", get(public_user_data))
+        .route("/private_data", get(private_user_data))
         .nest("/friends", friend_router::create_router())
 }
