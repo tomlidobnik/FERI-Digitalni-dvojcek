@@ -6,7 +6,7 @@ use crate::models::{
     UserResponse,
 };
 use crate::schema::users::dsl::*;
-use axum::{Json, http::StatusCode, response::IntoResponse};
+use axum::{Json, extract::Query, http::StatusCode, response::IntoResponse};
 use bcrypt::{DEFAULT_COST, hash, verify};
 use diesel::prelude::*;
 use log::{error, info};
@@ -19,11 +19,12 @@ pub async fn hello_user_json(user: AuthenticatedUser) -> impl IntoResponse {
     (StatusCode::OK, Json(body))
 }
 
-pub async fn public_user_data(Json(payload): Json<PublicUserDataRequest>) -> impl IntoResponse {
-    info!("Called public_user_data for user {}", payload.username);
+pub async fn public_user_data(Query(params): Query<PublicUserDataRequest>) -> impl IntoResponse {
+    info!("Called public_user_data for user {}", params.username);
+
     let mut connection = db::connect_db();
     let result = users
-        .filter(username.eq(&payload.username))
+        .filter(username.eq(&params.username))
         .first::<User>(&mut connection);
 
     match result {
