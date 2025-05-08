@@ -1,0 +1,33 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Igrišče"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [15.6456139, 46.554735]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Tekma"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [15.644, 46.555],
+                        [15.647, 46.555],
+                        [15.647, 46.553],
+                        [15.644, 46.553],
+                        [15.644, 46.555]
+                    ]
+                ]
+            }
+        }
+    ]
+}
