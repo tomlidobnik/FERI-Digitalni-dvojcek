@@ -38,7 +38,7 @@ jobs:
 
           cd /home/pi/FERI-Digitalni-dvojcek
           git switch develop
-          git pull origin
+          git fetch origin
           git reset --hard origin/develop
 
           cd ./backend
