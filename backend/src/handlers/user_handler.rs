@@ -19,6 +19,30 @@ pub async fn hello_user_json(user: AuthenticatedUser) -> impl IntoResponse {
     (StatusCode::OK, Json(body))
 }
 
+pub async fn public_user_data(Json(payload): Json<PublicUserDataRequest>) -> impl IntoResponse {
+    info!("Called public_user_data for user {}", payload.username);
+    let mut connection = db::connect_db();
+    let result = users
+        .filter(username.eq(&payload.username))
+        .first::<User>(&mut connection);
+
+    match result {
+        Ok(user) => {
+            let user_response = UserResponse {
+                username: user.username,
+                first_name: user.firstname,
+                last_name: user.lastname,
+                email: user.email,
+            };
+            Json(user_response).into_response()
+        }
+        Err(err) => {
+            error!("Database error: {}", err);
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
+        }
+    }
+}
+
 pub async fn private_user_data(user: AuthenticatedUser) -> impl IntoResponse {
     info!("Called private_user_data for user: {}", user.0.sub);
     let mut connection = db::connect_db();
