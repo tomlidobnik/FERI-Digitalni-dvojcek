@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import Cookies from 'js-cookie';
 
 export default function Login() {
     const navigate = useNavigate();
@@ -36,8 +37,22 @@ export default function Login() {
                     });
                 }
                 return;
-            }else {
-                navigate("/");
+            }else if (response.ok) {
+                //console.log(await response.json());
+                //console.log("User logged in successfully");
+                const token = await response.text();
+                const expirationDate = new Date(Date.now() + 30 * 60 * 1000);
+                Cookies.set("token", token, { expires: expirationDate, secure: true });
+
+                const storedToken = Cookies.get("token");
+                if (storedToken) {
+                    //console.log("Token successfully set:", storedToken);
+                    navigate("/");
+                } else {
+                    setError("root", {
+                        message: "Napaka pri nastavitvi piškotka",
+                    });
+                }
             }
             //console.log("User registered successfully");
         }catch (error) {
