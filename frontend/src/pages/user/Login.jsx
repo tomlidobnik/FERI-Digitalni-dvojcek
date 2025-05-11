@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import Cookies from 'js-cookie';
+import { useEffect } from "react";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -11,6 +12,13 @@ export default function Login() {
         setError,
         formState: { errors },
     } = useForm();
+
+    useEffect(() => { // preusmeritev uporabnika če je že prijavljen
+        const token = Cookies.get("token");
+        if (token) {
+            navigate("/");
+        }
+    });
 
     const onSubmit = async (data) => {
         try{
