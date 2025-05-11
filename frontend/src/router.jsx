@@ -7,6 +7,7 @@ import ErrorPage from "./pages/ErrorPage.jsx"; // Import the ErrorPage component
 import Register from "./pages/user/Register.jsx";
 import ChatBox from "./components/Chat/ChatBox";
 import Map from "./pages/map/Map.jsx";
+import Logout from "./pages/user/Logout.jsx";
 
 // Routers
 const router = createBrowserRouter([
@@ -28,6 +29,14 @@ const router = createBrowserRouter([
         element: (
             <ErrorBoundary FallbackComponent={ErrorPage}>
                 <Register />
+            </ErrorBoundary>
+        ),
+    },
+    {
+        path: "/logout",
+        element: (
+            <ErrorBoundary FallbackComponent={ErrorPage}>
+                <Logout />
             </ErrorBoundary>
         ),
     },
