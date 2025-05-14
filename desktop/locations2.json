@@ -1,0 +1,212 @@
+[
+    {
+        "name": "Igrišče Mestni park",
+        "address": "Igrala V Mestnem Parku MB, Maribor City Park, Mestni park, Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/Otro%C5%A1ko+igri%C5%A1%C4%8De+Mestni+Park/@46.5657502,15.6466055,18.39z/data=!4m8!1m2!2m1!1sMestni+park,+Maribor!3m4!1s0x476f77acce7ddf9d:0x50bbe0bd41d0e62e!8m2!3d46.5662503!4d15.6474288",
+        "lat": "46.5657502",
+        "lon": "15.6466055"
+    },
+    {
+        "name": "Igrišče Slovenska ulica",
+        "address": "Otroško igrišče Slovenska ulica, Center, Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/Otro%C5%A1ko+igri%C5%A1%C4%8De+Slovenska+ulica/@46.560227,15.6443965,20.12z/data=!4m13!1m7!3m6!1s0x476f77aec48d280d:0xf09bc2eabaf154c6!2sSlovenska+ulica,+2000+Maribor!3b1!8m2!3d46.5602967!4d15.6452724!3m4!1s0x476f77aec2f3342f:0x7c68f10262f1cc63!8m2!3d46.5603454!4d15.6447663",
+        "lat": "46.560227",
+        "lon": "15.6443965"
+    },
+    {
+        "name": "Igrišče Gregorčičeva ulica",
+        "address": "Evangeličanska cerkvena občina Maribor, Trubarjeva ulica, Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/Evangeli%C4%8Danska+cerkvena+ob%C4%8Dina+Maribor/@46.5614777,15.6440366,20.74z/data=!4m5!3m4!1s0x476f77ae857690e1:0xc6006d6222956f6d!8m2!3d46.5617897!4d15.6441594",
+        "lat": "46.5614777",
+        "lon": "15.6440366"
+    },
+    {
+        "name": "Igrišče Trg Borisa Kidriča",
+        "address": "Otroško Igrišče, Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/Otro%C5%A1ko+Igri%C5%A1%C4%8De/@46.5626894,15.6558502,19.13z/data=!4m12!1m6!3m5!1s0x476f77ae857690e1:0xc6006d6222956f6d!2sEvangeli%C4%8Danska+cerkvena+ob%C4%8Dina+Maribor!8m2!3d46.5617897!4d15.6441594!3m4!1s0x476f77008a18ab21:0x993f670a214611f6!8m2!3d46.5629013!4d15.6558894",
+        "lat": "46.5626894",
+        "lon": "15.6558502"
+    },
+    {
+        "name": "Igrišče KS Malečnik",
+        "address": "Nogometni klub Malečnik, Malečnik, Slovenija",
+        "url": "https://www.google.com/maps/place/Nogometni+klub+Male%C4%8Dnik/@46.5546432,15.691461,17z/data=!3m1!4b1!4m5!3m4!1s0x476f7728a6ec8171:0xa518e7c34b8f3399!8m2!3d46.5546449!4d15.693703",
+        "lat": "46.5546432",
+        "lon": "15.691461"
+    },
+    {
+        "name": "Igrišče Magdalenski park",
+        "address": "Otroško igrišče, Magdalenski park, Jezdarska ulica, Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/Otro%C5%A1ko+igri%C5%A1%C4%8De/@46.5506926,15.6430436,17z/data=!3m1!4b1!4m5!3m4!1s0x476f77a3ce4ec569:0x33ae06c8c9a1a89d!8m2!3d46.5506926!4d15.6452323",
+        "lat": "46.5506926",
+        "lon": "15.6430436"
+    },
+    {
+        "name": "Igrišče Magdalenski park – Ljubljanska ulica",
+        "address": "Igrišče Magdalenski park – Ljubljanska ulica",
+        "url": "https://www.google.com/maps/search/igri%C5%A1%C4%8De+v+bl%C3%ADzkosti+Magdalenski+park,+Ljubljanska+ulica,+Maribor/@46.5551665,15.5580197,12z/data=!3m1!4b1",
+        "lat": "46.5551665",
+        "lon": "15.5580197"
+    },
+    {
+        "name": "Igrišče Ghegova ulica",
+        "address": "Bičarjev park, Maribor, Slovenia",
+        "url": "https://www.google.com/maps/place/Bi%C4%8Darjev+park/@46.5518648,15.6386215,18.82z/data=!4m13!1m7!3m6!1s0x476f77a395e1c4df:0x943467cf0d633008!2sGhegova+ulica,+2000+Maribor!3b1!8m2!3d46.5518754!4d15.6392401!3m4!1s0x476f77bac69fa80b:0xbc0b19edd7ad0505!8m2!3d46.5516903!4d15.6395621",
+        "lat": "46.5518648",
+        "lon": "15.6386215"
+    },
+    {
+        "name": "Igrišče križišče Celjske ulice in Frankolovske ulice",
+        "address": "Celjska ulica 2, Maribor, Slovenia",
+        "url": "https://www.google.com/maps/place/Gostinske+storitve,+Mitja+Murko+s.p./@46.5466751,15.6454249,20.39z/data=!4m13!1m7!3m6!1s0x476f777560093295:0x407405441ca1e8f!2sCeljska+ulica,+2000+Maribor!3b1!8m2!3d46.5459226!4d15.6453474!3m4!1s0x476f779ffcfdec33:0x75454d6df71755e8!8m2!3d46.5466907!4d15.6453414",
+        "lat": "46.5466751",
+        "lon": "15.6454249"
+    },
+    {
+        "name": "Igrišče Schreinerjev trg",
+        "address": "Schreinerjev trg, Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/Schreinerjev+trg,+2000+Maribor/@46.5458495,15.6358176,17z/data=!3m1!4b1!4m5!3m4!1s0x476f7798d5765e53:0x6b4786f8e902e10b!8m2!3d46.5458495!4d15.6380063",
+        "lat": "46.5458495",
+        "lon": "15.6358176"
+    },
+    {
+        "name": "Igrišče Letonjeva ulica",
+        "address": "Letonjeva ulica 8, Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/Letonjeva+ulica+8,+2000+Maribor/@46.5389613,15.6220783,17z/data=!3m1!4b1!4m5!3m4!1s0x476f778fb540c3e3:0xc9e3c19faa434fe5!8m2!3d46.5389613!4d15.624267",
+        "lat": "46.5389613",
+        "lon": "15.6220783"
+    },
+    {
+        "name": "Igrišče pri Domu Antona Skale",
+        "address": "Majcigerjeva ulica 37, Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/Majcigerjeva+ulica+37,+2000+Maribor/@46.5412546,15.6180271,17z/data=!3m1!4b1!4m5!3m4!1s0x476f779273000c95:0x880c46b0be928d83!8m2!3d46.5412546!4d15.6202159",
+        "lat": "46.5412546",
+        "lon": "15.6180271"
+    },
+    {
+        "name": "Igrišče Greenwich Pobrežje",
+        "address": "Cesta XIV. divizije 30a, 2000 Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/Cesta+XIV.+divizije+30a,+2000+Maribor/@46.5515598,15.6605816,17z/data=!3m1!4b1!4m5!3m4!1s0x476f7711cf8c2c97:0xec592edae6085276!8m2!3d46.5515598!4d15.6627703",
+        "lat": "46.5515598",
+        "lon": "15.6605816"
+    },
+    {
+        "name": "Igrišče Brezje",
+        "address": "Na Trati 4, Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/Na+Trati+4,+2000+Maribor/@46.536167,15.6846881,17z/data=!3m1!4b1!4m5!3m4!1s0x476f774eabd99177:0xaaf616618ac24707!8m2!3d46.536167!4d15.6868768",
+        "lat": "46.536167",
+        "lon": "15.6846881"
+    },
+    {
+        "name": "Igrišče Bevkova ulica",
+        "address": "Bevkova ulica, Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/Bevkova+ulica,+2000+Maribor/@46.5341431,15.6635029,17z/data=!3m1!4b1!4m5!3m4!1s0x476f775d5608c6e3:0x174473257e86b779!8m2!3d46.5341431!4d15.6656916",
+        "lat": "46.5341431",
+        "lon": "15.6635029"
+    },
+    {
+        "name": "Igrišče Borova vas",
+        "address": "Borova vas, Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/Borova+vas,+2000+Maribor/@46.5420283,15.6157504,17z/data=!3m1!4b1!4m5!3m4!1s0x476f77931cd12511:0x89c43b287f76015e!8m2!3d46.5420283!4d15.6179391",
+        "lat": "46.5420283",
+        "lon": "15.6157504"
+    },
+    {
+        "name": "Doživljajsko igrišče (Ertlov gozdič)",
+        "address": "Doživljajsko igrišče, Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/Do%C5%BEivljajsko+igri%C5%A1%C4%8De/@46.5420283,15.6157504,17z/data=!4m5!3m4!1s0x476f770c034fb17b:0xb9f440f02729d2fe!8m2!3d46.5377874!4d15.6368946",
+        "lat": "46.5420283",
+        "lon": "15.6157504"
+    },
+    {
+        "name": "Igrišče Pohorska vzpenjača",
+        "address": "Vzpenjača, Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/Vzpenja%C4%8Da/@46.533221,15.5974973,17z/data=!3m1!4b1!4m5!3m4!1s0x476f781d6558c71f:0xf4f31c945a106a92!8m2!3d46.533221!4d15.599686",
+        "lat": "46.533221",
+        "lon": "15.5974973"
+    },
+    {
+        "name": "Igrišče Macunova ulica",
+        "address": "Macunova ulica, Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/Macunova+ulica,+2000+Maribor/@46.5360477,15.5974295,17z/data=!3m1!4b1!4m5!3m4!1s0x476f77f784a858f9:0xfd7fb80472a06bf3!8m2!3d46.5360477!4d15.5996182",
+        "lat": "46.5360477",
+        "lon": "15.5974295"
+    },
+    {
+        "name": "Igrišče Trg svobode",
+        "address": "Trg svobode, Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/Trg+svobode,+2000+Maribor/@46.5603298,15.6468819,17z/data=!3m1!4b1!4m5!3m4!1s0x476f77a96d5d504b:0x69318fa0acbdfa7a!8m2!3d46.5603298!4d15.6490706",
+        "lat": "46.5603298",
+        "lon": "15.6468819"
+    },
+    {
+        "name": "Naprave za ulično vadbo – Športni park Železničar Tabor",
+        "address": "Popovičeva ulica 14, 2000 Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/Popovi%C4%8Deva+ulica+14,+2000+Maribor/@46.5468313,15.6322839,17z/data=!3m1!4b1!4m5!3m4!1s0x476f77984ff117a3:0x512a0f0fd804ffcf!8m2!3d46.5468313!4d15.6344726",
+        "lat": "46.5468313",
+        "lon": "15.6322839"
+    },
+    {
+        "name": "Naprave za ulično vadbo – Pobrežje",
+        "address": "Ulica bratov Greifov 30, 2000 Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/Ulica+bratov+Greifov+30,+2000+Maribor/@46.5522961,15.6572318,17z/data=!3m1!4b1!4m5!3m4!1s0x476f770e517f9029:0x30c90b7cbe16526!8m2!3d46.5522961!4d15.6594206",
+        "lat": "46.5522961",
+        "lon": "15.6572318"
+    },
+    {
+        "name": "Naprave za ulično vadbo – Študentski domovi",
+        "address": "Gosposvetska cesta 85, 2000 Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/Gosposvetska+cesta+85,+2000+Maribor/@46.5634787,15.6233653,17z/data=!3m1!4b1!4m5!3m4!1s0x476f77c9bde3e4e3:0x4633541e29755188!8m2!3d46.5634787!4d15.625554",
+        "lat": "46.5634787",
+        "lon": "15.6233653"
+    },
+    {
+        "name": "BMX progra Tabor Maribor",
+        "address": "bmx proga maribor, Tabor, Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/bmx+proga+maribor/@46.5353714,15.627411,17z/data=!3m1!4b1!4m5!3m4!1s0x476f77060ec1b0bb:0x7e6ae8afb093c0c2!8m2!3d46.5353714!4d15.6295997",
+        "lat": "46.5353714",
+        "lon": "15.627411"
+    },
+    {
+        "name": "Skate park Maribor",
+        "address": "skatepark Maribor, Borštnikova ulica, Maribor, Slovenia",
+        "url": "https://www.google.com/maps/place/skatepark+Maribor/@46.5394946,15.6202832,17z/data=!3m1!4b1!4m5!3m4!1s0x476f778e3f5dd63f:0xfb89d0d390cac9ed!8m2!3d46.5394946!4d15.6224719",
+        "lat": "46.5394946",
+        "lon": "15.6202832"
+    },
+    {
+        "name": "Igrala MČ Tezno",
+        "address": "Romihova ulica 12, Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/Romihova+ulica+12,+2000+Maribor/@46.5339792,15.6692141,17z/data=!3m1!4b1!4m5!3m4!1s0x476f77434de27023:0x49b6c6821cb9ca9f!8m2!3d46.5339792!4d15.6714028",
+        "lat": "46.5339792",
+        "lon": "15.6692141"
+    },
+    {
+        "name": "Igrala MČ Pobrežje",
+        "address": "Cesta XIV. divizije 8, Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/Cesta+XIV.+divizije+8,+2000+Maribor/@46.5536758,15.6572292,17z/data=!3m1!4b1!4m5!3m4!1s0x476f770f0a568a73:0xfd361901d4383389!8m2!3d46.5536758!4d15.6594179",
+        "lat": "46.5536758",
+        "lon": "15.6572292"
+    },
+    {
+        "name": "Igrala KS Pekre",
+        "address": "Bezjakova ulica 4, Limbuš, Slovenija",
+        "url": "https://www.google.com/maps/place/Bezjakova+ulica+4,+2341+Limbu%C5%A1/@46.5479963,15.5916521,17z/data=!3m1!4b1!4m5!3m4!1s0x476f77e2410c2259:0x8327527a91c060a7!8m2!3d46.5479963!4d15.5938408",
+        "lat": "46.5479963",
+        "lon": "15.5916521"
+    },
+    {
+        "name": "Igrala KS Kamnica",
+        "address": "Vrbanska cesta 97, Kamnica, Slovenija",
+        "url": "https://www.google.com/maps/place/Vrbanska+cesta+97,+2351+Kamnica/@46.5732388,15.6136513,17z/data=!3m1!4b1!4m5!3m4!1s0x476f762cfc05e033:0xf0aebfc0cd51fedd!8m2!3d46.5732388!4d15.61584",
+        "lat": "46.5732388",
+        "lon": "15.6136513"
+    },
+    {
+        "name": "– MČ Koroška vrata",
+        "address": "Tomanova ulica 2, Maribor, Slovenija",
+        "url": "https://www.google.com/maps/place/Tomanova+ulica+2,+2000+Maribor/@46.5616322,15.6289053,17z/data=!3m1!4b1!4m5!3m4!1s0x476f77b6e2f20571:0x4db2962c50a42ebc!8m2!3d46.5616322!4d15.631094",
+        "lat": "46.5616322",
+        "lon": "15.6289053"
+    }
+]

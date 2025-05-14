@@ -45,5 +45,4 @@ bin/
 .DS_Storjjje
 
 ### DB config ###
-*.json
 **/db/config.json
