@@ -28,28 +28,13 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: ./build.sh
 
-      - name: Deploy to PI
-        env:
-          BACKEND_ENV_FILE: ${{ secrets.BACKEND_ENV_FILE }}
-        run: |
-          if [ ! -d "/home/pi/FERI-Digitalni-dvojcek" ]; then
-            git clone git@github.com:tomlidobnik/FERI-Digitalni-dvojcek.git /home/pi/FERI-Digitalni-dvojcek
-          fi
-
-          cd /home/pi/FERI-Digitalni-dvojcek
-          git switch develop
-          git fetch origin
-          git reset --hard origin/develop
-
-          cd ./backend
-          echo "$BACKEND_ENV_FILE" > .env
-          mkcert -install
-          mkcert -key-file key.pem -cert-file cert.pem tom.thehomeserver.net
-          cd ..
-
-          docker pull tomlidobnik/backend:prod
-          docker pull tomlidobnik/frontend:prod
-
-          docker-compose down
-          docker-compose up -d --build db backend-prod frontend-prod
+      - name: Webhook
+        uses: joelwmale/webhook-action@master
+        with:
+          url: ${{ secrets.WEBHOOK_URL }}
+          headers: > 
+            {
+              "repository": "joelwmale/webhook-action",
+              "X-Hub-Signature-256": "${{ secrets.WEBHOOK_SECRET }}"
+            }
 
