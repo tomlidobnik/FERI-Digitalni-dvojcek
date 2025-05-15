@@ -36,7 +36,7 @@
 
 = Priprava smiselnih testnih primerov
 
-= Definicija sintakse z gramatiko in regularnimi izrazi
+= Definicija sintakse z gramatiko
 
 = Implementacija abstraktnega sintaktičnega drevesa
 
@@ -47,7 +47,5 @@
 = Izračun FIRST in FOLLOW množic
 
 = Implementacija razčlenjevalnika (parser)
-
-= Implementacija pretvorbe v niz (minifier ali pretty-printer)
 
 = Implementacija izvoza v GeoJSON
