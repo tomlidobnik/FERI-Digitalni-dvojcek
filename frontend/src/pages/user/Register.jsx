@@ -29,7 +29,7 @@ export default function Register() {
                 email: data.email,
                 password: data.password,
             };
-            const response = await fetch(`http://${import.meta.env.VITE_API_URL}/api/user/create`, {
+            const response = await fetch(`https://${import.meta.env.VITE_API_URL}/api/user/create`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
