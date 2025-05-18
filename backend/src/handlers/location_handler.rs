@@ -1,20 +1,47 @@
 use crate::config::db;
-use crate::models::{CreateLocationRequest, NewLocation, UpdateLocationRequest};
 use crate::schema::locations::dsl::*;
-use axum::{Json, http::StatusCode};
 use diesel::prelude::*;
 use log::info;
+use serde::Deserialize;
+use axum::{Json, extract::Path,http::StatusCode};
+use crate::models::Location;
+#[derive(Deserialize)]
+pub struct UpdateLocationRequest {
+    pub id: i32,
+    pub info: Option<String>,
+    pub longitude: Option<f32>,
+    pub latitude: Option<f32>,
+    pub location_outline_fk: Option<i32>,
+}
+
+#[derive(Deserialize)]
+pub struct CreateLocationRequest {
+    pub info: Option<String>,
+    pub longitude: Option<f32>,
+    pub latitude: Option<f32>,
+    pub location_outline_fk: Option<i32>,
+}
+
+#[derive(Insertable)]
+#[diesel(table_name = crate::schema::locations)]
+pub struct NewLocation {
+    pub info: Option<String>,
+    pub longitude: Option<f32>,
+    pub latitude: Option<f32>,
+    pub location_outline_fk: Option<i32>,
+}
 
 pub async fn update_location(
     Json(payload): Json<UpdateLocationRequest>,
 ) -> Result<StatusCode, StatusCode> {
-    info!("Called update_event");
+    info!("Called update_location");
     let mut conn = db::connect_db();
     match diesel::update(locations.filter(id.eq(&payload.id)))
         .set((
             info.eq(&payload.info),
             latitude.eq(&payload.latitude),
             longitude.eq(&payload.longitude),
+            location_outline_fk.eq(&payload.location_outline_fk),
         ))
         .execute(&mut conn)
     {
@@ -34,6 +61,7 @@ pub async fn create_location(
         info: payload.info,
         longitude: payload.longitude,
         latitude: payload.latitude,
+        location_outline_fk: payload.location_outline_fk
     };
 
     match diesel::insert_into(locations)

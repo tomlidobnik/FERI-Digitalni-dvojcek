@@ -15,6 +15,9 @@ diesel::table! {
         user_fk -> Nullable<Int4>,
         title -> Text,
         description -> Text,
+        start_date -> Timestamp,
+        end_date -> Timestamp,
+        location_fk -> Nullable<Int4>,
     }
 }
 
@@ -28,11 +31,19 @@ diesel::table! {
 }
 
 diesel::table! {
+    location_outline (id) {
+        id -> Int4,
+        points -> Jsonb,
+    }
+}
+
+diesel::table! {
     locations (id) {
         id -> Int4,
         info -> Nullable<Text>,
-        longitude -> Numeric,
-        latitude -> Numeric,
+        longitude -> Nullable<Float4>,
+        latitude -> Nullable<Float4>,
+        location_outline_fk -> Nullable<Int4>,
     }
 }
 
@@ -47,6 +58,15 @@ diesel::table! {
     }
 }
 
+diesel::joinable!(events -> locations (location_fk));
 diesel::joinable!(events -> users (user_fk));
+diesel::joinable!(locations -> location_outline (location_outline_fk));
 
-diesel::allow_tables_to_appear_in_same_query!(chat_messages, events, friends, locations, users,);
+diesel::allow_tables_to_appear_in_same_query!(
+    chat_messages,
+    events,
+    friends,
+    location_outline,
+    locations,
+    users,
+);

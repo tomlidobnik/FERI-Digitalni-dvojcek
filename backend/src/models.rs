@@ -1,4 +1,3 @@
-use bigdecimal::BigDecimal;
 use chrono::NaiveDateTime;
 use diesel::prelude::*;
 use serde::Deserialize;
@@ -34,6 +33,9 @@ pub struct Event {
     pub user_fk: Option<i32>,
     pub title: String,
     pub description: String,
+    pub start_date: NaiveDateTime,
+    pub end_date: NaiveDateTime,
+    pub location_fk: Option<i32>,
 }
 #[derive(Deserialize)]
 pub struct UpdateEventRequest {
@@ -52,28 +54,9 @@ pub struct CreateEventRequest {
 pub struct Location {
     pub id: i32,
     pub info: Option<String>,
-    pub longitude: BigDecimal,
-    pub latitude: BigDecimal,
-}
-#[derive(Deserialize)]
-pub struct UpdateLocationRequest {
-    pub id: i32,
-    pub info: Option<String>,
-    pub longitude: BigDecimal,
-    pub latitude: BigDecimal,
-}
-#[derive(Deserialize)]
-pub struct CreateLocationRequest {
-    pub info: Option<String>,
-    pub longitude: BigDecimal,
-    pub latitude: BigDecimal,
-}
-#[derive(Insertable)]
-#[diesel(table_name = crate::schema::locations)]
-pub struct NewLocation {
-    pub info: Option<String>,
-    pub longitude: BigDecimal,
-    pub latitude: BigDecimal,
+    pub longitude: Option<f32>,
+    pub latitude: Option<f32>,
+    pub location_outline_fk: Option<i32>,
 }
 #[derive(Insertable)]
 #[diesel(table_name = crate::schema::events)]
