@@ -5,7 +5,12 @@ meta {
 }
 
 delete {
-  url: https://0.0.0.0:8000/api/user/delete/1
+  url: https://0.0.0.0:8000/api/user/delete
   body: none
   auth: inherit
+}
+
+script:pre-request {
+  const token = bru.getVar("token");
+  req.setHeader("Authorization", `Bearer ${token}`);
 }

@@ -12,11 +12,15 @@ put {
 
 body:json {
   {
-    "id":1,
     "username": "janez",
     "firstname": "janez",
     "lastname": "novak",
     "email": "janez.novak@mail.com",
     "password": "12345"
   }
+}
+
+script:pre-request {
+  const token = bru.getVar("token");
+  req.setHeader("Authorization", `Bearer ${token}`);
 }

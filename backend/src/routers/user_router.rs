@@ -12,7 +12,7 @@ pub fn create_router() -> Router {
         .route("/update", put(update_user))
         .route("/all", get(get_all_users))
         .route("/by_id/{id}", get(get_user_by_id))
-        .route("/delete/{id}", delete(delete_user))
+        .route("/delete", delete(delete_user))
         .route("/validate", post(validate_user))
         .route("/token", post(generate_token))
         .route("/public_data", get(public_user_data))
