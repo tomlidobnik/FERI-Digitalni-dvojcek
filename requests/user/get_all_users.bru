@@ -1,0 +1,11 @@
+meta {
+  name: get_all_users
+  type: http
+  seq: 6
+}
+
+get {
+  url: https://0.0.0.0:8000/api/user/all
+  body: none
+  auth: inherit
+}

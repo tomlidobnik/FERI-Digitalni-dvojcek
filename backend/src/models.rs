@@ -56,49 +56,12 @@ pub struct Location {
     pub latitude: Option<f32>,
     pub location_outline_fk: Option<i32>,
 }
-
-#[derive(Debug, Clone, serde::Deserialize)]
-pub struct LoginRequest {
-    pub username: String,
-    pub password: String,
-}
-
-#[derive(Insertable)]
-#[diesel(table_name = crate::schema::users)]
-pub struct NewUser {
-    pub username: String,
-    pub firstname: String,
-    pub lastname: String,
-    pub email: String,
-    pub password: String,
-}
-#[derive(Deserialize)]
-pub struct CreateUserRequest {
-    pub username: String,
-    pub firstname: String,
-    pub lastname: String,
-    pub email: String,
-    pub password: String,
-}
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
     pub sub: String,
     pub exp: usize,
 }
 pub struct AuthenticatedUser(pub Claims);
-#[derive(Serialize, Deserialize)]
-pub struct PublicUserDataRequest {
-    pub username: String,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct UserResponse {
-    pub username: String,
-    pub first_name: String,
-    pub last_name: String,
-    pub email: String,
-}
 
 #[derive(Queryable, Selectable, Serialize)]
 #[diesel(table_name = crate::schema::chat_messages)]

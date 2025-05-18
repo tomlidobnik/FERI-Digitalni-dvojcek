@@ -1,0 +1,22 @@
+meta {
+  name: update_user
+  type: http
+  seq: 8
+}
+
+put {
+  url: https://0.0.0.0:8000/api/user/update
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "id":1,
+    "username": "janez",
+    "firstname": "janez",
+    "lastname": "novak",
+    "email": "janez.novak@mail.com",
+    "password": "12345"
+  }
+}

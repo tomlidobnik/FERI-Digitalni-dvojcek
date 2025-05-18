@@ -2,22 +2,62 @@ use crate::config::db;
 use crate::error::user_error::UserError;
 use crate::middleware::auth::create_jwt;
 use crate::models::{
-    AuthenticatedUser, CreateUserRequest, LoginRequest, NewUser, PublicUserDataRequest, User,
-    UserResponse,
+    AuthenticatedUser, User
 };
 use crate::schema::users::dsl::*;
-use axum::{Json, extract::Query, http::StatusCode, response::IntoResponse};
+use axum::{Json, extract::{Query, Path}, http::StatusCode, response::IntoResponse};
 use bcrypt::{DEFAULT_COST, hash, verify};
 use diesel::prelude::*;
 use log::{error, info};
-use serde_json::json;
+use serde::{Serialize,Deserialize};
 
-pub async fn hello_user_json(user: AuthenticatedUser) -> impl IntoResponse {
-    info!("Called hello_user_json");
-    let other_username = user.0.sub;
-    let body = json!({ "message": format!("Hello, {}", other_username) });
-    (StatusCode::OK, Json(body))
+#[derive(Serialize, Deserialize)]
+pub struct PublicUserDataRequest {
+    pub username: String,
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct UserResponse {
+    pub username: String,
+    pub first_name: String,
+    pub last_name: String,
+    pub email: String,
+}
+
+#[derive(Debug, Clone, serde::Deserialize)]
+pub struct LoginRequest {
+    pub username: String,
+    pub password: String,
+}
+
+#[derive(Insertable)]
+#[diesel(table_name = crate::schema::users)]
+pub struct NewUser {
+    pub username: String,
+    pub firstname: String,
+    pub lastname: String,
+    pub email: String,
+    pub password: String,
+}
+#[derive(Deserialize)]
+pub struct CreateUserRequest {
+    pub username: String,
+    pub firstname: String,
+    pub lastname: String,
+    pub email: String,
+    pub password: String,
+}
+
+#[derive(Deserialize)]
+pub struct UpdateUserRequest {
+    pub id: i32,
+    pub username: String,
+    pub firstname: String,
+    pub lastname: String,
+    pub email: String,
+    pub password: String,
+}
+
 
 pub async fn public_user_data(Query(params): Query<PublicUserDataRequest>) -> impl IntoResponse {
     info!("Called public_user_data for user {}", params.username);
@@ -138,5 +178,54 @@ pub async fn create_user(Json(payload): Json<CreateUserRequest>) -> Result<Statu
             }
         }
         Err(_) => Err(UserError::UserNotFound),
+    }
+}
+
+pub async fn get_all_users() -> Result<Json<Vec<User>>, StatusCode> {
+    let mut conn = db::connect_db();
+    match users.load::<User>(&mut conn) {
+        Ok(user_list) => Ok(Json(user_list)),
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+    }
+}
+
+pub async fn get_user_by_id(
+    Path(user_id): Path<i32>,
+) -> Result<Json<User>, StatusCode> {
+    let mut conn = db::connect_db();
+    match users.filter(id.eq(user_id)).first::<User>(&mut conn) {
+        Ok(user) => Ok(Json(user)),
+        Err(diesel::result::Error::NotFound) => Err(StatusCode::NOT_FOUND),
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+    }
+}
+
+pub async fn delete_user(
+    Path(user_id): Path<i32>,
+) -> Result<StatusCode, StatusCode> {
+    let mut conn = db::connect_db();
+    match diesel::delete(users.filter(id.eq(user_id))).execute(&mut conn) {
+        Ok(affected) if affected > 0 => Ok(StatusCode::NO_CONTENT),
+        Ok(_) => Err(StatusCode::NOT_FOUND),
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+    }
+}
+
+pub async fn update_user(
+    Json(payload): Json<UpdateUserRequest>,
+) -> Result<StatusCode, StatusCode> {
+    let mut conn = db::connect_db();
+    match diesel::update(users.filter(id.eq(payload.id)))
+        .set((
+            username.eq(&payload.username),
+            firstname.eq(&payload.firstname),
+            lastname.eq(&payload.lastname),
+            email.eq(&payload.email),
+            password.eq(&payload.password),
+        ))
+        .execute(&mut conn)
+    {
+        Ok(_) => Ok(StatusCode::OK),
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
     }
 }
