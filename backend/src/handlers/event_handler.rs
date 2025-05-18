@@ -1,4 +1,5 @@
 use crate::config::db;
+use crate::error::event_error::EventError;
 use crate::models::{AuthenticatedUser, Event};
 use crate::schema::events::dsl::{events, title, description};
 use crate::schema::events::{id as event_id_col, start_date, end_date, location_fk};
@@ -52,12 +53,15 @@ async fn get_user_id(user: AuthenticatedUser) -> Result<i32, StatusCode> {
 pub async fn create_event(
     user: AuthenticatedUser,
     Json(payload): Json<CreateEventRequest>,
-) -> Result<StatusCode, StatusCode> {
-    info!("Called create_event by user: {}", user.0.sub);
+) -> Result<StatusCode, EventError> {
+    info!(
+        "Called create_event by user: {} with title: {}, start_date: {}, end_date: {:?}, location_fk: {:?}",
+        user.0.sub, payload.title, payload.start_date, payload.end_date, payload.location_fk
+    );
 
     let mut conn = db::connect_db();
 
-    let user_id: i32 = get_user_id(user).await?;
+    let user_id: i32 = get_user_id(user).await.map_err(|_| EventError::Unauthorized)?;
     let new_event = NewEvent {
         title: payload.title,
         description: payload.description,
@@ -72,45 +76,51 @@ pub async fn create_event(
         .execute(&mut conn)
     {
         Ok(_) => Ok(StatusCode::CREATED),
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        Err(_) => Err(EventError::InternalServerError),
     }
 }
 
 pub async fn get_event_by_id(
     Path(event_id): Path<i32>,
-) -> Result<Json<Event>, StatusCode> {
+) -> Result<Json<Event>, EventError> {
+    info!("Called get_event_by_id for id: {}", event_id);
     let mut conn = db::connect_db();
     match events.filter(event_id_col.eq(event_id)).first::<Event>(&mut conn) {
         Ok(event) => Ok(Json(event)),
-        Err(diesel::result::Error::NotFound) => Err(StatusCode::NOT_FOUND),
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        Err(diesel::result::Error::NotFound) => Err(EventError::EventNotFound),
+        Err(_) => Err(EventError::InternalServerError),
     }
 }
 
-pub async fn get_all_events() -> Result<Json<Vec<Event>>, StatusCode> {
+pub async fn get_all_events() -> Result<Json<Vec<Event>>, EventError> {
+    info!("Called get_all_events");
     let mut conn = db::connect_db();
     match events.load::<Event>(&mut conn) {
         Ok(event_list) => Ok(Json(event_list)),
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        Err(_) => Err(EventError::InternalServerError),
     }
 }
 
 pub async fn delete_event(
     Path(event_id): Path<i32>,
-) -> Result<StatusCode, StatusCode> {
+) -> Result<StatusCode, EventError> {
+    info!("Called delete_event for id: {}", event_id);
     let mut conn = db::connect_db();
     match diesel::delete(events.filter(event_id_col.eq(event_id))).execute(&mut conn) {
         Ok(affected) if affected > 0 => Ok(StatusCode::NO_CONTENT),
-        Ok(_) => Err(StatusCode::NOT_FOUND),
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        Ok(_) => Err(EventError::EventNotFound),
+        Err(_) => Err(EventError::InternalServerError),
     }
 }
 
 pub async fn update_event(
     user: AuthenticatedUser,
     Json(payload): Json<UpdateEventRequest>,
-) -> Result<StatusCode, StatusCode> {
-    info!("Called update_event by user: {}", user.0.sub);
+) -> Result<StatusCode, EventError> {
+    info!(
+        "Called update_event by user: {} for event id: {} with title: {}",
+        user.0.sub, payload.id, payload.title
+    );
     let mut conn = db::connect_db();
     match diesel::update(events.filter(event_id_col.eq(&payload.id)))
         .set((
@@ -123,6 +133,6 @@ pub async fn update_event(
         .execute(&mut conn)
     {
         Ok(_) => Ok(StatusCode::OK),
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        Err(_) => Err(EventError::InternalServerError),
     }
 }
