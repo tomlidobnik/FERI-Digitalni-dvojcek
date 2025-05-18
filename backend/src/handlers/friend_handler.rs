@@ -1,11 +1,16 @@
 use crate::config::db;
-use crate::models::{AuthenticatedUser, Friend, FriendRequest};
+use crate::models::{AuthenticatedUser, Friend};
 use crate::schema::friends::dsl::*;
 use crate::schema::users::dsl::*;
 use axum::{Json, http::StatusCode, response::IntoResponse};
 use diesel::prelude::*;
 
 use log::info;
+
+#[derive(Debug, Clone, serde::Deserialize)]
+pub struct FriendRequest {
+    pub username: String,
+}
 
 async fn get_user_id(user: String) -> Result<i32, StatusCode> {
     let mut conn = db::connect_db();

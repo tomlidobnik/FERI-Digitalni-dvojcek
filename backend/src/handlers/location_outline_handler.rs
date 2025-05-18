@@ -1,5 +1,5 @@
 use crate::config::db;
-use crate::models::{LocationOutline, NewLocationOutline};
+use crate::models::LocationOutline;
 use crate::schema::location_outline::dsl::*;
 use axum::{Json, extract::Path, http::StatusCode};
 use diesel::prelude::*;
@@ -10,6 +10,12 @@ use log::info;
 #[derive(Deserialize)]
 pub struct UpdateLocationOutlineRequest {
     pub id: i32,
+    pub points: Value,
+}
+
+#[derive(Insertable, Deserialize)]
+#[diesel(table_name = crate::schema::location_outline)]
+pub struct NewLocationOutline {
     pub points: Value,
 }
 

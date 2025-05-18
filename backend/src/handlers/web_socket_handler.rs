@@ -1,5 +1,4 @@
 use crate::config::db;
-use crate::models::{NewChatMessage, WsMessage};
 use crate::schema::chat_messages::dsl::chat_messages;
 use axum::{
     extract::{
@@ -14,6 +13,20 @@ use log::{error, info};
 use std::net::SocketAddr;
 use std::{collections::HashMap, sync::Arc};
 use tokio::sync::{Mutex, mpsc};
+use serde::{Serialize,Deserialize};
+
+#[derive(Insertable, Deserialize)]
+#[diesel(table_name = crate::schema::chat_messages)]
+pub struct NewChatMessage {
+    pub username: String,
+    pub message: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct WsMessage {
+    pub message: String,
+    pub username: String,
+}
 
 pub type Tx = mpsc::UnboundedSender<Message>;
 pub type Connections = Arc<Mutex<HashMap<SocketAddr, Tx>>>;

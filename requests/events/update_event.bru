@@ -1,10 +1,10 @@
 meta {
   name: update_event
   type: http
-  seq: 7
+  seq: 6
 }
 
-post {
+put {
   url: https://0.0.0.0:8000/api/event/update
   body: json
   auth: bearer
@@ -17,8 +17,11 @@ auth:bearer {
 body:json {
   {
     "id": 1,
-    "title": "Updated Event Title",
-    "description": "Updated description of the event"
+    "title": "Updated Event",
+    "description": "This is an updated test event.",
+    "start_date": "2024-06-01T11:00:00",
+    "end_date": "2024-06-01T13:00:00",
+    "location_fk": 2
   }
 }
 
