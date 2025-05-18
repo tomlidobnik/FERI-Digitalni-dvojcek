@@ -13,10 +13,13 @@ use axum_server::tls_rustls::RustlsConfig;
 pub async fn create_router(connections: Connections) -> Router {
     let cors = CorsLayer::new().allow_origin(Any).allow_methods(Any).allow_headers(Any);
 
-    let ws_routes = Router::new().route("/", get({
-        let connections = connections.clone();
-        move |ws, connect_info| handle_ws(ws, connect_info, connections.clone())
-    }));
+    let ws_routes = Router::new().route(
+        "/{event_id}",
+        get({
+            let connections = connections.clone();
+            move |path, ws, connect_info| handle_ws(path, ws, connect_info, connections.clone())
+        }),
+    );
 
     let api_routes = Router::new()
         .nest("/user", user_router::create_router().layer(cors.clone()))

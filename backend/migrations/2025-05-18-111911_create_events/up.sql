@@ -5,5 +5,6 @@ CREATE TABLE events (
     description TEXT NOT NULL,
     start_date TIMESTAMP NOT NULL,
     end_date TIMESTAMP NOT NULL,
-    location_fk INT REFERENCES locations(id) ON DELETE SET NULL
+    location_fk INT REFERENCES locations(id) ON DELETE SET NULL,
+    public BOOLEAN NOT NULL DEFAULT TRUE
 );

@@ -3,9 +3,17 @@
 diesel::table! {
     chat_messages (id) {
         id -> Int4,
-        username -> Text,
+        user_fk -> Int4,
         message -> Text,
         created_at -> Timestamp,
+        event_fk -> Int4,
+    }
+}
+
+diesel::table! {
+    event_allowed_users (event_id, user_id) {
+        event_id -> Int4,
+        user_id -> Int4,
     }
 }
 
@@ -18,6 +26,7 @@ diesel::table! {
         start_date -> Timestamp,
         end_date -> Timestamp,
         location_fk -> Nullable<Int4>,
+        public -> Bool,
     }
 }
 
@@ -58,12 +67,17 @@ diesel::table! {
     }
 }
 
+diesel::joinable!(chat_messages -> events (event_fk));
+diesel::joinable!(chat_messages -> users (user_fk));
+diesel::joinable!(event_allowed_users -> events (event_id));
+diesel::joinable!(event_allowed_users -> users (user_id));
 diesel::joinable!(events -> locations (location_fk));
 diesel::joinable!(events -> users (user_fk));
 diesel::joinable!(locations -> location_outline (location_outline_fk));
 
 diesel::allow_tables_to_appear_in_same_query!(
     chat_messages,
+    event_allowed_users,
     events,
     friends,
     location_outline,

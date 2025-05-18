@@ -37,6 +37,7 @@ pub struct Event {
     pub start_date: NaiveDateTime,
     pub end_date: NaiveDateTime,
     pub location_fk: Option<i32>,
+    pub public: bool,
 }
 
 #[derive(Queryable, Selectable, Serialize)]
@@ -68,7 +69,8 @@ pub struct AuthenticatedUser(pub Claims);
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct ChatMessage {
     pub id: i32,
-    pub username: String,
+    pub user_fk: i32,
     pub message: String,
     pub created_at: NaiveDateTime,
+    pub event_fk: i32,
 }

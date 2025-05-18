@@ -9,4 +9,5 @@ pub fn create_router() -> Router {
         .route("/all", get(get_all_events))
         .route("/by_id/{id}", get(get_event_by_id))
         .route("/delete/{id}", delete(delete_event))
+        .route("/available", get(get_available_events))
 }
