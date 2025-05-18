@@ -2,6 +2,8 @@ use chrono::NaiveDateTime;
 use diesel::prelude::*;
 use serde::Deserialize;
 use serde::Serialize;
+use serde_json::Value;
+
 
 #[derive(Queryable, Selectable, Serialize)]
 #[diesel(table_name = crate::schema::users)]
@@ -42,6 +44,20 @@ pub struct UpdateEventRequest {
     pub id: i32,
     pub title: String,
     pub description: String,
+}
+
+#[derive(Queryable, Selectable, Serialize)]
+#[diesel(table_name = crate::schema::location_outline)]
+#[diesel(check_for_backend(diesel::pg::Pg))]
+pub struct LocationOutline {
+    pub id: i32,
+    pub points: Value,
+}
+
+#[derive(Insertable, Deserialize)]
+#[diesel(table_name = crate::schema::location_outline)]
+pub struct NewLocationOutline {
+    pub points: Value,
 }
 #[derive(Deserialize)]
 pub struct CreateEventRequest {

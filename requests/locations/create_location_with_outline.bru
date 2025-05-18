@@ -1,0 +1,20 @@
+meta {
+  name: create_location_with_outline
+  type: http
+  seq: 3
+}
+
+post {
+  url: https://0.0.0.0:8000/api/location/create
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "info": "Polygon Location",
+    "longitude": null,
+    "latitude": null,
+    "location_outline_fk": 2
+  }
+}

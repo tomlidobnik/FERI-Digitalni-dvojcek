@@ -1,5 +1,5 @@
 use crate::handlers::web_socket_handler::{handle_ws, Connections};
-use crate::routers::{event_router, location_router, user_router,chat_router};
+use crate::routers::{event_router, location_router, user_router,chat_router, location_outline_router};
 use axum::{Router, routing::get};
 use log::info;
 use pretty_env_logger;
@@ -22,6 +22,7 @@ pub async fn create_router(connections: Connections) -> Router {
         .nest("/user", user_router::create_router().layer(cors.clone()))
         .nest("/event", event_router::create_router().layer(cors.clone()))
         .nest("/location", location_router::create_router().layer(cors.clone()))
+        .nest("/location_outline", location_outline_router::create_router().layer(cors.clone()))
         .nest("/chat", chat_router::create_router().layer(cors.clone()));
 
     Router::new()

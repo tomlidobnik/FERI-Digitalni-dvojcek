@@ -1,0 +1,35 @@
+meta {
+  name: update_location_outline
+  type: http
+  seq: 2
+}
+
+put {
+  url: https://0.0.0.0:8000/api/location_outline/update
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "id": 1,
+    "points": [
+      {
+        "longitude": 10.0,
+        "latitude": 20.0
+      },
+      {
+        "longitude": 2.0,
+        "latitude": 2.0
+      },
+      {
+        "longitude": 2.0,
+        "latitude": 3.0
+      },
+      {
+        "longitude": 1.0,
+        "latitude": 3.0
+      }
+    ]
+  }
+}
