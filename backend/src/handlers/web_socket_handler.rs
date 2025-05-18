@@ -1,9 +1,11 @@
 use crate::config::db;
 use crate::schema::chat_messages::dsl::chat_messages;
+use crate::schema::users::dsl::{users, username as username_col, id as user_id_col};
 use axum::{
     extract::{
         ConnectInfo,
         ws::{Message, WebSocket, WebSocketUpgrade},
+        Path,
     },
     response::IntoResponse,
 };
@@ -18,8 +20,9 @@ use serde::{Serialize,Deserialize};
 #[derive(Insertable, Deserialize)]
 #[diesel(table_name = crate::schema::chat_messages)]
 pub struct NewChatMessage {
-    pub username: String,
+    pub user_fk: i32,
     pub message: String,
+    pub event_fk: i32,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -29,25 +32,33 @@ pub struct WsMessage {
 }
 
 pub type Tx = mpsc::UnboundedSender<Message>;
-pub type Connections = Arc<Mutex<HashMap<SocketAddr, Tx>>>;
+pub type Connections = Arc<Mutex<HashMap<i32, HashMap<SocketAddr, Tx>>>>;
 
 pub async fn handle_ws(
+    Path(event_id): Path<i32>,
     ws: WebSocketUpgrade,
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
     connections: Connections,
 ) -> impl IntoResponse {
-    info!("WebSocket connection from {}", addr);
-    ws.on_upgrade(move |socket| handle_socket(socket, addr, connections))
+    info!("WebSocket connection from {} to event {}", addr, event_id);
+    ws.on_upgrade(move |socket| handle_socket(socket, addr, event_id, connections))
 }
 
-async fn handle_socket(socket: WebSocket, addr: SocketAddr, connections: Connections) {
+async fn handle_socket(
+    socket: WebSocket,
+    addr: SocketAddr,
+    event_id: i32,
+    connections: Connections,
+) {
     let (mut sender, mut receiver) = socket.split();
     let (tx, mut rx) = mpsc::unbounded_channel::<Message>();
 
     {
-        let mut conn = connections.lock().await;
-        conn.insert(addr, tx);
+        let mut all_conns = connections.lock().await;
+        let room = all_conns.entry(event_id).or_insert_with(HashMap::new);
+        room.insert(addr, tx);
     }
+
     let send_task = tokio::spawn(async move {
         while let Some(msg) = rx.recv().await {
             if sender.send(msg).await.is_err() {
@@ -56,6 +67,7 @@ async fn handle_socket(socket: WebSocket, addr: SocketAddr, connections: Connect
             }
         }
     });
+
     let connections_clone = connections.clone();
 
     let recv_task = tokio::spawn(async move {
@@ -64,23 +76,45 @@ async fn handle_socket(socket: WebSocket, addr: SocketAddr, connections: Connect
                 if let Ok(parsed) = serde_json::from_str::<WsMessage>(&text) {
                     info!("Got message from {}: {}", parsed.username, parsed.message);
 
-                    let new_msg = NewChatMessage {
-                        username: parsed.username.clone(),
-                        message: parsed.message.clone(),
-                    };
+                    let username = parsed.username.clone();
+                    let message = parsed.message.clone();
+                    let event_id = event_id;
+
                     tokio::task::spawn_blocking(move || {
                         let mut conn = db::connect_db();
-                        diesel::insert_into(chat_messages)
-                            .values(&new_msg)
-                            .execute(&mut conn)
+                        let user_fk = users
+                            .filter(username_col.eq(&username))
+                            .select(user_id_col)
+                            .first::<i32>(&mut conn)
                             .ok();
+
+                        if let Some(user_fk) = user_fk {
+                            let new_msg = NewChatMessage {
+                                user_fk,
+                                message,
+                                event_fk: event_id,
+                            };
+                            if let Err(e) = diesel::insert_into(chat_messages)
+                                .values(&new_msg)
+                                .execute(&mut conn)
+                            {
+                                error!("Failed to insert chat message: {}", e);
+                            }
+                        } else {
+                            error!("User '{}' not found in database, message not saved.", username);
+                        }
                     })
                     .await
                     .ok();
 
                     let json = serde_json::to_string(&parsed).unwrap();
-                    broadcast_message(&Message::Text(Into::into(json)), &connections_clone, addr)
-                        .await;
+                    broadcast_message(
+                        &Message::Text(json.into()),
+                        &connections_clone,
+                        event_id,
+                        addr,
+                    )
+                    .await;
                 } else {
                     error!("Invalid JSON format received: {}", text);
                 }
@@ -94,17 +128,28 @@ async fn handle_socket(socket: WebSocket, addr: SocketAddr, connections: Connect
     }
 
     {
-        let mut conn = connections.lock().await;
-        conn.remove(&addr);
+        let mut all_conns = connections.lock().await;
+        if let Some(room) = all_conns.get_mut(&event_id) {
+            room.remove(&addr);
+            if room.is_empty() {
+                all_conns.remove(&event_id);
+            }
+        }
     }
 }
 
-async fn broadcast_message(message: &Message, connections: &Connections, sender_addr: SocketAddr) {
-    info!("Called broadcast_message",);
-    let conns = connections.lock().await;
-    for (addr, tx) in conns.iter() {
-        if addr != &sender_addr {
-            let _ = tx.send(message.clone());
+async fn broadcast_message(
+    message: &Message,
+    connections: &Connections,
+    event_id: i32,
+    sender_addr: SocketAddr,
+) {
+    let all_conns = connections.lock().await;
+    if let Some(room) = all_conns.get(&event_id) {
+        for (addr, tx) in room.iter() {
+            if addr != &sender_addr {
+                let _ = tx.send(message.clone());
+            }
         }
     }
 }

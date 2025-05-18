@@ -5,10 +5,10 @@ use crate::models::{
     AuthenticatedUser, User
 };
 use crate::schema::users::dsl::*;
-use axum::{Json, extract::{Query, Path}, http::StatusCode, response::IntoResponse};
+use axum::{Json, extract::Path, http::StatusCode};
 use bcrypt::{DEFAULT_COST, hash, verify};
 use diesel::prelude::*;
-use log::{error, info};
+use log::info;
 use serde::{Serialize,Deserialize};
 
 #[derive(Serialize, Deserialize)]
