@@ -68,55 +68,6 @@ async fn get_user_id(user: AuthenticatedUser) -> Result<i32, StatusCode> {
     Ok(user_id)
 }
 
-pub async fn public_user_data(Query(params): Query<PublicUserDataRequest>) -> impl IntoResponse {
-    info!("Called public_user_data for user {}", params.username);
-
-    let mut connection = db::connect_db();
-    let result = users
-        .filter(username.eq(&params.username))
-        .first::<User>(&mut connection);
-
-    match result {
-        Ok(user) => {
-            let user_response = UserResponse {
-                username: user.username,
-                first_name: user.firstname,
-                last_name: user.lastname,
-                email: user.email,
-            };
-            Json(user_response).into_response()
-        }
-        Err(err) => {
-            error!("Database error: {}", err);
-            StatusCode::INTERNAL_SERVER_ERROR.into_response()
-        }
-    }
-}
-
-pub async fn private_user_data(user: AuthenticatedUser) -> impl IntoResponse {
-    info!("Called private_user_data for user: {}", user.0.sub);
-    let mut connection = db::connect_db();
-    let result = users
-        .filter(username.eq(&user.0.sub))
-        .first::<User>(&mut connection);
-
-    match result {
-        Ok(user) => {
-            let user_response = UserResponse {
-                username: user.username,
-                first_name: user.firstname,
-                last_name: user.lastname,
-                email: user.email,
-            };
-            Json(user_response).into_response()
-        }
-        Err(err) => {
-            error!("Database error: {}", err);
-            StatusCode::INTERNAL_SERVER_ERROR.into_response()
-        }
-    }
-}
-
 pub async fn create_user(Json(payload): Json<CreateUserRequest>) -> Result<StatusCode, UserError> {
     info!("Called create_user for username: {}", payload.username);
     let mut conn = db::connect_db();
@@ -192,24 +143,40 @@ pub async fn generate_token(
     }
 }
 
-pub async fn get_all_users() -> Result<Json<Vec<User>>, StatusCode> {
+pub async fn get_all_users() -> Result<Json<Vec<UserResponse>>, UserError> {
     info!("Called get_all_users");
     let mut conn = db::connect_db();
     match users.load::<User>(&mut conn) {
-        Ok(user_list) => Ok(Json(user_list)),
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        Ok(user_list) => {
+            let safe_users: Vec<UserResponse> = user_list.into_iter().map(|user| UserResponse {
+                username: user.username,
+                first_name: user.firstname,
+                last_name: user.lastname,
+                email: user.email,
+            }).collect();
+            Ok(Json(safe_users))
+        },
+        Err(_) => Err(UserError::InternalServerError),
     }
 }
 
 pub async fn get_user_by_id(
     Path(user_id): Path<i32>,
-) -> Result<Json<User>, StatusCode> {
+) -> Result<Json<UserResponse>, UserError> {
     info!("Called get_user_by_id for id: {}", user_id);
     let mut conn = db::connect_db();
     match users.filter(id.eq(user_id)).first::<User>(&mut conn) {
-        Ok(user) => Ok(Json(user)),
-        Err(diesel::result::Error::NotFound) => Err(StatusCode::NOT_FOUND),
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        Ok(user) => {
+            let user_response = UserResponse {
+                username: user.username,
+                first_name: user.firstname,
+                last_name: user.lastname,
+                email: user.email,
+            };
+            Ok(Json(user_response))
+        },
+        Err(diesel::result::Error::NotFound) => Err(UserError::UserNotFound),
+        Err(_) => Err(UserError::InternalServerError),
     }
 }
 
