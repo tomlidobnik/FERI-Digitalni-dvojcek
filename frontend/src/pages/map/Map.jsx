@@ -21,7 +21,7 @@ const Map = () => {
         <MapContainer
             center={[46.554736193959975, 15.645613823633967]}
             zoom={13}
-            className="h-full rounded-2xl">
+            className="h-full md:rounded-2xl">
             <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution="&copy; OpenStreetMap contributors"
