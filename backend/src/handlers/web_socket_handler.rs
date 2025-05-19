@@ -6,7 +6,7 @@ use axum::{
     extract::{
         ConnectInfo,
         ws::{Message, WebSocket, WebSocketUpgrade},
-        Path,
+        Path, Query
     },
     response::IntoResponse,
 };
@@ -17,6 +17,8 @@ use std::net::SocketAddr;
 use std::{collections::HashMap, sync::Arc};
 use tokio::sync::{Mutex, mpsc};
 use serde::{Serialize,Deserialize};
+use crate::middleware::auth::verify_jwt;
+use axum::http::StatusCode;
 
 #[derive(Insertable, Deserialize)]
 #[diesel(table_name = crate::schema::chat_messages)]
@@ -148,14 +150,32 @@ async fn handle_socket(
     }
 }
 
+#[derive(Deserialize)]
+pub struct WsAuthQuery {
+    pub token: String,
+    pub username: String,
+}
+
 pub async fn handle_ws_friend(
     Path(friend_id): Path<i32>,
+    Query(WsAuthQuery { token, username }): Query<WsAuthQuery>,
     ws: WebSocketUpgrade,
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
     connections: FriendConnections,
 ) -> impl IntoResponse {
-    info!("WebSocket connection from {} to friend {}", addr, friend_id);
-    ws.on_upgrade(move |socket| handle_socket_friend(socket, addr, friend_id, connections))
+    match verify_jwt(&token) {
+        Ok(_) => {
+            info!(
+                "WebSocket connection from {} to friend {} as user {} (token valid)",
+                addr, friend_id, username
+            );
+            ws.on_upgrade(move |socket| handle_socket_friend(socket, addr, friend_id, connections))
+        }
+        Err(_) => {
+            info!("WebSocket connection from {} rejected: invalid token", addr);
+            StatusCode::UNAUTHORIZED.into_response()
+        }
+    }
 }
 
 async fn handle_socket_friend(

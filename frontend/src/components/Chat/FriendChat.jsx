@@ -52,15 +52,25 @@ const ChatBox = () => {
             socketRef.current.close();
             setIsConnected(false);
         }
-
+        const token = Cookies.get("token");
+        let usernameFromToken = "";
+        if (token) {
+            try {
+                const decoded = jwtDecode(token);
+                usernameFromToken = decoded.sub || decoded.username || "";
+            } catch (err) {
+                console.error("Failed to decode token", err);
+            }
+        }
         const socket = new WebSocket(
-            `wss://${API_URL}/ws/friend/${selectedFriendId}`
+            `wss://${API_URL}/ws/friend/${selectedFriendId}?token=${token}&username=${encodeURIComponent(
+                usernameFromToken
+            )}`
         );
         socketRef.current = socket;
 
         socket.onopen = () => {
             setIsConnected(true);
-            const token = Cookies.get("token");
             fetch(
                 `https://${API_URL}/api/chat/friend_history/${selectedFriendId}`,
                 {

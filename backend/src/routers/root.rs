@@ -25,7 +25,7 @@ pub async fn create_router(friend_connections: FriendConnections, event_connecti
         "/friend/{friend_id}",
         get({
             let connections = friend_connections.clone();
-            move |path, ws, connect_info| handle_ws_friend(path, ws, connect_info, connections.clone())
+            move |user, path, ws, connect_info| handle_ws_friend(user ,path, ws, connect_info, connections.clone())
         }),
     );
 
