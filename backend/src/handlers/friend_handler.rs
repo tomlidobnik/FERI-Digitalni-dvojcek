@@ -83,19 +83,13 @@ pub async fn list_friends_ids(user: AuthenticatedUser) -> Result<impl IntoRespon
         .load::<Friend>(&mut conn)
         .map_err(|_| FriendError::InternalServerError)?;
 
-    let friend_ids: Vec<i32> = friend_rows
+        let friendship_ids: Vec<i32> = friend_rows
         .into_iter()
-        .filter_map(|f| {
-            if f.user1_fk == Some(this_user_id) {
-                f.user2_fk
-            } else {
-                f.user1_fk
-            }
-        })
+        .map(|f| f.id)
         .collect();
 
-    info!("Found friend ids for user {}: {:?}", this_user_id, friend_ids);
-    Ok(Json(friend_ids).into_response())
+    info!("Found friendship ids for user {}: {:?}", this_user_id, friendship_ids);
+    Ok(Json(friendship_ids).into_response())
 }
 
 pub async fn friend_request(
