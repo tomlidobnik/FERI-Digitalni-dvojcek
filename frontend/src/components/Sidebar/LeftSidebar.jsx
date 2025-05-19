@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import { Link } from "react-router-dom";
 
 // Match the App page button style: bg-quaternary text-white font-semibold rounded-lg
@@ -8,18 +8,73 @@ const navButton =
 const LeftSidebar = () => {
     const [navShow, setNavShow] = useState(false);
 
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth > 768) { // Tailwind's md breakpoint
+                setNavShow(false);
+            }
+        };
+        window.addEventListener("resize", handleResize);
+        // Optionally, check on mount:
+        handleResize();
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+    
     return (
         <aside className="w-full md:w-fit lg:w-64 h-fit min-h-full flex flex-col p-4 md:rounded-3xl  bg-[var(--color-primary)]">
-            <div className="flex items-center justify-between md:mb-8 md:mt-2">
-                <h2 className="text-2xl lg:text-3xl font-bold text-quaternary">
-                    Copycats
-                </h2>
-                <h2 className="text-2xl lg:text-3xl font-bold text-quaternary md:hidden" onClick={() => setNavShow(!navShow)}>
-                    Hide
-                </h2>
-            </div>
+      <div className="flex items-center justify-between md:mb-8 md:mt-2">
+        <h2 className="text-2xl lg:text-3xl font-bold text-quaternary">
+          Copycats
+        </h2>
+        <button
+        className="md:hidden"
+        onClick={() => setNavShow((prev) => !prev)}
+        aria-label="Toggle navigation"
+        >
+        <span className="relative inline-block w-8 h-8">
+            {/* Animated icon transition */}
+            <span
+            className={`absolute inset-0 transition-opacity duration-300 ease-in-out ${
+                navShow ? "opacity-100 scale-100" : "opacity-0 scale-90"
+            }`}
+            >
+            {/* Angle Down SVG */}
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="rounded-xl w-8 h-8 object-cover text-quaternary mr-2"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+            >
+                <path d="M1.51,6.079a1.492,1.492,0,0,1,1.06.44l7.673,7.672a2.5,2.5,0,0,0,3.536,0L21.44,6.529A1.5,1.5,0,1,1,23.561,8.65L15.9,16.312a5.505,5.505,0,0,1-7.778,0L.449,8.64A1.5,1.5,0,0,1,1.51,6.079Z"/>
+            </svg>
+            </span>
+            <span
+            className={`absolute inset-0 transition-opacity duration-300 ease-in-out ${
+                navShow ? "opacity-0 scale-90" : "opacity-100 scale-100"
+            }`}
+            >
+            {/* Menu Burger SVG */}
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="rounded-xl w-8 h-8 object-cover text-quaternary mr-2"
+                fill="currentColor"
+                viewBox="0 0 512 512"
+            >
+                <path d="M480,224H32c-17.673,0-32,14.327-32,32s14.327,32,32,32h448c17.673,0,32-14.327,32-32S497.673,224,480,224z"/>
+                <path d="M32,138.667h448c17.673,0,32-14.327,32-32s-14.327-32-32-32H32c-17.673,0-32,14.327-32,32S14.327,138.667,32,138.667z"/>
+                <path d="M480,373.333H32c-17.673,0-32,14.327-32,32s14.327,32,32,32h448c17.673,0,32-14.327,32-32S497.673,373.333,480,373.333z"/>
+            </svg>
+            </span>
+        </span>
+        </button>
+        </div>
             {navShow ? (
-            <>
+            <div
+                className="animate-slide-down origin-top"
+                style={{
+                animation: "slideDown 0.3s cubic-bezier(0.4,0,0.2,1)"
+                }}
+            >
                 <nav className="flex flex-col gap-0 md:gap-2 pt-3 md:pt-0">
                 <Link to="/" className={navButton}>
                     Domov
@@ -33,8 +88,8 @@ const LeftSidebar = () => {
                     Odjava
                 </Link>
                 </nav>
-            </>
-            ) : 
+            </div>
+            ) : (
             <>
                 <nav className="flex-col gap-0 md:gap-2 hidden md:flex">
                 <Link to="/" className={navButton}>
@@ -44,13 +99,27 @@ const LeftSidebar = () => {
                     Profil
                 </Link>
                 </nav>
-                <nav className="md:pt-2 flex-col mt-auto pt-0 hidden md:flex">
+                <nav className="md:pt-2 flex flex-col pt-0 md:mt-auto hidden md:block">
                 <Link to="/logout" className={navButton}>
                     Odjava
                 </Link>
                 </nav>
             </>
+            )}
+            <style>
+            {`
+            @keyframes slideDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px) scaleY(0.95);
             }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scaleY(1);
+            }
+            }
+            `}
+            </style>
             <div className="mt-4 text-xs text-quaternary text-center tracking-wider hidden md:block">
                 &copy; {new Date().getFullYear()} Copycats
             </div>
