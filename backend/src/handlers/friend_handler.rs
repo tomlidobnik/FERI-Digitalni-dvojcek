@@ -63,6 +63,35 @@ pub async fn list_friends(user: AuthenticatedUser) -> Result<impl IntoResponse, 
     }
 }
 
+pub async fn list_friends_ids(user: AuthenticatedUser) -> Result<impl IntoResponse, FriendError> {
+    info!("Called list_friend_ids for user: {}", user.0.sub);
+    let mut conn = db::connect_db();
+    let this_user_id = match get_user_id(user.0.sub).await {
+        Ok(this_id) => this_id,
+        Err(_) => return Err(FriendError::Unauthorized),
+    };
+
+    let friend_rows = friends
+        .filter(status.eq(0))
+        .filter(user1_fk.eq(this_user_id).or(user2_fk.eq(this_user_id)))
+        .load::<Friend>(&mut conn)
+        .map_err(|_| FriendError::InternalServerError)?;
+
+    let friend_ids: Vec<i32> = friend_rows
+        .into_iter()
+        .filter_map(|f| {
+            if f.user1_fk == Some(this_user_id) {
+                f.user2_fk
+            } else {
+                f.user1_fk
+            }
+        })
+        .collect();
+
+    info!("Found friend ids for user {}: {:?}", this_user_id, friend_ids);
+    Ok(Json(friend_ids).into_response())
+}
+
 pub async fn friend_request(
     user: AuthenticatedUser,
     Json(payload): Json<FriendRequest>,
