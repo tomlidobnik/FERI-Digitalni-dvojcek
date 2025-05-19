@@ -1,4 +1,7 @@
-import { createBrowserRouter } from "react-router-dom";
+import {
+    createBrowserRouter,
+    UNSAFE_getTurboStreamSingleFetchDataStrategy,
+} from "react-router-dom";
 import App from "./pages/home/App.jsx";
 import Login from "./pages/user/Login.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
@@ -10,6 +13,7 @@ import FriendChat from "./components/Chat/FriendChat.jsx";
 import LocationsMap from "./pages/map/LocationsMap.jsx";
 import EventsMap from "./pages/map/EventsMap.jsx";
 import Logout from "./pages/user/Logout.jsx";
+import ListUsers from "./components/Chat/ListUsers.jsx";
 
 // Routers
 const router = createBrowserRouter([
@@ -55,6 +59,14 @@ const router = createBrowserRouter([
         element: (
             <ErrorBoundary FallbackComponent={ErrorPage}>
                 <FriendChat />
+            </ErrorBoundary>
+        ),
+    },
+    {
+        path: "/add_friends",
+        element: (
+            <ErrorBoundary FallbackComponent={ErrorPage}>
+                <ListUsers />
             </ErrorBoundary>
         ),
     },
