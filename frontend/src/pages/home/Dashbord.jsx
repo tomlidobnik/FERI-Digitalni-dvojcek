@@ -1,12 +1,13 @@
-import { use, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Cookies from 'js-cookie';
 import LeftSidebar from "../../components/Sidebar/LeftSidebar.jsx";
 import Map from "../map/Map.jsx";
 
 function Dashbord() {
     const navigate = useNavigate();
-    useEffect(() => { // preusmeritev uporabnika če je že prijavljen
+
+    useEffect(() => {
         const token = Cookies.get("token");
         if (!token) {
             navigate ("/login");
