@@ -6,4 +6,5 @@ pub fn create_router() -> Router {
     Router::new()
         .route("/send", post(friend_request))
         .route("/list", get(list_friends))
+        .route("/list_ids", get(list_friends_ids))
 }

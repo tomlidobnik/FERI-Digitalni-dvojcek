@@ -5,7 +5,8 @@ import NotFoundPage from "./pages/NotFoundPage.jsx";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorPage from "./pages/ErrorPage.jsx"; // Import the ErrorPage component
 import Register from "./pages/user/Register.jsx";
-import ChatBox from "./components/Chat/ChatBox";
+import EventChat from "./components/Chat/EventChat.jsx";
+import FriendChat from "./components/Chat/FriendChat.jsx";
 import LocationsMap from "./pages/map/LocationsMap.jsx";
 import EventsMap from "./pages/map/EventsMap.jsx";
 import Logout from "./pages/user/Logout.jsx";
@@ -42,10 +43,18 @@ const router = createBrowserRouter([
         ),
     },
     {
-        path: "/chat",
+        path: "/event_chat",
         element: (
             <ErrorBoundary FallbackComponent={ErrorPage}>
-                <ChatBox />
+                <EventChat />
+            </ErrorBoundary>
+        ),
+    },
+    {
+        path: "/friend_chat",
+        element: (
+            <ErrorBoundary FallbackComponent={ErrorPage}>
+                <FriendChat />
             </ErrorBoundary>
         ),
     },

@@ -1,0 +1,16 @@
+meta {
+  name: list_friends_ids
+  type: http
+  seq: 9
+}
+
+get {
+  url: https://0.0.0.0:8000/api/user/friends/list_ids
+  body: none
+  auth: inherit
+}
+
+script:pre-request {
+  const token = bru.getVar("token");
+  req.setHeader("Authorization", `Bearer ${token}`);
+}

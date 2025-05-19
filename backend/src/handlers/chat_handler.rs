@@ -1,3 +1,4 @@
+use crate::models::AuthenticatedUser;
 use crate::{config::db, schema::chat_messages::dsl::*};
 use crate::error::chat_error::ChatError;
 use axum::{Json, response::IntoResponse, extract::Path};
@@ -24,6 +25,39 @@ pub async fn get_chat_history(
     let result = chat_messages
         .inner_join(users.on(user_id.eq(user_fk)))
         .filter(event_fk.eq(event_id))
+        .order(created_at.asc())
+        .select((users_username, message, created_at))
+        .load::<(String, String, NaiveDateTime)>(&mut conn);
+
+    match result {
+        Ok(rows) => {
+            let messages: Vec<ChatMessageResponse> = rows
+                .into_iter()
+                .map(|(username, other_message, date)| ChatMessageResponse { username, message: other_message, date })
+                .collect();
+            Ok(Json(messages).into_response())
+        }
+        Err(err) => {
+            error!("Database error: {}", err);
+            Err(ChatError::InternalServerError)
+        }
+    }
+}
+
+pub async fn get_friend_chat_history(
+    _user:AuthenticatedUser,
+    Path(friend_id): Path<i32>,
+) -> Result<impl IntoResponse, ChatError> {
+    use crate::schema::friend_chat_messages::dsl::*;
+    use crate::schema::users::dsl::{users, username as users_username};
+    use crate::schema::users::id as user_id;
+
+    info!("Called get_friend_chat_history for friend_id: {}", friend_id);
+    let mut conn = db::connect_db();
+
+    let result = friend_chat_messages
+        .inner_join(users.on(user_id.eq(user_fk)))
+        .filter(friend_fk.eq(friend_id))
         .order(created_at.asc())
         .select((users_username, message, created_at))
         .load::<(String, String, NaiveDateTime)>(&mut conn);

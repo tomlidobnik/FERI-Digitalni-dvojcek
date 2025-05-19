@@ -9,8 +9,8 @@ const ChatBox = () => {
     const [message, setMessage] = useState("");
     const [isConnected, setIsConnected] = useState(false);
     const [messages, setMessages] = useState([]);
-    const [events, setEvents] = useState([]);
-    const [selectedEventId, setSelectedEventId] = useState("");
+    const [friends, setFriends] = useState([]);
+    const [selectedFriendId, setSelectedFriendId] = useState("");
     const socketRef = useRef(null);
     const messagesContainerRef = useRef(null);
 
@@ -24,28 +24,51 @@ const ChatBox = () => {
     }, [messages]);
 
     useEffect(() => {
-        fetch(`https://${API_URL}/api/event/available`)
-            .then((res) => res.json())
+        const token = Cookies.get("token");
+        fetch(`https://${API_URL}/api/user/friends/list_ids`, {
+            headers: {
+                Authorization: token ? `Bearer ${token}` : "",
+            },
+        })
+            .then((res) => {
+                if (!res.ok) throw new Error("Unauthorized");
+                return res.json();
+            })
             .then((data) => {
-                setEvents(data);
-                if (data.length > 0) setSelectedEventId(data[0].id);
+                setFriends(data);
+                if (data.length > 0) setSelectedFriendId(data[0]);
+            })
+            .catch((err) => {
+                setFriends([]);
+                setSelectedFriendId("");
+                console.error(err);
             });
     }, [API_URL]);
 
     useEffect(() => {
-        if (!selectedEventId) return;
+        if (!selectedFriendId) return;
 
         if (socketRef.current) {
             socketRef.current.close();
             setIsConnected(false);
         }
 
-        const socket = new WebSocket(`wss://${API_URL}/ws/${selectedEventId}`);
+        const socket = new WebSocket(
+            `wss://${API_URL}/ws/friend/${selectedFriendId}`
+        );
         socketRef.current = socket;
 
         socket.onopen = () => {
             setIsConnected(true);
-            fetch(`https://${API_URL}/api/chat/history/${selectedEventId}`)
+            const token = Cookies.get("token");
+            fetch(
+                `https://${API_URL}/api/chat/friend_history/${selectedFriendId}`,
+                {
+                    headers: {
+                        Authorization: token ? `Bearer ${token}` : "",
+                    },
+                }
+            )
                 .then((res) => res.json())
                 .then((data) => {
                     setMessages(data);
@@ -64,42 +87,48 @@ const ChatBox = () => {
                 setIsConnected(false);
             }
         };
-    }, [selectedEventId, API_URL]);
+    }, [selectedFriendId, API_URL]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (socketRef.current?.readyState === WebSocket.OPEN) {
-            const msg = { username: username, message };
-            socketRef.current.send(JSON.stringify(msg));
+            const token = Cookies.get("token");
+            let usernameFromToken = "";
+            if (token) {
+                try {
+                    const decoded = jwtDecode(token);
+                    usernameFromToken = decoded.sub || decoded.username || "";
+                } catch (err) {
+                    console.error("Failed to decode token", err);
+                }
+            }
+            const now = new Date();
+            const dateString = now.toISOString().replace("T", " ").slice(0, 19); // "YYYY-MM-DD HH:MM:SS"
+            const msg = {
+                username: usernameFromToken,
+                message,
+                date: dateString,
+            };
+            socketRef.current.send(
+                JSON.stringify({ username: usernameFromToken, message })
+            );
             setMessages((prev) => [...prev, msg]);
             setMessage("");
         }
     };
 
-    useEffect(() => {
-        const token = Cookies.get("token");
-        if (token) {
-            try {
-                const decoded = jwtDecode(token);
-                setUsername(decoded.sub || decoded.username || "");
-            } catch (e) {
-                setUsername("");
-            }
-        }
-    }, []);
-
     return (
         <div className="min-h-screen p-6 text-text">
-            <h2 className="text-2xl font-bold mb-4">WebSocket Chat</h2>
+            <h2 className="text-2xl font-bold mb-4">WebSocket Friend Chat</h2>
             <div className="flex items-center gap-3 mb-4">
                 <select
                     className="px-2 py-1 border rounded"
-                    value={selectedEventId}
-                    onChange={(e) => setSelectedEventId(e.target.value)}
+                    value={selectedFriendId}
+                    onChange={(e) => setSelectedFriendId(e.target.value)}
                     disabled={false}>
-                    {events.map((event) => (
-                        <option key={event.id} value={event.id}>
-                            {event.title} (ID: {event.id})
+                    {friends.map((friendId) => (
+                        <option key={friendId} value={friendId}>
+                            Friend ID: {friendId}
                         </option>
                     ))}
                 </select>
