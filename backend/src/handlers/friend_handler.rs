@@ -4,6 +4,7 @@ use crate::models::{AuthenticatedUser, Friend};
 use crate::schema::friends::dsl::*;
 use crate::schema::users::dsl::*;
 use axum::{http::StatusCode, response::IntoResponse, Json};
+use axum::extract::Path;
 use diesel::prelude::*;
 
 use log::info;
@@ -11,6 +12,11 @@ use log::info;
 #[derive(Debug, Clone, serde::Deserialize)]
 pub struct FriendRequest {
     pub username: String,
+}
+
+#[derive(serde::Serialize)]
+pub struct FriendStatusResponse {
+    pub status: String,
 }
 
 async fn get_user_id(user: String) -> Result<i32, StatusCode> {
@@ -111,17 +117,21 @@ pub async fn friend_request(
         .map_err(|_| FriendError::InternalServerError)?;
 
     if let Some(existing) = existing_friendship {
-        if existing.status != 0 {
-            info!("Updating existing friendship status to 0 for users {} and {}", this_user_id, friend_user_id);
+        if existing.status == 0 {
+            info!("Friendship already exists and is active for users {} and {}", this_user_id, friend_user_id);
+            return Err(FriendError::FriendAlreadyExists);
+        } else if existing.status == this_user_id {
+            info!("Friend request already sent by you (user {}) to user {}", this_user_id, friend_user_id);
+            return Err(FriendError::FriendAlreadyExists);
+        } else if existing.status == friend_user_id {
+            info!("User {} is accepting friend request from user {}", this_user_id, friend_user_id);
             diesel::update(friends.find(existing.id))
                 .set(status.eq(0))
                 .execute(&mut conn)
                 .map_err(|_| FriendError::InternalServerError)?;
-
             return Ok(StatusCode::OK);
         } else {
-            info!("Friendship already exists and is active for users {} and {}", this_user_id, friend_user_id);
-            return Err(FriendError::FriendAlreadyExists);
+            return Err(FriendError::InternalServerError);
         }
     }
 
@@ -138,4 +148,56 @@ pub async fn friend_request(
         .map_err(|_| FriendError::InternalServerError)?;
 
     Ok(StatusCode::OK)
+}
+
+pub async fn friend_status(
+    user: AuthenticatedUser,
+    Path(friend_username): Path<String>,
+) -> Result<impl IntoResponse, FriendError> {
+    let mut conn = db::connect_db();
+    let this_user_id = get_user_id(user.0.sub).await.map_err(|_| FriendError::Unauthorized)?;
+    let friend_user_id = get_user_id(friend_username.clone()).await.map_err(|_| FriendError::FriendNotFound)?;
+
+    let existing_friendship = friends
+        .filter(
+            (user1_fk.eq(this_user_id).and(user2_fk.eq(friend_user_id)))
+                .or(user1_fk.eq(friend_user_id).and(user2_fk.eq(this_user_id))),
+        )
+        .first::<Friend>(&mut conn)
+        .optional()
+        .map_err(|_| FriendError::InternalServerError)?;
+
+    let status_str = match existing_friendship {
+        Some(f) if f.status == 0 => "Friends",
+        Some(_) => "Request Pending",
+        None => "Not Friends",
+    };
+
+    Ok(Json(FriendStatusResponse {
+        status: status_str.to_string(),
+    }))
+}
+
+pub async fn remove_friend(
+    user: AuthenticatedUser,
+    Path(friend_username): Path<String>,
+) -> Result<StatusCode, FriendError> {
+    let mut conn = db::connect_db();
+    let this_user_id = get_user_id(user.0.sub).await.map_err(|_| FriendError::Unauthorized)?;
+    let friend_user_id = get_user_id(friend_username.clone()).await.map_err(|_| FriendError::FriendNotFound)?;
+
+    let num_deleted = diesel::delete(
+        friends.filter(
+            (user1_fk.eq(this_user_id).and(user2_fk.eq(friend_user_id)))
+                .or(user1_fk.eq(friend_user_id).and(user2_fk.eq(this_user_id))),
+        )
+    )
+    .execute(&mut conn)
+    .map_err(|_| FriendError::InternalServerError)?;
+
+    if num_deleted > 0 {
+        Ok(StatusCode::OK)
+    } else {
+        Err(FriendError::FriendNotFound)
+    }
 }
