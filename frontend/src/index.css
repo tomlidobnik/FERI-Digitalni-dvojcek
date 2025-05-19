@@ -1,12 +1,13 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #F5ECD5;
+  --color-primary: #E5DCC5;
   --color-secondary: #F0BB78;
   --color-tertiary: #A4B465;
   --color-quaternary: #626F47;
   --color-error: #A94A4A;
   --color-warning: #FF9B17;
+  --color-background: #FFF9E5;
 
   /* text colors */
   --color-text: #212529;
@@ -28,7 +29,7 @@
 
   color-scheme: light dark;
   color: var(--color-text);
-  background-color: var(--color-tertiary);
+  background-color: var(--color-background);
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
