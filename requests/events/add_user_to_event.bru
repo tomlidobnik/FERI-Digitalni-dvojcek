@@ -1,0 +1,22 @@
+meta {
+  name: add_user_to_event
+  type: http
+  seq: 9
+}
+
+post {
+  url: https://0.0.0.0:8000/api/event/allow_user/2
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "user_id": 1
+  }
+}
+
+script:pre-request {
+  const token = bru.getVar("token");
+  req.setHeader("Authorization", `Bearer ${token}`);
+}
