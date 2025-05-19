@@ -2,9 +2,9 @@ use crate::config::db;
 use crate::schema::locations::dsl::*;
 use diesel::prelude::*;
 use log::info;
-use serde::Deserialize;
+use serde::{Deserialize,Serialize};
 use axum::{Json, extract::Path, http::StatusCode};
-use crate::models::Location;
+use crate::models::{Location, LocationOutline};
 use crate::error::location_error::LocationError;
 
 #[derive(Deserialize)]
@@ -106,6 +106,58 @@ pub async fn delete_location(
     match diesel::delete(locations.filter(id.eq(location_id))).execute(&mut conn) {
         Ok(affected) if affected > 0 => Ok(StatusCode::NO_CONTENT),
         Ok(_) => Err(LocationError::LocationNotFound),
+        Err(_) => Err(LocationError::InternalServerError),
+    }
+}
+
+use crate::schema::location_outline::dsl as outline_dsl;
+
+#[derive(Serialize)]
+pub struct LocationWithOutline {
+    pub id: i32,
+    pub info: Option<String>,
+    pub longitude: Option<f32>,
+    pub latitude: Option<f32>,
+    pub location_outline: Option<LocationOutline>,
+}
+
+pub async fn get_all_locations_with_outline() -> Result<Json<Vec<LocationWithOutline>>, LocationError> {
+    use crate::schema::locations::dsl::*;
+    use crate::schema::location_outline::dsl::{location_outline as outline_table, id as outline_id};
+
+    let mut conn = db::connect_db();
+
+    let results = locations
+        .left_join(outline_table.on(location_outline_fk.eq(outline_id.nullable())))
+        .select((
+            id,
+            info,
+            longitude,
+            latitude,
+            (
+                outline_id.nullable(),
+                outline_dsl::points.nullable(),
+            ),
+        ))
+        .load::<(i32, Option<String>, Option<f32>, Option<f32>, (Option<i32>, Option<serde_json::Value>))>(&mut conn);
+
+    match results {
+        Ok(rows) => {
+            let locations_with_outline = rows
+                .into_iter()
+                .map(|(other_id, other_info, other_longitude, other_latitude, (outline_id_opt, points_opt))| LocationWithOutline {
+                    id:other_id,
+                    info:other_info,
+                    longitude:other_longitude,
+                    latitude:other_latitude,
+                    location_outline: match (outline_id_opt, points_opt) {
+                        (Some(oid), Some(points)) => Some(LocationOutline { id: oid, points }),
+                        _ => None,
+                    },
+                })
+                .collect();
+            Ok(Json(locations_with_outline))
+        }
         Err(_) => Err(LocationError::InternalServerError),
     }
 }

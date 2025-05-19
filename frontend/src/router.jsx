@@ -6,7 +6,8 @@ import { ErrorBoundary } from "react-error-boundary";
 import ErrorPage from "./pages/ErrorPage.jsx"; // Import the ErrorPage component
 import Register from "./pages/user/Register.jsx";
 import ChatBox from "./components/Chat/ChatBox";
-import Map from "./pages/map/Map.jsx";
+import LocationsMap from "./pages/map/LocationsMap.jsx";
+import EventsMap from "./pages/map/EventsMap.jsx";
 import Logout from "./pages/user/Logout.jsx";
 
 // Routers
@@ -49,10 +50,18 @@ const router = createBrowserRouter([
         ),
     },
     {
-        path: "/map",
+        path: "/locations_map",
         element: (
             <ErrorBoundary FallbackComponent={ErrorPage}>
-                <Map />
+                <LocationsMap />
+            </ErrorBoundary>
+        ),
+    },
+    {
+        path: "/events_map",
+        element: (
+            <ErrorBoundary FallbackComponent={ErrorPage}>
+                <EventsMap />
             </ErrorBoundary>
         ),
     },

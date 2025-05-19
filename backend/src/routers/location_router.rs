@@ -9,4 +9,5 @@ pub fn create_router() -> Router {
         .route("/all", get(get_all_locations))
         .route("/by_id/{:id}", get(get_location_by_id))
         .route("/delete/{:id}", delete(delete_location))
+        .route("/list",get(get_all_locations_with_outline))
 }
