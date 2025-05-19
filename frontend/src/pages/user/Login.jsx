@@ -16,7 +16,7 @@ export default function Login() {
     useEffect(() => { // preusmeritev uporabnika če je že prijavljen
         const token = Cookies.get("token");
         if (token) {
-            navigate("/");
+            navigate("/home");
         }
     });
 
@@ -54,8 +54,7 @@ export default function Login() {
 
                 const storedToken = Cookies.get("token");
                 if (storedToken) {
-                    //console.log("Token successfully set:", storedToken);
-                    navigate("/");
+                    console.log("Token successfully set:", storedToken);
                 } else {
                     setError("root", {
                         message: "Napaka pri nastavitvi piškotka",
