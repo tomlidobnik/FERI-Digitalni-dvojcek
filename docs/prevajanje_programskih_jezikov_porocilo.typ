@@ -27,8 +27,8 @@ Za predmet prevajanje programskih jezikov smo se odločili, da bomo implementira
 Zahtevano je, da lahko z uporabo vašega jezika opišete geometrijske strukture, točke in ceste v mestu. Torej je potrebno podpreti polilinije (polyline) in poligone (polygon). Na primer, majhen del mesta bi lahko opisali takole:
 
 ```
-let $p = (1,1.12);
-let $q = (2,2);
+let @p = (1,1.12);
+let @q = (2,2);
 
 city ["Maribor"]{
     road["Ptujska cesta"]{
@@ -52,7 +52,7 @@ city ["Maribor"]{
 }
 
 ?{[(1,1),$p,$q,(3,4)],[(1,1),3]};
-let $r = (fst(p),snd(q));
+let @r = (fst(p),snd(q));
 ```
 == Konstrukti
 Uporabljen jezik vsebuje naslednje konstrukte.
@@ -152,7 +152,7 @@ Na zemljevidu lahko definiramo tudi dodatne elemente, ki jih lahko uporabljamo z
 == Spremenljivke
 V jeziku lahko definiramo spremenljivke, ki jih lahko uporabljamo za shranjevanje vrednosti. Spremenljivke se definirajo z uporabo ključe "let", in predstavlja točko, ki jo definiramo v oklepajih. Pred samim imenom spremenvljicke mora biti znak `$`.
 ```
-  let $IME = (KOORDINATA X,KOORDINATA Y);
+  let @IME = (KOORDINATA X,KOORDINATA Y);
 ```
 == Izjave
 Podprte izjave v jeziku vključujejo: seštevanje, odštevanje, dostop do prve koordinate in dostop do druge koordinate.
@@ -169,7 +169,7 @@ Odštevanje dveh točk se izvede tako, da se odštejeta obe komponenti točk. Re
 === First & Second
 Dostop do prve in druge komponente točke se izvede tako, da se uporabita funkciji `fst` in `snd`.
 ```
-  let $r = (fst(p),snd(q));
+  let @r = (fst($p),snd($q));
 ```
 == Povpraševanja
 Povpraševanje je določeno z množico točk, zapisanih v oglatih oklepajih. Poleg te množice je podana dodatna točka z določenim radijem, ki opredeljuje krožno območje povpraševanja. Rezultat povpraševanja je množica vseh točk iz začetne množice, ki ležijo znotraj tega krožnega območja.
@@ -177,7 +177,66 @@ Povpraševanje je določeno z množico točk, zapisanih v oglatih oklepajih. Pol
   ?{[TOČKA1,TOČKA2,TOČKA3,TOČKA4],[TOČKA0,RADIJ]};
 ```
 
-= Definicija sintakse z gramatiko !
+= Gramatika z BNF notacijo
+```
+  izraz   ::= SPREMENLJIVKA_DEF izraz* | POVPRAŠEVANJE izraz* | CITY izraz*
+  izraz*  ::= SPREMENLJIVKA_DEF izraz* | POVPRAŠEVANJE izraz* | CITY izraz* | ε
+
+  // definicija mesta
+  CITY ::= city["IME"] { BLOKS }
+
+  // definicija bloka
+  BLOKS ::= ROAD BLOKS* | BUILDING BLOKS* | AREA BLOKS* | LAKE BLOKS* | PARK BLOKS*
+  BLOKS* ::= ROAD BLOKS* | BUILDING BLOKS* | AREA BLOKS* | LAKE BLOKS* | PARK BLOKS* | ε
+
+  ROAD ::= road["IME"] { POLYLINE }
+  BUILDING ::= building["IME"] { IZRIS }
+  AREA ::= area["IME"] { IZRIS }
+  LAKE ::= lake["IME"] { IZRIS }
+  PARK ::= park["IME"] { IZRIS }
+
+  IZRIS ::= POLYGON | KROG
+
+  // definicija spremenljivke
+  SPREMENLJIVKA_DEF ::= let @ IME = TOČKA;
+
+  POLYLINE ::= polyline[TOČKE];
+
+  POLYGON ::= polygon[TOČKE];
+
+  KROG ::= circle KROG*
+  KROG* ::= [TOČKA, KROG**]
+  KROG** ::= FIRST_SECOND | ŠTEVILO
+
+  // definicija povpraševanja
+  POVPRAŠEVANJE ::= ?{[TOČKE],KROG*};
+
+  //definicija večih točk
+  TOČKE ::= TOČKA TOČKE*
+  TOČKE* ::= , TOČKA TOČKE* | ε
+
+  // definicija točke
+  TOČKA ::= ( KOORDINATA* , KOORDINATA* ) OPERACIJA | SPREMENLJIVKA OPERACIJA
+  KOORDINATA* ::= ŠTEVILO | FIRST_SECOND
+
+  OPERACIJA ::= + TOČKA | - TOČKA | ε
+
+  // definicija FIRST in SECOND
+  FIRST_SECOND ::= fst TOČKA | snd TOČKA
+
+  // uporaba spremenljivke
+  SPREMENLJIVKA ::= $IME
+
+  ŠTEVILO ::= [0-9] ŠTEVILO*
+  ŠTEVILO** ::= [0-9] ŠTEVILO* | . REALNO | ε
+  
+  REALNO ::= [0-9] REALNO*
+  REALNO* ::= [0-9] REALNO* | ε
+
+  // definicija niza
+  IME ::= [a-zA-Z_] IME*
+  IME* ::= [a-zA-Z0-9_] IME* | ε
+```
 
 = Izračun FIRST in FOLLOW množic !
 
