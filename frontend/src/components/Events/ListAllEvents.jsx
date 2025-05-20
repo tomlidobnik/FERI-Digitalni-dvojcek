@@ -1,28 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import EventForList from "./EventForList";
 
 const ListAllEvents = () => {
-    const [response, setResponse] = useState(null);
+    const API_URL = import.meta.env.VITE_API_URL;
 
-    const handlePost = async () => {
-        try {
-            const res = await fetch("/api/events", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ name: "New Event" }),
+    const [response, setResponse] = useState([]);
+
+    useEffect(() => {
+        fetch(`https://${API_URL}/api/event/available`)
+            .then((res) => res.json())
+            .then((data) => setResponse(data))
+            .catch((err) => {
+                console.error(err);
             });
-            const data = await res.json();
-            setResponse(data);
-        } catch (error) {
-            setResponse({ error: "Failed to post event" });
-        }
-    };
+    }, [API_URL]);
 
     return (
-        <div>
-
+        <div className="bg-primary w-full md:rounded-2xl shadow-2xl p-4 xl:p-6 h-full overflow-y-auto">
+            <h1 className="text-3xl lg:text-4xl font-bold text-text mb-4 ">Seznam dogodkov</h1>
+            <div className="flex flex-col ">
+                {response.map((event) => (
+                    <EventForList
+                        event={event}
+                    />
+                ))}
+            </div>
         </div>
     );
 };

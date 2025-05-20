@@ -19,13 +19,15 @@ const LeftSidebar = () => {
         handleResize();
         return () => window.removeEventListener("resize", handleResize);
     }, []);
-    
+
     return (
-        <aside className="w-full md:w-fit lg:w-64 h-fit min-h-full flex flex-col p-4 md:rounded-3xl  bg-[var(--color-primary)]">
+        <aside className="w-full md:w-fit lg:w-64 h-fit min-h-full flex flex-col p-4 md:rounded-3xl  bg-primary">
       <div className="flex items-center justify-between md:mb-8 md:mt-2">
-        <h2 className="text-2xl lg:text-3xl font-bold text-quaternary">
-          Copycats
-        </h2>
+        <Link to="/">
+            <h2 className="text-2xl lg:text-3xl font-bold text-text">
+            Copycats
+            </h2>
+        </Link>
         <button
         className="md:hidden"
         onClick={() => setNavShow((prev) => !prev)}
@@ -76,11 +78,14 @@ const LeftSidebar = () => {
                 }}
             >
                 <nav className="flex flex-col gap-0 md:gap-2 pt-3 md:pt-0">
-                <Link to="/" className={navButton}>
+                <Link to="/home" className={navButton}>
                     Domov
                 </Link>
                 <Link to="/profile" className={navButton}>
                     Profil
+                </Link>
+                <Link to="/events" className={navButton}>
+                    Dogodki
                 </Link>
                 </nav>
                 <nav className="md:pt-2 flex flex-col pt-0 md:mt-auto">
@@ -92,11 +97,14 @@ const LeftSidebar = () => {
             ) : (
             <>
                 <nav className="flex-col gap-0 md:gap-2 hidden md:flex">
-                <Link to="/" className={navButton}>
+                <Link to="/home" className={navButton}>
                     Domov
                 </Link>
                 <Link to="/profile" className={navButton}>
                     Profil
+                </Link>
+                <Link to="/events" className={navButton}>
+                    Dogodki
                 </Link>
                 </nav>
                 <nav className="md:pt-2 flex flex-col pt-0 md:mt-auto hidden md:block">
@@ -120,9 +128,6 @@ const LeftSidebar = () => {
             }
             `}
             </style>
-            <div className="mt-4 text-xs text-quaternary text-center tracking-wider hidden md:block">
-                &copy; {new Date().getFullYear()} Copycats
-            </div>
         </aside>
     );
 };
