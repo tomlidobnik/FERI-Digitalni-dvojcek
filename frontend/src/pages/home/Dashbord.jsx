@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from 'js-cookie';
 import LeftSidebar from "../../components/Sidebar/LeftSidebar.jsx";
-import Map from "../map/Map.jsx";
+import Map from "../map/LocationsMap.jsx";
 import ListAllEvents from "../../components/Events/ListAllEvents.jsx";
+import ListAllFriends from "../../components/Friends/ListAllFriends.jsx";
 
 function Dashbord() {
 
@@ -18,25 +19,20 @@ function Dashbord() {
 
     return (
         <>
-            <div className="flex flex-col md:flex-row h-screen">
-                {/* Left Navigation Bar */}
-                <div className="md:pr-0 md:p-6 w-full md:h-full md:w-auto">
+            <div className="flex flex-col lg:flex-row h-screen">
+                <div className="lg:pr-0 lg:p-6 w-full lg:h-full lg:w-auto">
                     <LeftSidebar />
                 </div>
-                {/* Main Content Grid */}
-                <div className="flex-1 md:p-6 ml-0 h-fit md:h-full">
-                    <div className="grid grid-rows-3 grid-cols-1 md:grid-rows-2 md:grid-cols-2 md:gap-6 h-fit md:h-full">
-                        {/* Top: One big wide window (spans both columns) */}
+                <div className="flex-1 md:p-6 ml-0 h-fit lg:h-full">
+                    <div className="grid grid-cols-1 md:grid-rows-2 md:grid-cols-2 md:gap-6 h-fit md:h-full">
                         <div className="row-span-1 md:row-span-1 col-span-1 md:col-span-2 md:rounded-2xl shadow-xl min-h-[500px] md:min-h-[180px] h-[calc(50vh-4rem)] md:h-full w-full">
                             <Map />
                         </div>
-                        {/* Bottom Left Window */}
-                        <div className="md:flex row-span-1 col-span-1 md:rounded-2xl md:shadow-xl min-h-[120px]">
+                        <div className="md:flex h-fit md:h-full md:rounded-2xl md:shadow-xl max-h-[700px]">
                             <ListAllEvents />
                         </div>
-                        {/* Bottom Right Window */}
                         <div className="md:flex row-span-1 col-span-1 md:rounded-2xl md:shadow-xl min-h-[120px]">
-                            prijatelji
+                            <ListAllFriends />
                         </div>
                     </div>
                 </div>

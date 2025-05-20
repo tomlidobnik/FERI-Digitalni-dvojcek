@@ -1,16 +1,20 @@
 import {useState, useEffect} from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 // Match the App page button style: bg-quaternary text-white font-semibold rounded-lg
 const navButton =
   "flex items-center justify-center w-full py-3 mb-2 text-md lg:text-lg font-semibold rounded-lg bg-quaternary text-white transition-colors duration-200 shadow-md hover:bg-quaternary/80 focus:bg-quaternary/90";
 
+const navButtonCurrent =
+  "flex items-center justify-center w-full py-3 mb-2 text-md lg:text-lg font-semibold rounded-lg bg-quaternary/70 text-white shadow-md";
+
 const LeftSidebar = () => {
     const [navShow, setNavShow] = useState(false);
+    const location = useLocation().pathname;
 
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth > 768) { // Tailwind's md breakpoint
+            if (window.innerWidth > 1280) { // Tailwind's md breakpoint
                 setNavShow(false);
             }
         };
@@ -21,26 +25,24 @@ const LeftSidebar = () => {
     }, []);
 
     return (
-        <aside className="w-full md:w-fit lg:w-64 h-fit min-h-full flex flex-col p-4 md:rounded-3xl  bg-primary">
-      <div className="flex items-center justify-between md:mb-8 md:mt-2">
+        <aside className="w-full lg:w-64 h-fit min-h-full flex flex-col p-4 lg:rounded-3xl  bg-primary">
+      <div className="flex items-center justify-between lg:mb-8 lg:mt-2">
         <Link to="/">
             <h2 className="text-2xl lg:text-3xl font-bold text-text">
             Copycats
             </h2>
         </Link>
         <button
-        className="md:hidden"
+        className="lg:hidden"
         onClick={() => setNavShow((prev) => !prev)}
         aria-label="Toggle navigation"
         >
         <span className="relative inline-block w-8 h-8">
-            {/* Animated icon transition */}
             <span
             className={`absolute inset-0 transition-opacity duration-300 ease-in-out ${
                 navShow ? "opacity-100 scale-100" : "opacity-0 scale-90"
             }`}
             >
-            {/* Angle Down SVG */}
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="rounded-xl w-8 h-8 object-cover text-quaternary mr-2"
@@ -55,7 +57,6 @@ const LeftSidebar = () => {
                 navShow ? "opacity-0 scale-90" : "opacity-100 scale-100"
             }`}
             >
-            {/* Menu Burger SVG */}
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="rounded-xl w-8 h-8 object-cover text-quaternary mr-2"
@@ -77,18 +78,18 @@ const LeftSidebar = () => {
                 animation: "slideDown 0.3s cubic-bezier(0.4,0,0.2,1)"
                 }}
             >
-                <nav className="flex flex-col gap-0 md:gap-2 pt-3 md:pt-0">
-                <Link to="/home" className={navButton}>
+                <nav className="flex flex-col gap-0 lg:gap-2 pt-3 lg:pt-0">
+                <Link to="/home" className={location === "/home" ? "btn-nav-active" : "btn-nav"}>
                     Domov
                 </Link>
-                <Link to="/profile" className={navButton}>
+                <Link to="/profile" className={location === "/profile" ? "btn-nav-active" : "btn-nav"}>
                     Profil
                 </Link>
-                <Link to="/events" className={navButton}>
+                <Link to="/events" className={location === "/events" ? "btn-nav-active" : "btn-nav"}>
                     Dogodki
                 </Link>
                 </nav>
-                <nav className="md:pt-2 flex flex-col pt-0 md:mt-auto">
+                <nav className="lg:pt-2 flex flex-col pt-0 lg:mt-auto">
                 <Link to="/logout" className={navButton}>
                     Odjava
                 </Link>
@@ -96,18 +97,19 @@ const LeftSidebar = () => {
             </div>
             ) : (
             <>
-                <nav className="flex-col gap-0 md:gap-2 hidden md:flex">
-                <Link to="/home" className={navButton}>
+                <nav className="flex-col gap-0 md:gap-2 hidden lg:flex">
+                
+                <Link to="/home" className={location === "/home" ? "btn-nav-active" : "btn-nav"}>
                     Domov
                 </Link>
-                <Link to="/profile" className={navButton}>
+                <Link to="/profile" className={location === "/profile" ? "btn-nav-active" : "btn-nav"}>
                     Profil
                 </Link>
-                <Link to="/events" className={navButton}>
+                <Link to="/events" className={location === "/events" ? "btn-nav-active" : "btn-nav"}>
                     Dogodki
                 </Link>
                 </nav>
-                <nav className="md:pt-2 flex flex-col pt-0 md:mt-auto hidden md:block">
+                <nav className="lg:pt-2 flex flex-col pt-0 lg:mt-auto hidden lg:block">
                 <Link to="/logout" className={navButton}>
                     Odjava
                 </Link>

@@ -8,22 +8,16 @@ function NotFoundPage() {
                 <h2 className="text-2xl sm:text-4xl font-bold text-text">Stran ni bila najdena</h2>
                 <Link
                     to="/"
-                    className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-black/20 text-text font-semibold text-xl sm:text-2xl shadow hover:bg-quaternary/80 transition"
+                    className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-black/20 text-text font-semibold text-xl sm:text-2xl shadow hover:bg-quaternary/80 transition group"
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-6 h-6"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                    >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                    </svg>
+                    <img
+                        src="icons/angle-left.svg"
+                        className="w-6 h-6 xl:w-8 xl:h-8 transition-transform duration-300 group-hover:-translate-x-2"
+                        alt="home"
+                    />
                     Pojdi na domačo stran
                 </Link>
             </div>
-
         </div>
     )
 }

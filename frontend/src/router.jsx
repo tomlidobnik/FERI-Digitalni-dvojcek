@@ -95,14 +95,6 @@ const router = createBrowserRouter([
             </ErrorBoundary>
         ),
     },
-    {
-        path: "/home",
-        element: (
-            <ErrorBoundary FallbackComponent={ErrorPage}>
-                <Dashbord />
-            </ErrorBoundary>
-        ),
-    },
 ]);
 
 export default router;

@@ -129,7 +129,6 @@ const ChatBox = () => {
 
     return (
         <div className="min-h-screen p-6 text-text">
-            <h2 className="text-2xl font-bold mb-4">WebSocket Friend Chat</h2>
             <div className="flex items-center gap-3 mb-4">
                 <select
                     className="px-2 py-1 border rounded"

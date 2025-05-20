@@ -83,6 +83,14 @@ button:focus-visible {
     /*outline: 4px auto -webkit-focus-ring-color;*/
 }
 
+.btn-nav {
+  @apply flex items-center justify-center w-full py-3 mb-2 lg:text-lg font-semibold rounded-lg bg-quaternary text-white transition-colors duration-200 shadow-md hover:bg-quaternary/80 focus:bg-quaternary/90;
+}
+
+.btn-nav-active {
+  @apply flex items-center justify-center w-full py-3 mb-2 lg:text-lg font-semibold rounded-lg bg-quaternary/70 text-white shadow-md;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
