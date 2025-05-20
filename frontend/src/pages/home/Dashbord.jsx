@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Cookies from 'js-cookie';
 import LeftSidebar from "../../components/Sidebar/LeftSidebar.jsx";
 import Map from "../map/Map.jsx";
+import ListAllEvents from "../../components/Events/ListAllEvents.jsx";
 
 function Dashbord() {
 
@@ -29,8 +30,8 @@ function Dashbord() {
                             <Map />
                         </div>
                         {/* Bottom Left Window */}
-                        <div className="md:flex row-span-1 col-span-1 md:rounded-2xl md:shadow-xl items-center justify-center min-h-[120px]">
-                        <span className="text-xl text-gray-600">Dogodki</span>
+                        <div className="md:flex row-span-1 col-span-1 md:rounded-2xl md:shadow-xl p-4 min-h-[120px]">
+                            <ListAllEvents />
                         </div>
                         {/* Bottom Right Window */}
                         <div className="md:flex row-span-1 col-span-1 md:rounded-2xl md:shadow-xl items-center justify-center min-h-[120px]">
