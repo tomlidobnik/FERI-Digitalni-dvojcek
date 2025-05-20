@@ -24,7 +24,7 @@ function App() {
           Digitalni Dvojček
         </div>
         <div className="flex space-x-4">
-          <Link to="/" className="text-gray-900 hover:text-quaternary font-medium transition">Domov</Link>
+          <Link to="/home" className="text-gray-900 hover:text-quaternary font-medium transition">Domov</Link>
           {token ? (
             <Link to="/logout" className="text-gray-900 hover:text-quaternary font-medium transition">Odjava</Link>
           ) : (

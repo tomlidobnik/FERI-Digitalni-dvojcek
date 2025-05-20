@@ -2,7 +2,8 @@ import {
     createBrowserRouter,
     UNSAFE_getTurboStreamSingleFetchDataStrategy,
 } from "react-router-dom";
-import App from "./pages/home/App.jsx";
+import Dashbord from "./pages/home/Dashbord.jsx";
+import App from "./pages/App.jsx";
 import Login from "./pages/user/Login.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import { ErrorBoundary } from "react-error-boundary";
@@ -83,6 +84,14 @@ const router = createBrowserRouter([
         element: (
             <ErrorBoundary FallbackComponent={ErrorPage}>
                 <EventsMap />
+            </ErrorBoundary>
+        ),
+    },
+    {
+        path: "/home",
+        element: (
+            <ErrorBoundary FallbackComponent={ErrorPage}>
+                <Dashbord />
             </ErrorBoundary>
         ),
     },
