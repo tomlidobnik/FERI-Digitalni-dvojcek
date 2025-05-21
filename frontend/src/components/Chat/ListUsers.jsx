@@ -47,6 +47,7 @@ const ListUsers = () => {
                 )
                     .then((res) => res.json())
                     .then((data) => {
+                        console.log(data);
                         setFriendStatuses((prev) => ({
                             ...prev,
                             [user.username]: data.status,
@@ -165,23 +166,40 @@ const ListUsers = () => {
                             status && status.toLowerCase().includes("pending");
                         const isFriend = status === "Friends";
                         const isNotFriend = status === "Not Friends";
-                        let buttonText = "Add Friend";
-                        let buttonAction = () =>
-                            sendFriendRequest(user.username);
-                        let buttonColor = "bg-blue-500";
+                        const isAccept = status === "Accept Friend Request";
+                        let button1Text = "";
+                        let button1Action = () => {};
+                        let button1Color = "";
+                        let button2Text = "";
+                        let button2Action = () => {};
+                        let button2Color = "";
                         let buttonDisabled = false;
 
                         if (isFriend) {
-                            buttonText = "Remove Friend";
-                            buttonAction = () =>
+                            button1Text = "Remove Friend";
+                            button1Action = () =>
                                 removeFriendOrRequest(user.username);
-                            buttonColor = "bg-red-500";
+                            button1Color = "bg-red-500";
                         } else if (isPending) {
-                            buttonText = "Remove Request";
-                            buttonAction = () =>
+                            button1Text = "Remove Request";
+                            button1Action = () =>
                                 removeFriendOrRequest(user.username);
-                            buttonColor = "bg-yellow-500";
-                        } else if (!isNotFriend) {
+                            button1Color = "bg-yellow-500";
+                        } else if (isAccept) {
+                            button1Text = "Accept";
+                            button1Action = () =>
+                                sendFriendRequest(user.username);
+                            button1Color = "bg-green-500";
+                            button2Text = "Reject";
+                            button2Action = () =>
+                                removeFriendOrRequest(user.username);
+                            button2Color = "bg-red-500";
+                        } else if (isNotFriend) {
+                            button1Text = "Add Friend";
+                            button1Action = () =>
+                                sendFriendRequest(user.username);
+                            button1Color = "bg-blue-500";
+                        } else {
                             buttonDisabled = true;
                         }
 
@@ -190,12 +208,22 @@ const ListUsers = () => {
                                 key={user.id ?? user.username}
                                 className="mb-2 flex items-center gap-2">
                                 {user.username}
-                                <button
-                                    className={`ml-2 px-2 py-1 text-white rounded disabled:opacity-50 ${buttonColor}`}
-                                    onClick={buttonAction}
-                                    disabled={buttonDisabled}>
-                                    {buttonText}
-                                </button>
+                                {button1Text && (
+                                    <button
+                                        className={`ml-2 px-2 py-1 text-white rounded disabled:opacity-50 ${button1Color}`}
+                                        onClick={button1Action}
+                                        disabled={buttonDisabled}>
+                                        {button1Text}
+                                    </button>
+                                )}
+                                {button2Text && (
+                                    <button
+                                        className={`ml-2 px-2 py-1 text-white rounded disabled:opacity-50 ${button2Color}`}
+                                        onClick={button2Action}
+                                        disabled={buttonDisabled}>
+                                        {button2Text}
+                                    </button>
+                                )}
                                 <span className="ml-2 text-yellow-600">
                                     {status
                                         ? `Status: ${status}`
