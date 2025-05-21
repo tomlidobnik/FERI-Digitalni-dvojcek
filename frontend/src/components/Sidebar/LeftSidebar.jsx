@@ -14,7 +14,7 @@ const LeftSidebar = () => {
 
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth > 1280) { // Tailwind's md breakpoint
+            if (window.innerWidth > 1280) {
                 setNavShow(false);
             }
         };
@@ -79,14 +79,17 @@ const LeftSidebar = () => {
                 }}
             >
                 <nav className="flex flex-col gap-0 lg:gap-2 pt-3 lg:pt-0">
-                <Link to="/home" className={location === "/home" ? "btn-nav-active" : "btn-nav"}>
+                <Link to="/home" className={location.startsWith("/home") ? "btn-nav-active" : "btn-nav"}>
                     Domov
                 </Link>
-                <Link to="/profile" className={location === "/profile" ? "btn-nav-active" : "btn-nav"}>
+                <Link to="/profile" className={location.startsWith("/profile") ? "btn-nav-active" : "btn-nav"}>
                     Profil
                 </Link>
-                <Link to="/events" className={location === "/events" ? "btn-nav-active" : "btn-nav"}>
+                <Link to="/events" className={location.startsWith("/events") ? "btn-nav-active" : "btn-nav"}>
                     Dogodki
+                </Link>
+                <Link to="/map" className={location === "/map" ? "btn-nav-active" : "btn-nav"}>
+                    Mapa
                 </Link>
                 </nav>
                 <nav className="lg:pt-2 flex flex-col pt-0 lg:mt-auto">
@@ -99,14 +102,17 @@ const LeftSidebar = () => {
             <>
                 <nav className="flex-col gap-0 md:gap-2 hidden lg:flex">
                 
-                <Link to="/home" className={location === "/home" ? "btn-nav-active" : "btn-nav"}>
+                <Link to="/home" className={location.startsWith("/home") ? "btn-nav-active" : "btn-nav"}>
                     Domov
                 </Link>
-                <Link to="/profile" className={location === "/profile" ? "btn-nav-active" : "btn-nav"}>
+                <Link to="/profile" className={location.startsWith("/profile") ? "btn-nav-active" : "btn-nav"}>
                     Profil
                 </Link>
-                <Link to="/events" className={location === "/events" ? "btn-nav-active" : "btn-nav"}>
+                <Link to="/events" className={location.startsWith("/events") ? "btn-nav-active" : "btn-nav"}>
                     Dogodki
+                </Link>
+                <Link to="/map" className={location.startsWith("/map") ? "btn-nav-active" : "btn-nav"}>
+                    Mapa
                 </Link>
                 </nav>
                 <nav className="lg:pt-2 flex flex-col pt-0 lg:mt-auto hidden lg:block">
@@ -130,6 +136,9 @@ const LeftSidebar = () => {
             }
             `}
             </style>
+            <div className="hidden lg:block text-center text-text/70 text-sm">
+                {new Date().getFullYear()} Copycats
+            </div>
         </aside>
     );
 };

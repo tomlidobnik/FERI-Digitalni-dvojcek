@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import EventForList from "./EventForList";
+import EventForListDetail from "./EventForListDetail";
 import { Link } from "react-router-dom";
 
-const ListAllEvents = () => {
+const ListAllEventsDetail = () => {
     const API_URL = import.meta.env.VITE_API_URL;
 
     const [response, setResponse] = useState([]);
@@ -17,8 +17,8 @@ const ListAllEvents = () => {
     }, [API_URL]);
 
     return (
-        <div className="bg-primary w-full md:rounded-2xl shadow-2xl p-4 xl:p-6 h-full overflow-y-auto">
-            <h1 className="text-2xl xl:text-3xl font-bold text-text mb-4 ">Dogodki</h1>
+        <div className="w-full h-full overflow-y-auto p-4 xl:p-6">
+            <h1 className="text-2xl xl:text-5xl font-bold text-text mb-4 ">Dogodki</h1>
             <div className="flex flex-col ">
                 {response.length === 0 ? (
                     <>
@@ -26,7 +26,7 @@ const ListAllEvents = () => {
                     </>
                 ) : (
                     response.map((event) => (
-                        <EventForList
+                        <EventForListDetail
                             key={event.id}
                             event={event}
                         />
@@ -37,4 +37,4 @@ const ListAllEvents = () => {
     );
 };
 
-export default ListAllEvents;
+export default ListAllEventsDetail;

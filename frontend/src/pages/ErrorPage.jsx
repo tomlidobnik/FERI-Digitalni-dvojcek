@@ -11,7 +11,7 @@ function ErrorPage(error) {
                     className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-black/20 text-text font-semibold text-xl sm:text-2xl shadow hover:bg-quaternary/80 transition group"
                 >
                     <img
-                        src="icons/angle-left.svg"
+                        src="/icons/angle-left.svg"
                         className="w-6 h-6 xl:w-8 xl:h-8 transition-transform duration-300 group-hover:-translate-x-2"
                         alt="home"
                     />
