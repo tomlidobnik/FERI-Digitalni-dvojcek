@@ -179,15 +179,17 @@ Povpraševanje je določeno z množico točk, zapisanih v oglatih oklepajih. Pol
 
 = Gramatika z BNF notacijo
 ```
-  izraz   ::= SPREMENLJIVKA_DEF izraz* | POVPRAŠEVANJE izraz* | CITY izraz*
-  izraz*  ::= SPREMENLJIVKA_DEF izraz* | POVPRAŠEVANJE izraz* | CITY izraz* | ε
+  izraz   ::= izraz** izraz*
+  izraz*  ::= izraz izraz* | ε
+  izraz** ::= SPREMENLJIVKA_DEF | POVPRAŠEVANJE | CITY
 
   // definicija mesta
-  CITY ::= city["IME"] { BLOKS }
+  CITY ::= city["IME"] { BLOCKS }
 
   // definicija bloka
-  BLOKS ::= ROAD BLOKS* | BUILDING BLOKS* | AREA BLOKS* | LAKE BLOKS* | PARK BLOKS*
-  BLOKS* ::= ROAD BLOKS* | BUILDING BLOKS* | AREA BLOKS* | LAKE BLOKS* | PARK BLOKS* | ε
+  BLOCKS ::= BLOCK BLOCKS*
+  BLOCKS* ::= BLOCK BLOCKS* | ε
+  BLOCK ::= ROAD | BUILDING | AREA | LAKE | PARK
 
   ROAD ::= road["IME"] { POLYLINE }
   BUILDING ::= building["IME"] { IZRIS }
@@ -201,7 +203,6 @@ Povpraševanje je določeno z množico točk, zapisanih v oglatih oklepajih. Pol
   SPREMENLJIVKA_DEF ::= let @ IME = TOČKA;
 
   POLYLINE ::= polyline[TOČKE];
-
   POLYGON ::= polygon[TOČKE];
 
   KROG ::= circle KROG*
@@ -216,10 +217,13 @@ Povpraševanje je določeno z množico točk, zapisanih v oglatih oklepajih. Pol
   TOČKE* ::= , TOČKA TOČKE* | ε
 
   // definicija točke
-  TOČKA ::= ( KOORDINATA* , KOORDINATA* ) OPERACIJA | SPREMENLJIVKA OPERACIJA
-  KOORDINATA* ::= ŠTEVILO | FIRST_SECOND
+  TOČKA ::= TOČKA** TOČKA*
+  TOČKA* ::= OPERACIJA TOČKA** TOČKA* | ε
+  TOČKA** ::= ( KOORDINATA , KOORDINATA )  | SPREMENLJIVKA PERACIJA
 
-  OPERACIJA ::= + TOČKA | - TOČKA | ε
+  KOORDINATA ::= ŠTEVILO | FIRST_SECOND
+
+  OPERACIJA ::= + | - 
 
   // definicija FIRST in SECOND
   FIRST_SECOND ::= fst TOČKA | snd TOČKA
@@ -228,7 +232,7 @@ Povpraševanje je določeno z množico točk, zapisanih v oglatih oklepajih. Pol
   SPREMENLJIVKA ::= $IME
 
   ŠTEVILO ::= [0-9] ŠTEVILO*
-  ŠTEVILO** ::= [0-9] ŠTEVILO* | . REALNO | ε
+  ŠTEVILO* ::= [0-9] ŠTEVILO* | . REALNO | ε
   
   REALNO ::= [0-9] REALNO*
   REALNO* ::= [0-9] REALNO* | ε
@@ -238,11 +242,83 @@ Povpraševanje je določeno z množico točk, zapisanih v oglatih oklepajih. Pol
   IME* ::= [a-zA-Z0-9_] IME* | ε
 ```
 
-= Izračun FIRST in FOLLOW množic !
+= Izračun FIRST in FOLLOW množic
 
 == Izračun FIRST množic !
-
-== Izračun FOLLOW množic !
+```
+FIRST(IZRAZ) = { let, ?, city }
+FIRST(IZRAZ*) = { let, ?, city, ε }
+FIRST(IZRAZ**) = { let, ?, city }
+FIRST(CITY) = { city }
+FIRST(BLOCKS) = { road, building, area, lake, park }
+FIRST(BLOCKS*) = { road, building, area, lake, park, ε }
+FIRST(ROAD) = { road }
+FIRST(BUILDING) = { building }
+FIRST(AREA) = { area }
+FIRST(LAKE) = { lake }
+FIRST(PARK) = { park }
+FIRST(IZRIS) = { polygon, circle}
+FIRST(SPREMENLJIVKA_DEF) = { let}
+FIRST(POLYLINE) = { polyline }
+FIRST(POLYGON) = { polygon }
+FIRST(KROG) = { circle }
+FIRST(KROG*) = { [ }
+FIRST(KROG**) = { fst, snd, [0-9] }
+FIRST(POVPRAŠEVANJE) = { ? }
+FIRST(TOČKE) = { ( , $ }
+FIRST(TOČKE*) = { ,  ε }
+FIRST(TOČKA) = { ( , $ }
+FIRST(TOČKA*) = { + , - }
+FIRST(TOČKA**) = { ( , $ }
+FIRST(KOORDINATA) = { [0-9] , fst , snd}
+FIRST(OPERACIJA) = { + , - }
+FIRST(FIRST_SECOND) = { fst, snd }
+FIRST(SPREMELNJIVKA) = { $ }
+FIRST (ŠTEVILO) = { [0-9]}
+FIRST (ŠTEVILO*) = { [0-9], . , ε }
+FIRST(REALNO) = { [0-9] }
+FIRST(REALNO*) =  { [0-9], ε }
+FIRST(IME) = { [a-zA-Z0-9_] }
+FIRST(IME*) = { [a-zA-Z0-9_], ε }
+```
+== Izračun FOLLOW množic
+```
+FOLLOW(IZRAZ) = { let, ?, city, ε }
+FOLLOW(IZRAZ*) = { let, ?, city, ε }
+FOLLOW(IZRAZ**) = { let, ?, city, ε }
+FOLLOW(CITY) = { let, ?, city, ε }
+FOLLOW(BLOCKS) = { } }
+FOLLOW(BLOCKS*) = { } }
+FOLLOW(BLOCK) = { road, building, area, lake, park, }
+FOLLOW(ROAD) = { road, building, area, lake, park, }
+FOLLOW(BUILDING) = { road, building, area, lake, park, }
+FOLLOW(AREA) = { road, building, area, lake, park, }
+FOLLOW(LAKE) = { road, building, area, lake, park, }
+FOLLOW(PARK) = { road, building, area, lake, park, }
+FOLLOW(IZRIS) = { } }
+FOLLOW(SPREMENLJIVKA_DEF) = { let, ?, city, ε }
+FOLLOW(POLYLINE) = { } }
+FOLLOW(POLYGON) = { } }
+FOLLOW(KROG) = { } }
+FOLLOW(KROG*) = { } }
+FOLLOW(KROG**) = { ] }
+FOLLOW(POVPRAŠEVANJE) = { let, ?, city, ε }
+FOLLOW(TOČKE) = { ] }
+FOLLOW(TOČKE*) = { ] }
+FOLLOW(TOČKA) = { ; ,, ε, )}
+FOLLOW(TOČKA*) = { ; ,, ε, )}
+FOLLOW(TOČKA**) = { + , -}
+FOLLOW(KOORDINATA) = { , ) }
+FOLLOW(OPERACIJA) = { TOČKA } 
+FOLLOW(FIRST_SECOND) = { , ) }
+FOLLOW(SPREMELNJIVKA) =  { + , - , ε }
+FOLLOW(ŠTEVILO) = { , ) }
+FOLLOW(ŠTEVILO*) = { , ) }
+FOLLOW(REALNO) = { , )}
+FOLLOW(REALNO*) = { , ) }
+FOLLOW(IME) = { let, ?, city, ε }
+FOLLOW(IME*) = { let, ?, city, ε }
+```
 
 /*= Implementacija abstraktnega sintaktičnega drevesa
 
