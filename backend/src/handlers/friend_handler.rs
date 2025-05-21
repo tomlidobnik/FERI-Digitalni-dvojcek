@@ -163,8 +163,10 @@ pub async fn friend_status(
 
     let status_str = match existing_friendship {
         Some(f) if f.status == 0 => "Friends",
-        Some(_) => "Request Pending",
+        Some(f) if f.status == this_user_id => "Request Sent",
+        Some(f) if f.status == friend_user_id => "Accept Friend Request",
         None => "Not Friends",
+        Some(_) => "Request Pending",
     };
 
     Ok(Json(FriendStatusResponse {
