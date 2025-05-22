@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
+import "../index.css";
+import { FaHome, FaSignInAlt, FaUserPlus, FaSignOutAlt } from "react-icons/fa";
 
 function App() {
+  const [menuOpen, setMenuOpen] = useState(false);
   const token = Cookies.get("token");
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -19,11 +22,38 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-200">
       {/* Navbar */}
-      <nav className="fixed top-6 left-10 right-10 bg-white/60 backdrop-blur-md rounded-2xl shadow-lg flex items-center justify-between px-8 py-3 z-50">
+      <nav className="
+          fixed top-0 left-0 right-0 bg-white/60 shadow-md flex items-center justify-between px-4 py-3 z-50
+          md:top-6 md:left-2 md:right-2 md:bg-white/60 md:backdrop-blur-md md:rounded-2xl md:shadow-lg md:px-8 md:py-3"
+        >
         <div className="text-xl font-bold text-black">
           Digitalni Dvojček
         </div>
-        <div className="flex space-x-4">
+        {/* Hamburger button */}
+        <button
+            className="md:hidden absolute top-3 right-4 flex flex-col justify-center items-center w-10 h-8 z-50"
+            onClick={() => setMenuOpen((prev) => !prev)}
+            aria-label="gumb"
+          >
+            <span
+              className={`block h-0.5 w-6 bg-black transition-transform duration-300 ease-in-out transform origin-center ${
+                menuOpen ? "rotate-45 translate-y-1.5" : ""
+              }`}
+            />
+            <span
+              className={`block h-0.5 w-6 bg-black my-1 transition-opacity duration-300 ease-in-out ${
+                menuOpen ? "opacity-0" : "opacity-100"
+              }`}
+            />
+            <span
+              className={`block h-0.5 w-6 bg-black transition-transform duration-300 ease-in-out transform origin-center ${
+                menuOpen ? "-rotate-45 -translate-y-1.5" : ""
+              }`}
+            />
+          </button>
+
+        {/* Desktop menu */}
+        <div className="hidden md:flex space-x-4">
           <Link to="/home" className="text-gray-900 hover:text-quaternary font-medium transition">Domov</Link>
           {token ? (
             <Link to="/logout" className="text-gray-900 hover:text-quaternary font-medium transition">Odjava</Link>
@@ -34,6 +64,37 @@ function App() {
             </>
           )}
         </div>
+        {/* Mobile menu and backdrop */}
+        {menuOpen && (
+          <div>
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 backdrop-blur-none z-40 md:hidden animate-fadeIn"
+              onClick={() => setMenuOpen(false)}
+            />
+            {/* Side panel */}
+            <div
+              className={`
+                fixed top-0 left-0 h-full w-2/4 max-w-xs bg-white shadow-lg z-50 md:hidden
+                flex flex-col items-start pt-10 px-6 space-y-4
+                transition-transform duration-300 transform
+                ${menuOpen ? "translate-x-0 slide-in-left" : "-translate-x-full"}
+              `}
+              style={{ willChange: "transform" }}
+            >
+
+              <Link to="/home" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-black hover:text-quaternary font-medium transition"><FaHome /> Domov</Link>
+              {token ? (
+                <Link to="/logout" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-black hover:text-quaternary font-medium transition"><FaSignOutAlt /> Odjava</Link>
+              ) : (
+                <>
+                  <Link to="/login" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-black hover:text-quaternary font-medium transition"><FaSignInAlt /> Prijava</Link>
+                  <Link to="/register" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-black hover:text-quaternary font-medium transition"><FaUserPlus /> Registracija</Link>
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* Hero Section */}
