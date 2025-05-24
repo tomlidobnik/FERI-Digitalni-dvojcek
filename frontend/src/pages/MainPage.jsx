@@ -29,6 +29,7 @@ function MainPage() {
                         {location === "/map" ? <Map />: <></>}
                         {location === "/events" ? <Event />: <></>}
                         {location === "/events/add" ? <CreateEvent />: <></>}
+                        {location === "/events/edit" ? <EditEvent />: <></>}
                     </div>
 
                 </div>
