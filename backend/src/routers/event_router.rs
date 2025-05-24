@@ -13,4 +13,5 @@ pub fn create_router() -> Router {
         .route("/make_public/{id}", put(make_event_public))
         .route("/make_private/{id}", put(make_event_private))
         .route("/allow_user/{id}", post(add_event_allowed_user))
+        .route("/my", get(get_user_events))
 }
