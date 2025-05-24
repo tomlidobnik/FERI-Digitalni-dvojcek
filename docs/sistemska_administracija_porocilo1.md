@@ -238,6 +238,89 @@ volumes:
   db_data:
 ```
 
+<b>Najprej imamo db, ki je namenjen podatkovni bazi PostgreSQL:</b><br>
+`image: postgres:15-alpine`, uporabljamo verzijo 15, na Alpine Linux-u.
+
+`restart: always`, vedno se znova zažene, če gre kaj narobe ali če Docker pade.
+
+`environment`: inicializiramo bazo z uporabnikom, geslom in bazo db<br>
+  &nbsp;&nbsp;&nbsp;`POSTGRES_USER`: user<br>
+  &nbsp;&nbsp;&nbsp;`POSTGRES_PASSWORD`: password<br>
+  &nbsp;&nbsp;&nbsp;`POSTGRES_DB`: db
+
+`volumes`: trajno shranimo bazo znotraj Docker volume "db_data<br>
+&nbsp;&nbsp;&nbsp; - db_data:/var/lib/postgresql/data
+
+`ports`:povežemo lokalni port 5433 na "kontejnerjev" 5432.<br>
+&nbsp;&nbsp;&nbsp;- "5433:5432"<br>
+
+<b>Nato imamo zaledni del za razvoj, z Rust.</b><br>
+`build`: zgradi z Dockerfile.dev iz mape ./backend<br>
+  &nbsp;&nbsp;&nbsp;context: ./backend<br>
+  &nbsp;&nbsp;&nbsp;dockerfile: Dockerfile.dev<br>
+
+`environment`: uporablja se za povezavo do baze<br>
+  DATABASE_URL: postgres://user:password@db:5432/db <br>
+  RUST_LOG: debug (uporabljamo debug logging)<br>
+
+`volumes`: lokalno kodo lahko povežemo direktno v "konterjner", kar omogoča "hot reload", torej lahko vidimo spremembe datotek takoj.<br>
+&nbsp;&nbsp;&nbsp; - ./backend:/usr/src/backend<br>
+
+`command`: cargo watch -x run, spremljamo spremembe in znova zaženemo aplikacijo<br>
+
+`depends_on`: zažene zaledni del šele, ko je baza zagnana.<br>
+&nbsp;&nbsp;&nbsp;- db
+
+`ports`: port za lokalni dostop<br>
+  &nbsp;&nbsp;&nbsp;- "8000:8000"
+
+<b>Naslednje je zaledni del za produkcijo, z Rust:</b><br>
+`build`: zgradimo z Dockerfile<br>
+  &nbsp;&nbsp;&nbsp;context: ./backend<br>
+  &nbsp;&nbsp;&nbsp;dockerfile: Dockerfile
+
+`restart`: always, enako kot pri zalednem delu za razvoj, le da imamo manj vnosov v logih (info namesto debug)<br>
+`environment`:
+  &nbsp;&nbsp;&nbsp;DATABASE_URL: postgres://user:password@db:5432/db<br>
+  &nbsp;&nbsp;&nbsp;RUST_LOG: info<br>
+`depends_on`:<br>
+&nbsp;&nbsp;&nbsp;- db<br>
+`ports`:<br>
+  &nbsp;&nbsp;&nbsp;- "8000:8000"
+
+`volumes`:
+ &nbsp;&nbsp;&nbsp; - ./backend/.env:/app/.env:ro, "mountamo" .env datoteko, samo za branje. Uporabljamo za konfiguracijo.
+
+<b> Naslednjo je Vite čelni del za razvoj:</b><br>
+`build`: zgradi z Dockerfile.dev iz frontend mape<br>
+  &nbsp;&nbsp;&nbsp;context: ./frontend<br>
+  &nbsp;&nbsp;&nbsp;dockerfile: Dockerfile.dev
+
+`volumes`: "mount" za kodo (./frontend) in ločen mount za node_modules<br>
+  &nbsp;&nbsp;&nbsp;- ./frontend:/app<br>
+  &nbsp;&nbsp;&nbsp;- /app/node_modules
+
+`ports`: port za Vite<br>
+  &nbsp;&nbsp;&nbsp;- "5173:5173"
+
+`stdin_open`: true, omogoča "hot reloading"<br>
+`tty`: true
+
+`command`: npm run dev, zažene ukaz za zagon Vite strežnika.
+
+<b> Nato je Vite čelni del za produkcijo:</b><br>
+  `build`: uporabimo Dockerfile za grajenje aplikacije<br>
+    &nbsp;&nbsp;&nbsp;context: ./frontend<br>
+    &nbsp;&nbsp;&nbsp;dockerfile: Dockerfile
+
+`ports`: port za Vite<br>
+   &nbsp;&nbsp;&nbsp;-"3000:3000"
+
+<b>Na koncu pa imamo še "volumes":</b><br>
+`volumes`: imamo lokalni volumen za PostgreSQL, da se podatki ohranijo po izklopu "kontejnera".<br>
+  &nbsp;&nbsp;&nbsp;db_data:
+
+
 Zdaj lahko z ukazom
 
 ```sh
