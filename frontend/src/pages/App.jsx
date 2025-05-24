@@ -49,7 +49,7 @@ function App() {
           <h1 className="text-4xl md:text-6xl font-bold drop-shadow-lg">Organiziraj. Ustvari. Doživi.</h1>
           <p className="mt-4 text-lg md:text-xl drop-shadow">Dogodki, kjerkoli, kadarkoli.</p>
           <Link
-            to="/TODO"
+            to="/home"
             className="inline-block mt-6 px-6 py-3 bg-white text-black font-semibold rounded-full shadow hover:bg-quaternary hover:text-white transition"
           >
             Razišči Dogodke

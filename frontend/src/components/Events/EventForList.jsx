@@ -8,7 +8,7 @@ const EventForList = ({event}) => {
         </div>
             <Link
                 to="/event"
-                className="flex-shrink-0 text-right bg-black/10 rounded-2xl p-4 px-6 xl:px-8 flex items-center justify-center hover:bg-quaternary hover:text-white transition group"
+                className="flex-shrink-0 text-right bg-black/10 rounded-2xl p-4 px-6 xl:px-8 flex items-center justify-center hover:bg-quaternary/70 hover:text-white transition group"
             >
                 <img
                     src="icons/angle-double-right.svg"

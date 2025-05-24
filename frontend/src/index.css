@@ -1,4 +1,8 @@
 @import "tailwindcss";
+@import "flowbite/src/themes/default";
+@plugin "flowbite/plugin";
+@source "../node_modules/flowbite";
+
 
 @theme {
   --color-primary: #E5DCC5;
@@ -19,6 +23,18 @@
 
 ::selection {
   background: var(--color-tertiary);
+}
+
+body {
+  --color-text: var(--color-text);
+  --color-background: var(--color-background);
+}
+
+.description-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 :root {

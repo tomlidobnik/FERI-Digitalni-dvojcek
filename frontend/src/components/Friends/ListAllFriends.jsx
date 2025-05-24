@@ -17,7 +17,7 @@ const ListAllFriends = () => {
     }, [API_URL]);
 
     return (
-        <div className="bg-primary w-full md:rounded-2xl shadow-2xl p-4 xl:p-6 pt-16 md:pt-4 h-full overflow-y-auto pb-8 md:pb-0">
+        <div className=" bg-linear-to-t to-quaternary/35 from-quaternary/80 md:to-primary md:from-quaternary/50 lg:bg-none lg:bg-primary w-full md:rounded-2xl md:shadow-2xl p-4 xl:p-6 pt-16 md:pt-4 h-full overflow-y-auto pb-8 md:pb-0">
                 {response.length === 0 ? (
                     <>
                         <h1 className="flex flex-col text-2xl xl:text-3xl font-bold text-text mb-4 h-1/12">Chat</h1>

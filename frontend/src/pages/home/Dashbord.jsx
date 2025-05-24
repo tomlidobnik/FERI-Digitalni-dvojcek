@@ -19,7 +19,7 @@ function Dashbord() {
 
     return (
         <>
-            <div className="flex flex-col lg:flex-row h-screen">
+            <div className="flex flex-col lg:flex-row h-screen ">
                 <div className="lg:pr-0 lg:p-6 w-full lg:h-full lg:w-auto">
                     <LeftSidebar />
                 </div>
@@ -35,11 +35,11 @@ function Dashbord() {
                             <ListAllFriends />
                         </div>
                     </div>
-                    <div className="text-lg bg-quaternary text-center py-4 lg:hidden block relative bottom-0 left-0 right-0">
-                        {new Date().getFullYear()} Copycats
-                    </div>
                 </div>
             </div>
+                                <div className="text-lg bg-quaternary text-center py-4 lg:hidden block relative bottom-0 left-0 right-0">
+                        {new Date().getFullYear()} Copycats
+                    </div>
         </>
 
     );

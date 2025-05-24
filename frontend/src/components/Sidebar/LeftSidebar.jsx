@@ -91,6 +91,12 @@ const LeftSidebar = () => {
                 <Link to="/map" className={location === "/map" ? "btn-nav-active" : "btn-nav"}>
                     Mapa
                 </Link>
+                <Link to="/friends" className={location.startsWith("/friends") ? "btn-nav-active" : "btn-nav"}>
+                    Prijatelji
+                </Link>
+                <Link to="/chat" className={location.startsWith("/chat") ? "btn-nav-active" : "btn-nav"}>
+                    Klepetalnica
+                </Link>
                 </nav>
                 <nav className="lg:pt-2 flex flex-col pt-0 lg:mt-auto">
                 <Link to="/logout" className={navButton}>
@@ -113,6 +119,12 @@ const LeftSidebar = () => {
                 </Link>
                 <Link to="/map" className={location.startsWith("/map") ? "btn-nav-active" : "btn-nav"}>
                     Mapa
+                </Link>
+                <Link to="/friends" className={location.startsWith("/friends") ? "btn-nav-active" : "btn-nav"}>
+                    Prijatelji
+                </Link>
+                <Link to="/chat" className={location.startsWith("/chat") ? "btn-nav-active" : "btn-nav"}>
+                    Klepetalnica
                 </Link>
                 </nav>
                 <nav className="lg:pt-2 flex flex-col pt-0 lg:mt-auto hidden lg:block">

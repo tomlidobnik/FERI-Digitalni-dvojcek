@@ -17,7 +17,7 @@ const ListAllEvents = () => {
     }, [API_URL]);
 
     return (
-        <div className="bg-primary w-full md:rounded-2xl shadow-2xl p-4 xl:p-6 h-full overflow-y-auto">
+        <div className="bg-linear-to-t to-primary from-quaternary/35 md:from-quaternary/50 lg:bg-none lg:bg-primary w-full md:rounded-2xl md:shadow-2xl p-4 xl:p-6 h-full overflow-y-auto">
             <h1 className="text-2xl xl:text-3xl font-bold text-text mb-4 ">Dogodki</h1>
             <div className="flex flex-col ">
                 {response.length === 0 ? (
