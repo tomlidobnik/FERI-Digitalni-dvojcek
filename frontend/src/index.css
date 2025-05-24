@@ -53,6 +53,20 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+.radio-custom {
+  @apply appearance-none w-5 h-5 border-2 border-quaternary rounded-full bg-black/10 
+    checked:bg-primary checked:border-primary checked:ring-2 checked:ring-primary transition;
+  vertical-align: middle;
+  margin-right: 0.75rem;
+}
+
+.radio-label {
+  @apply flex items-center cursor-pointer text-xl font-semibold mb-1;
+}
+.radio-custom:checked + span {
+  @apply text-quaternary font-bold;
+}
+
 input:-webkit-autofill,
 input:-webkit-autofill:focus {
     transition: background-color 600000s 0s, color 600000s 0s;

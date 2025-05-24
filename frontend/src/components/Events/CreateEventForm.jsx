@@ -15,10 +15,13 @@ export default function CreateEventForm() {
     const changeStartTime = (value) => {
         setStartTime(value);
         clearErrors("starttime");
+        clearErrors("endtime");
     };
+
     const changeEndTime = (value) => {
         setEndTime(value);
         clearErrors("endtime");
+        clearErrors("starttime");
     };
 
     const pad = (num) => num.toString().padStart(2, '0');
@@ -32,65 +35,68 @@ export default function CreateEventForm() {
         setError,
         clearErrors,
         formState: { errors },
-    } = useForm();
+    } = useForm({
+        defaultValues: {
+            public: "true",
+        },
+    });
 
     useEffect(() => { // preusmeritev uporabnika če je že prijavljen
 
     });
 
-    const onSubmit = async (data) => {
-        clearErrors();
-        try{
-            const eventData = {
-                title: data.title,
-                description: data.description,
-                start_date: toLocalISOString(startTime),
-                end_date: toLocalISOString(endTime),
-                location: null,
-                public: data.public === "true",
-            };
-            if (startTime >= endTime) {
-                setError("starttime", {
-                    message: "Začetni čas mora biti pred končnim časom",
-                });
-                console.log("Začetni čas mora biti pred končnim časom");
-                return;
-            }
-            else{
-                console.log(eventData);
-                const response = await fetch(`https://${import.meta.env.VITE_API_URL}/api/event/create`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(eventData),
-                });
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    if (errorData.error) {
-                        setError("root", {
-                            message: errorData.error,
-                        });
-                    } else {
-                        setError("root", {
-                            message: "Napaka pri registraciji uporabnika",
-                        });
-                    }
-                    return;
-                }else {
-                    navigate("/login");
-                }
-            }
-        }catch (error) {
-            setError("root", {
-                message: "Napaka ustvarjanju dogodka",
+const onSubmit = async (data) => {
+    clearErrors();
+    try {
+        const token = Cookies.get("token");
+        const eventData = {
+            title: data.title,
+            description: data.description,
+            start_date: toLocalISOString(startTime),
+            end_date: toLocalISOString(endTime),
+            location_fk: null,
+            public: data.public === "true",
+        };
+        if (startTime >= endTime) {
+            setError("starttime", {
+                message: "Začetni čas mora biti pred končnim časom",
             });
+            return;
+        } else {
+            const response = await fetch(`https://${import.meta.env.VITE_API_URL}/api/event/create`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token ? `Bearer ${token}` : "",
+                },
+                body: JSON.stringify(eventData),
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                if (errorData.error) {
+                    setError("root", {
+                        message: errorData.error,
+                    });
+                } else {
+                    setError("root", {
+                        message: "Napaka pri ustvarjanju dogodka",
+                    });
+                }
+                return;
+            } else if (response.ok) {
+                navigate("/events");
+            }
         }
+    } catch (error) {
+        setError("root", {
+            message: "Napaka ustvarjanju dogodka (client)",
+        });
     }
+};
 
     return (
-        <>
-                <h1 className="text-2xl xl:text-5xl mb-4 font-bold md:w-96 w-full text-left">Ustvari dogodek</h1>
+        <div className="flex flex-col w-full h-full min-h-fit p-4 xl:p-6 overflow-y-auto">
+                <h1 className="text-2xl xl:text-5xl mb-4 font-bold md:w-96 text-left">Ustvari dogodek</h1>
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full">
                     <div className="flex flex-col gap-0.5">
                         <label className="font-semibold text-xl">Naslov</label>
@@ -139,22 +145,22 @@ export default function CreateEventForm() {
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-1">
-                        <label>
+                    <div className="flex flex-col gap-1 w-fit">
+                        <label className="radio-label">
                             <input
                                 type="radio"
                                 {...register("public", { required: true })}
                                 value="true"
-                                className="bg-black/10 p-3 text-xl rounded-2xl shadow-md focus:border-tertiary focus:outline-tertiary focus:outline-0 border-black/20 border-4 mr-4"
+                                className="radio-custom bg-black/10 p-3 text-xl rounded-2xl shadow-md focus:border-tertiary focus:outline-tertiary focus:outline-0 border-black/20 border-4 mr-4"
                             />
                             Javno
                         </label>
-                        <label>
+                        <label className="radio-label">
                             <input
                                 type="radio"
                                 {...register("public", { required: true })}
                                 value="false"
-                                className="bg-black/10 p-3 text-xl rounded-2xl shadow-md focus:border-tertiary focus:outline-tertiary focus:outline-0 border-black/20 border-4 mr-4"
+                                className="radio-custom bg-black/10 p-3 text-xl rounded-2xl shadow-md focus:border-tertiary focus:outline-tertiary focus:outline-0 border-black/20 border-4 mr-4"
                             />
                             Privat
                         </label>
@@ -163,11 +169,13 @@ export default function CreateEventForm() {
                         </div>
                     </div>
 
-                    <button type="submit" className="btn-nav" >Ustvari</button>
+                    <div className="w-32">
+                        <button type="submit" className="btn-nav" >Ustvari</button>
+                    </div>
                     <div className="text-error h-2 font-semibold w-full text-center">
                             {errors.root && <>{errors.root.message}</>}
                     </div>
                 </form>
-            </>
+            </div>
     );
 }

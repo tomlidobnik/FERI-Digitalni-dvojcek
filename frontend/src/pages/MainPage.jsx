@@ -24,8 +24,8 @@ function MainPage() {
                 <div className="lg:pr-0 lg:p-6 w-full lg:h-full lg:w-auto">
                     <LeftSidebar />
                 </div>
-                <div className="flex-1 ml-0 h-full min-h-[600px] overflow-y-auto">
-                    <div className="flex flex-col h-full min-h-full md:p-6">
+                <div className="flex-1 ml-0 h-full overflow-y-auto">
+                    <div className="flex flex-col h-full md:p-6">
                         {location === "/map" ? <Map />: <></>}
                         {location === "/events" ? <Event />: <></>}
                         {location === "/events/add" ? <CreateEvent />: <></>}
