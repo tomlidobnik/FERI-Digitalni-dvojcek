@@ -1,4 +1,8 @@
 @import "tailwindcss";
+@import "flowbite/src/themes/default";
+@plugin "flowbite/plugin";
+@source "../node_modules/flowbite";
+
 
 @theme {
   --color-primary: #E5DCC5;
@@ -21,6 +25,18 @@
   background: var(--color-tertiary);
 }
 
+body {
+  --color-text: var(--color-text);
+  --color-background: var(--color-background);
+}
+
+.description-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -35,6 +51,20 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+.radio-custom {
+  @apply appearance-none w-5 h-5 border-2 border-quaternary rounded-full bg-black/10 
+    checked:bg-primary checked:border-primary checked:ring-2 checked:ring-primary transition;
+  vertical-align: middle;
+  margin-right: 0.75rem;
+}
+
+.radio-label {
+  @apply flex items-center cursor-pointer text-xl font-semibold mb-1;
+}
+.radio-custom:checked + span {
+  @apply text-quaternary font-bold;
 }
 
 input:-webkit-autofill,
