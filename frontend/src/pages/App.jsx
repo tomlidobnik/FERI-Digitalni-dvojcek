@@ -107,10 +107,15 @@ function App() {
       >
         <div className="absolute inset-0 bg-tertiary bg-opacity-40" />
         <div className="relative z-10 text-white text-center px-4">
-          <h1 className="text-4xl md:text-6xl font-bold drop-shadow-lg">Organiziraj. Ustvari. Doživi.</h1>
+          <h1 className="text-4xl md:text-6xl font-bold drop-shadow-lg">
+            <span className="block md:inline">Organiziraj.</span>{" "}
+            <span className="block md:inline">Ustvari.</span>{" "}
+            <span className="block md:inline">Doživi.</span>
+          </h1>
+
           <p className="mt-4 text-lg md:text-xl drop-shadow">Dogodki, kjerkoli, kadarkoli.</p>
           <Link
-            to="/TODO"
+            to="/home"
             className="inline-block mt-6 px-6 py-3 bg-white text-black font-semibold rounded-full shadow hover:bg-quaternary hover:text-white transition"
           >
             Razišči Dogodke
