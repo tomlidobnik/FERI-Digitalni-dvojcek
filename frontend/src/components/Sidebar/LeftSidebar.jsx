@@ -157,11 +157,11 @@ const LeftSidebar = () => {
                 </nav>
                 <Link to="/profile/public" className="mt-auto pt-16 lg:flex items-center gap-3 mb-2 hidden">
                     <div className="w-10 h-10 rounded-full bg-quaternary flex items-center justify-center text-white text-xl font-bold shadow">
-                        {user.username ? user.username.charAt(0).toUpperCase() : "U"}
+                        {user ? <>{user.username ? user.username.charAt(0).toUpperCase() : "U"}</>: "U"}
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-lg font-semibold whitespace-nowrap overflow-hidden text-ellipsis w-42">{user.username ? user.username : "User"}</span>
-                        <span className=" text-black/60 whitespace-nowrap overflow-hidden text-ellipsis w-42 text-sm">{user.email ? user.email : "Email"}</span>
+                        <span className="text-lg font-semibold whitespace-nowrap overflow-hidden text-ellipsis w-42">{user ? <> {user.username ? user.username : "User"} </> : "User"}</span>
+                        <span className=" text-black/60 whitespace-nowrap overflow-hidden text-ellipsis w-42 text-sm">{user ? <> {user.email ? user.email:"Email"} </>  : "Email"}</span>
                     </div>
                 </Link>
                 <nav className="lg:pt-2 flex flex-col pt-0 hidden lg:block border-t-4 border-black/40">
