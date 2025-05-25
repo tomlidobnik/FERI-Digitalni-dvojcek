@@ -31,7 +31,8 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-dao:0.49.0")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.49.0")
     implementation("it.skrape:skrapeit:1.2.2")
-    implementation("io.github.serpro69:kotlin-faker:1.14.0")
+    implementation("io.github.serpro69:kotlin-faker:1.6.0")
+    implementation("com.github.javafaker:javafaker:1.0.2")
 
 }
 

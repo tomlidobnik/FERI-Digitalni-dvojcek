@@ -11,9 +11,10 @@ class userGenerate {
             User(
                 id = it + 1,
                 username = faker.name.name(),
+                firstname = faker.name.firstName(),
+                lastname = faker.name.lastName(),
                 email = faker.internet.email(),
-                password = faker.password(),
-                created_at = faker.date.past().toLocalDateTime()
+                password = faker.lorem.words(),
             )
         }
     }
