@@ -58,7 +58,7 @@ const router = createBrowserRouter([
         ),
     },
     {
-        path: "/friend_chat",
+        path: "/chat",
         element: (
             <ErrorBoundary FallbackComponent={ErrorPage}>
                 <FriendChat />
@@ -66,7 +66,7 @@ const router = createBrowserRouter([
         ),
     },
     {
-        path: "/add_friends",
+        path: "/friends",
         element: (
             <ErrorBoundary FallbackComponent={ErrorPage}>
                 <ListUsers />
@@ -107,6 +107,14 @@ const router = createBrowserRouter([
     },
     {
         path: "/events/add",
+        element: (
+            <ErrorBoundary FallbackComponent={ErrorPage}>
+                <MainPage />
+            </ErrorBoundary>
+        ),
+    },
+        {
+        path: "/event/edit",
         element: (
             <ErrorBoundary FallbackComponent={ErrorPage}>
                 <MainPage />

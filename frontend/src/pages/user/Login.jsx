@@ -50,7 +50,7 @@ export default function Login() {
                 //console.log("User logged in successfully");
                 const token = await response.text();
                 const expirationDate = new Date(Date.now() + 30 * 60 * 1000);
-                Cookies.set("token", token, { expires: expirationDate, secure: true });
+                Cookies.set("token", token, { expires: expirationDate, sameSite: "strict" });
 
                 const storedToken = Cookies.get("token");
                 if (storedToken) {

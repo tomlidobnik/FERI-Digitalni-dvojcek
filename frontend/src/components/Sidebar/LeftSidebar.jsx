@@ -14,7 +14,7 @@ const LeftSidebar = () => {
 
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth > 1280) {
+            if (window.innerWidth > 1024) {
                 setNavShow(false);
             }
         };
@@ -25,7 +25,7 @@ const LeftSidebar = () => {
     }, []);
 
     return (
-        <aside className="w-full lg:w-64 h-fit min-h-full flex flex-col p-4 lg:rounded-3xl  bg-primary">
+        <aside className="w-full lg:w-64 h-fit min-h-full flex flex-col p-4 lg:rounded-3xl  bg-primary border-b-2 border-black/30">
       <div className="flex items-center justify-between lg:mb-8 lg:mt-2">
         <Link to="/">
             <h2 className="text-2xl lg:text-3xl font-bold text-text">
@@ -79,6 +79,7 @@ const LeftSidebar = () => {
                 }}
             >
                 <nav className="flex flex-col gap-0 lg:gap-2 pt-3 lg:pt-0">
+
                 <Link to="/home" className={location.startsWith("/home") ? "btn-nav-active" : "btn-nav"}>
                     Domov
                 </Link>
@@ -106,29 +107,65 @@ const LeftSidebar = () => {
             </div>
             ) : (
             <>
-                <nav className="flex-col gap-0 md:gap-2 hidden lg:flex">
-                
-                <Link to="/home" className={location.startsWith("/home") ? "btn-nav-active" : "btn-nav"}>
+                <nav className="flex-col gap-0 md:gap-3 hidden lg:flex">
+                <Link to="/home" className={location.startsWith("/home") ? "btn-nav-active-side" : "btn-nav-side"}>
+                                <img
+                    src="/icons/home.svg"
+                    className="w-6 h-6 lg:w-8 lg:h-8 mr-2"
+                    />
                     Domov
                 </Link>
-                <Link to="/profile" className={location.startsWith("/profile") ? "btn-nav-active" : "btn-nav"}>
+                <Link to="/profile" className={location.startsWith("/profile") ? "btn-nav-active-side" : "btn-nav-side"}>
+                    <img
+                    src="/icons/user.svg"
+                    className="w-6 h-6 lg:w-8 lg:h-8 mr-2"
+                    />
                     Profil
                 </Link>
-                <Link to="/events" className={location.startsWith("/events") ? "btn-nav-active" : "btn-nav"}>
+                <Link to="/events" className={location.startsWith("/events") ? "btn-nav-active-side" : "btn-nav-side"}>
+                    <img
+                    src="/icons/calendar-day.svg"
+                    className="w-6 h-6 lg:w-8 lg:h-8 mr-2"
+                    />
                     Dogodki
                 </Link>
-                <Link to="/map" className={location.startsWith("/map") ? "btn-nav-active" : "btn-nav"}>
+                <Link to="/map" className={location.startsWith("/map") ? "btn-nav-active-side" : "btn-nav-side"}>
+                    <img
+                    src="/icons/map.svg"
+                    className="w-6 h-6 lg:w-8 lg:h-8 mr-2"
+                    />
                     Mapa
                 </Link>
-                <Link to="/friends" className={location.startsWith("/friends") ? "btn-nav-active" : "btn-nav"}>
+                <Link to="/friends" className={location.startsWith("/friends") ? "btn-nav-active-side" : "btn-nav-side"}>
+                                    <img
+                    src="/icons/users-alt.svg"
+                    className="w-6 h-6 lg:w-8 lg:h-8 mr-2"
+                    />
                     Prijatelji
                 </Link>
-                <Link to="/chat" className={location.startsWith("/chat") ? "btn-nav-active" : "btn-nav"}>
+                <Link to="/chat" className={location.startsWith("/chat") ? "btn-nav-active-side" : "btn-nav-side"}>
+                     <img
+                    src="/icons/comment-alt.svg"
+                    className="w-6 h-6 lg:w-8 lg:h-8 mr-2"
+                    />
                     Klepetalnica
                 </Link>
                 </nav>
-                <nav className="lg:pt-2 flex flex-col pt-0 lg:mt-auto hidden lg:block">
-                <Link to="/logout" className={navButton}>
+                <Link to="/profile/public" className="mt-auto pt-16 lg:flex items-center gap-3 mb-2 hidden">
+                    <div className="w-10 h-10 rounded-full bg-quaternary flex items-center justify-center text-white text-xl font-bold shadow">
+                        J
+                    </div>
+                    <div className="flex flex-col">
+                        <span className="text-lg font-semibold whitespace-nowrap overflow-hidden text-ellipsis w-42">JoeDoe</span>
+                        <span className=" text-black/60 whitespace-nowrap overflow-hidden text-ellipsis w-42 text-sm">joe.doe@gmail.com</span>
+                    </div>
+                </Link>
+                <nav className="lg:pt-2 flex flex-col pt-0 hidden lg:block border-t-4 border-black/40">
+                <Link to="/logout" className="btn-nav-side">
+                                    <img
+                    src="/icons/user-logout.svg"
+                    className="w-6 h-6 lg:w-8 lg:h-8 mr-2"
+                    />
                     Odjava
                 </Link>
                 </nav>
@@ -148,9 +185,6 @@ const LeftSidebar = () => {
             }
             `}
             </style>
-            <div className="hidden lg:block text-center text-text/70 text-sm">
-                {new Date().getFullYear()} Copycats
-            </div>
         </aside>
     );
 };

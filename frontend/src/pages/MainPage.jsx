@@ -6,6 +6,7 @@ import Map from "./map/LocationsMap.jsx";
 import Event from "../components/Events/Event.jsx";
 import ListAllFriends from "../components/Friends/ListAllFriends.jsx";
 import CreateEvent from "../components/Events/CreateEvent.jsx";
+import EditEvent from "../components/Events/EditEvent.jsx";
 
 function MainPage() {
     const navigate = useNavigate();
@@ -29,6 +30,7 @@ function MainPage() {
                         {location === "/map" ? <Map />: <></>}
                         {location === "/events" ? <Event />: <></>}
                         {location === "/events/add" ? <CreateEvent />: <></>}
+                        {location === "/event/edit" ? <EditEvent />: <></>}
                     </div>
 
                 </div>

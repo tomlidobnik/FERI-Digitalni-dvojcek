@@ -3,11 +3,17 @@ import { useForm } from "react-hook-form";
 import Cookies from 'js-cookie';
 import { useEffect, useState } from "react";
 import DateTimePicker from 'react-datetime-picker';
+import 'react-datetime-picker/dist/DateTimePicker.css';
+import 'react-calendar/dist/Calendar.css';
+import 'react-clock/dist/Clock.css';
+import { useSelector } from "react-redux";
 
-export default function CreateEventForm() {
+export default function EditEventForm() {
     const navigate = useNavigate();
+    const event = useSelector((state) => state.event); 
     const [startTime, setStartTime] = useState(new Date());
     const [endTime, setEndTime] = useState(new Date());
+
 
     const changeStartTime = (value) => {
         setStartTime(value);
@@ -34,19 +40,32 @@ export default function CreateEventForm() {
         formState: { errors },
     } = useForm({
         defaultValues: {
-            public: "true",
+            public: event.public ? "true" : "false",
+            title: event.title || "",
+            description: event.description || "",
         },
     });
 
     useEffect(() => { // preusmeritev uporabnika če je že prijavljen
-
-    });
+        const token = Cookies.get("token");
+        if (!token) {
+            navigate("/login");
+        }
+        if (event.title === ""){
+            navigate("/events");
+            return;
+        }else {
+            setStartTime(new Date(event.start_date));
+            setEndTime(new Date(event.end_date));
+        }
+    }, [navigate]);
 
 const onSubmit = async (data) => {
     clearErrors();
     try {
         const token = Cookies.get("token");
         const eventData = {
+            id: event.id,
             title: data.title,
             description: data.description,
             start_date: toLocalISOString(startTime),
@@ -60,13 +79,13 @@ const onSubmit = async (data) => {
             });
             return;
         } else {
-            const response = await fetch(`https://${import.meta.env.VITE_API_URL}/api/event/create`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: token ? `Bearer ${token}` : "",
-                },
-                body: JSON.stringify(eventData),
+            const response = await fetch(`https://${import.meta.env.VITE_API_URL}/api/event/update`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+            body: JSON.stringify(eventData),
             });
             if (!response.ok) {
                 const errorData = await response.json();
@@ -102,7 +121,7 @@ const onSubmit = async (data) => {
                 <img src="/icons/angle-left.svg" alt="Nazaj" className="w-6 h-6" />
                 Nazaj
             </button>
-                <h1 className="text-2xl xl:text-5xl mb-4 font-bold md:w-96 text-left">Ustvari dogodek</h1>
+                <h1 className="text-2xl xl:text-5xl mb-4 font-bold md:w-96 text-left">Uredi dogodek</h1>
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full">
                     <div className="flex flex-col gap-0.5">
                         <label className="font-semibold text-xl">Naslov</label>
@@ -150,7 +169,7 @@ const onSubmit = async (data) => {
                             className="bg-black/10 p-3 text-xl rounded-2xl shadow-md focus:border-tertiary focus:outline-tertiary focus:outline-0 border-black/20 border-4"
                             value="TODO (ne deluje sedaj)"
                             readOnly
-                        />
+                        />                        
                         <div className="text-error h-2">
                             {errors.password && <>{errors.password.message}</>}
                         </div>
@@ -181,7 +200,7 @@ const onSubmit = async (data) => {
                     </div>
 
                     <div className="w-32">
-                        <button type="submit" className="btn-nav" >Ustvari</button>
+                        <button type="submit" className="btn-nav" >Shrani</button>
                     </div>
                     <div className="text-error h-2 font-semibold w-full text-center">
                             {errors.root && <>{errors.root.message}</>}
