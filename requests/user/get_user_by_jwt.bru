@@ -1,0 +1,16 @@
+meta {
+  name: get_user_by_jwt
+  type: http
+  seq: 7
+}
+
+get {
+  url: https://0.0.0.0:8000/api/user/by_token
+  body: none
+  auth: inherit
+}
+
+script:pre-request {
+  const token = bru.getVar("token");
+  req.setHeader("Authorization", `Bearer ${token}`);
+}
