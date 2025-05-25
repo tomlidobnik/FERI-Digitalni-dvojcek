@@ -1,19 +1,29 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import ListAllEventsDetail from "./ListAllEventsDetail";
+import { useSelector } from "react-redux";
+import { setEventFilter } from "../../state/window/eventFilterSlice";
 
 const Event = () => {
-    const [selectMode, setSelectMode] = useState(0);
+    const [selectMode, setSelectMode] = useState(useSelector((state) => state.eventFilter.value));
     const [menuOpen, setMenuOpen] = useState(false);
+    const dispatch = useDispatch();
+
+    const handleSelectMode = (mode) => {
+        setMenuOpen(false);
+        dispatch(setEventFilter({ mode }));
+        setSelectMode(mode);
+    };
 
     return (
-        <div className="flex flex-col min-h-[700px] h-full md:rounded-2xl shadow-2xl bg-primary">
+        <div className="flex flex-col md:min-h-[700px] h-full md:rounded-2xl shadow-2xl bg-primary">
             <div className="max-h-screen overflow-y-auto">
                 <ListAllEventsDetail selectMode={selectMode}/>
             </div>
             
             {!menuOpen?  (
-                <div className="md:hidden flex justify-center p-4 bg-transparent fixed mb-16 bottom-0 left-0 right-0 z-50 ">
+                <div className="md:hidden flex justify-center p-4 bg-transparent fixed bottom-0 left-0 right-0 z-50 ">
                     <button
                         onClick={() => setMenuOpen(!menuOpen)}
                         className="p-2 rounded bg-black/20 "
@@ -24,7 +34,7 @@ const Event = () => {
                 </div>
             ): null}
 
-            <div className={`flex-col md:flex-row h-fit gap-2 bg-black/10 p-4 md:rounded-b-2xl mt-auto fixed bottom-0 w-full md:static z-50 mb-15 md:mb-0 backdrop-blur-sm
+            <div className={`flex-col md:flex-row h-fit gap-2 bg-black/10 p-4 md:rounded-b-2xl mt-auto fixed bottom-0 w-full md:static z-50 backdrop-blur-sm
                 ${menuOpen ? "flex" : "hidden"} md:flex`}>
                 <div className="w-full flex justify-center md:hidden">
                     <button
@@ -35,19 +45,19 @@ const Event = () => {
                         <img src="/icons/angle-down.svg" alt="Meni" className="w-8 h-8" />
                     </button>
                 </div>
-                <Link className={selectMode === 0 ? "btn-nav-active" : "btn-nav"} onClick={() => { setSelectMode(0); setMenuOpen(false); }}>
+                <Link className={selectMode === 0 ? "btn-nav-active" : "btn-nav"} onClick={() => handleSelectMode(0)}>
                     <div className="text-2xl text-center md:p-1">Vsi dogodki</div>
                 </Link>
-                <Link className={selectMode === 1 ? "btn-nav-active" : "btn-nav"} onClick={() => { setSelectMode(1); setMenuOpen(false); }}>
+                <Link className={selectMode === 1 ? "btn-nav-active" : "btn-nav"} onClick={() => handleSelectMode(1)}>
                     <div className="text-2xl text-center md:p-1">Trenutni dogodki</div>
                 </Link>
-                <Link className={selectMode === 2 ? "btn-nav-active" : "btn-nav"} onClick={() => { setSelectMode(2); setMenuOpen(false); }}>
+                <Link className={selectMode === 2 ? "btn-nav-active" : "btn-nav"} onClick={() => handleSelectMode(2)}>
                     <div className="text-2xl text-center md:p-1">Prihajajoči dogodki</div>
                 </Link>
-                <Link className={selectMode === 3 ? "btn-nav-active" : "btn-nav"} onClick={() => { setSelectMode(3); setMenuOpen(false); }}>
+                <Link className={selectMode === 3 ? "btn-nav-active" : "btn-nav"} onClick={() => handleSelectMode(3)}>
                     <div className="text-2xl text-center md:p-1">Pretekli dogodki</div>
                 </Link>
-                <Link className={selectMode === 4 ? "btn-nav-active" : "btn-nav"} onClick={() => { setSelectMode(4); setMenuOpen(false); }}>
+                <Link className={selectMode === 4 ? "btn-nav-active" : "btn-nav"} onClick={() => handleSelectMode(4)}>
                     <div className="text-2xl text-center md:p-1">Moji dogodki</div>
                 </Link>
                 <Link to="/events/add" className="btn-nav" onClick={() => setMenuOpen(false)}>

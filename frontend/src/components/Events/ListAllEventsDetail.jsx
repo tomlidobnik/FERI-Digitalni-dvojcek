@@ -2,14 +2,17 @@ import { useState, useEffect } from "react";
 import EventForListDetail from "./EventForListDetail";
 import { Link } from "react-router-dom";
 import Cookies from 'js-cookie';
+import { useSelector } from "react-redux";
 
-const ListAllEventsDetail = ({ selectMode }) => {
+const ListAllEventsDetail = ({selectMode}) => {
+    //const[selectMode, setSelectMode] = useState(useSelector((state) => state.eventFilter.value));
     const API_URL = import.meta.env.VITE_API_URL;
 
     const [response, setResponse] = useState([]);
     const [filteredResponse, setFilteredResponse] = useState([]);
 
     useEffect(() => {
+        console.log(selectMode);
         fetch(`https://${API_URL}/api/event/all`)
             .then((res) => res.json())
             .then((data) => {
@@ -79,9 +82,9 @@ const ListAllEventsDetail = ({ selectMode }) => {
     //console.log("Filtered Events:", filteredEvents);
 
     return (
-    <div className="w-full min-h-[500px] p-4 xl:p-6 flex flex-col h-full">
-        <h1 className="text-2xl xl:text-5xl font-bold text-text mb-4 flex-shrink-0">Dogodki</h1>
-        <div className="flex-1 overflow-y-auto">
+    <div className="w-full flex flex-col h-full">
+        <h1 className="text-2xl p-4 xl:p-6 xl:text-5xl font-bold text-text  bg-black/10 md:rounded-t-2xl flex-shrink-0">Dogodki</h1>
+        <div className="flex-1 overflow-y-auto p-2 sm:p-4">
             {filteredResponse.length === 0 ? (
                 <div className="text-center text-text/70 text-lg py-8">Ni dogodkov za prikaz.</div>
             ) : (

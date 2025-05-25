@@ -3,7 +3,6 @@
 @plugin "flowbite/plugin";
 @source "../node_modules/flowbite";
 
-
 @theme {
   --color-primary: #E5DCC5;
   --color-secondary: #F0BB78;
@@ -121,6 +120,14 @@ button:focus-visible {
   @apply flex items-center justify-center w-full py-3 mb-2 lg:text-lg font-semibold rounded-lg bg-quaternary/70 text-white shadow-md;
 }
 
+.btn-nav-side {
+  @apply flex flex-row items-center bg-black/10 p-2 rounded-xl text-text text-xl font-bold shadow-md hover:bg-black/20 transition-colors duration-200;
+}
+
+.btn-nav-active-side {
+  @apply flex flex-row items-center bg-black/30 p-2 rounded-xl text-text text-xl font-bold shadow-md;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -132,4 +139,25 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+/* Style calendar container */
+.react-calendar {
+  font-size: 1.1rem;
+  padding: 20px;
+  background: var(--color-primary);
+}
+
+/* Style selected day */
+.react-calendar__tile--active {
+  background: var(--color-quaternary) !important;
+  color: #fff !important;
+  border-radius: 0.5rem;
+}
+
+/* Style today */
+.react-calendar__tile--now {
+  background: var(--color-secondary) !important;
+  color: white;
+  border-radius: 0.5rem;
 }
