@@ -147,7 +147,7 @@ const LeftSidebar = () => {
                     />
                     Prijatelji
                 </Link>
-                <Link to="/chat" className={location.startsWith("/chat") ? "btn-nav-active-side" : "btn-nav-side"}>
+                <Link to="/chat" className={location.startsWith("/chat") ? "btn-nav-active-side" : "btn-nav-side"}> 
                      <img
                     src="/icons/comment-alt.svg"
                     className="w-6 h-6 lg:w-8 lg:h-8 mr-2"
@@ -157,11 +157,11 @@ const LeftSidebar = () => {
                 </nav>
                 <Link to="/profile/public" className="mt-auto pt-16 lg:flex items-center gap-3 mb-2 hidden">
                     <div className="w-10 h-10 rounded-full bg-quaternary flex items-center justify-center text-white text-xl font-bold shadow">
-                        J
+                        {user.username ? user.username.charAt(0).toUpperCase() : "U"}
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-lg font-semibold whitespace-nowrap overflow-hidden text-ellipsis w-42">{user.username}</span>
-                        <span className=" text-black/60 whitespace-nowrap overflow-hidden text-ellipsis w-42 text-sm">{user.email}</span>
+                        <span className="text-lg font-semibold whitespace-nowrap overflow-hidden text-ellipsis w-42">{user.username ? user.username : "User"}</span>
+                        <span className=" text-black/60 whitespace-nowrap overflow-hidden text-ellipsis w-42 text-sm">{user.email ? user.email : "Email"}</span>
                     </div>
                 </Link>
                 <nav className="lg:pt-2 flex flex-col pt-0 hidden lg:block border-t-4 border-black/40">
