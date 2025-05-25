@@ -74,43 +74,6 @@ input[data-autocompleted] {
     background-color: transparent !important;
 }
 
-a {
-  /*font-weight: 500;
-  color: var(--color-text-clickable);
-  text-decoration: inherit;*/
-}
-
-body {
-  /*margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;*/
-}
-
-h1 {
-  /*font-size: 3.2em;
-  line-height: 1.1;*/
-}
-
-button {
-    /*border-radius: 8px;
-    border: 1px solid transparent;
-    padding: 0.6em 1.2em;
-    font-size: 1em;
-    font-weight: 500;
-    font-family: inherit;
-    background-color: var(--color-quaternary);
-    cursor: pointer;
-    transition: border-color 0.25s;*/
-}
-button:hover {
-    /*border-color: #646cff;*/
-}
-button:focus,
-button:focus-visible {
-    /*outline: 4px auto -webkit-focus-ring-color;*/
-}
 
 .btn-nav {
   @apply flex items-center justify-center w-full py-3 mb-2 lg:text-lg font-semibold rounded-lg bg-quaternary text-white transition-colors duration-200 shadow-md hover:bg-quaternary/80 focus:bg-quaternary/90;
@@ -126,19 +89,6 @@ button:focus-visible {
 
 .btn-nav-active-side {
   @apply flex flex-row items-center bg-black/30 p-2 rounded-xl text-text text-xl font-bold shadow-md;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: var(--color-text-hover);
-  }
-  button {
-    background-color: #f9f9f9;
-  }
 }
 
 /* Style calendar container */

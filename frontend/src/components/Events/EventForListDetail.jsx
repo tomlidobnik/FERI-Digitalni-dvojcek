@@ -7,7 +7,6 @@ import { setEvent } from "../../state/event/eventSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-
 const formatDateTime = (dateString) => {
     const date = new Date(dateString);
     return `${date.getDate()}. ${date.getMonth() + 1}. ${date.getFullYear()} ob ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
@@ -45,7 +44,7 @@ const EventForListDetail = ({event, selectMode}) => {
     }
 
     return (
-    <div className="flex flex-col bg-white/30 rounded-2xl shadow-xl mb-4 p-4">
+    <div className="flex flex-col bg-white/30 rounded-2xl shadow-md mb-4 p-4">
         <ConfirmPopup
                 open={showConfirm}
                 message="Ali res želiš izbrisati ta dogodek?"

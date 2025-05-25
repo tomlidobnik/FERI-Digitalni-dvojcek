@@ -10,6 +10,7 @@ const ListAllEventsDetail = ({selectMode}) => {
 
     const [response, setResponse] = useState([]);
     const [filteredResponse, setFilteredResponse] = useState([]);
+    const [dogodkiTitle, setDogodkiTitle] = useState("Dogodki");
 
     useEffect(() => {
         console.log(selectMode);
@@ -24,6 +25,26 @@ const ListAllEventsDetail = ({selectMode}) => {
     }, [API_URL]);
 
     useEffect(() => {
+        switch (selectMode) {
+            case 0:
+                setDogodkiTitle("Vsi dogodki");
+                break;
+            case 1:
+                setDogodkiTitle("Trenutni dogodki");
+                break;
+            case 2:
+                setDogodkiTitle("Prihajajoči dogodki");
+                break;
+            case 3:
+                setDogodkiTitle("Pretekli dogodki");
+                break;
+            case 4:
+                setDogodkiTitle("Moji dogodki");
+                break;
+            default:
+                setDogodkiTitle("Dogodki");
+                break;
+        }
         const token = Cookies.get("token");
         if (selectMode === 4){
             fetch(`https://${API_URL}/api/event/my`,{
@@ -83,7 +104,10 @@ const ListAllEventsDetail = ({selectMode}) => {
 
     return (
     <div className="w-full flex flex-col h-full">
-        <h1 className="text-2xl p-4 xl:p-6 xl:text-5xl font-bold text-text  bg-black/10 md:rounded-t-2xl flex-shrink-0">Dogodki</h1>
+        <h1 className="text-2xl p-4 xl:p-6 xl:text-5xl font-bold text-text bg-black/10 md:rounded-t-2xl flex-shrink-0">
+            <span className="hidden md:inline">Dogodki</span>
+            <span className="md:hidden">{dogodkiTitle}</span>
+        </h1>
         <div className="flex-1 overflow-y-auto p-2 sm:p-4">
             {filteredResponse.length === 0 ? (
                 <div className="text-center text-text/70 text-lg py-8">Ni dogodkov za prikaz.</div>

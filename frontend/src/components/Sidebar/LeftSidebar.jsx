@@ -45,7 +45,7 @@ const LeftSidebar = () => {
             >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="rounded-xl w-8 h-8 object-cover text-quaternary mr-2"
+                className="rounded-xl w-8 h-8 object-cover mr-2"
                 fill="currentColor"
                 viewBox="0 0 24 24"
             >
@@ -59,7 +59,7 @@ const LeftSidebar = () => {
             >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="rounded-xl w-8 h-8 object-cover text-quaternary mr-2"
+                className="rounded-xl w-8 h-8 object-cover mr-2"
                 fill="currentColor"
                 viewBox="0 0 512 512"
             >
