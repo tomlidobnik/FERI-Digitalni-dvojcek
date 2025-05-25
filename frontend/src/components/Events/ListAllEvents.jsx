@@ -19,7 +19,7 @@ const ListAllEvents = () => {
             .catch((err) => {
                 console.error(err);
             });
-        setTimeout(() => setIsLoading(false), 0);
+        setTimeout(() => setIsLoading(false), 300);
     }, [API_URL]);
 
     return (

@@ -37,9 +37,6 @@ function Dashbord() {
                     </div>
                 </div>
             </div>
-                                <div className="text-lg bg-quaternary text-center py-4 lg:hidden block relative bottom-0 left-0 right-0">
-                        {new Date().getFullYear()} Copycats
-                    </div>
         </>
 
     );
