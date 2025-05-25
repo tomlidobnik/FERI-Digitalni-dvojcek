@@ -153,6 +153,20 @@ pub async fn get_event_by_id(
     Ok(Json(event))
 }
 
+pub async fn get_user_events(
+    user: AuthenticatedUser,
+) -> Result<Json<Vec<Event>>, EventError> {
+    let mut conn = db::connect_db();
+    let user_id = get_user_id(user).await.map_err(|_| EventError::Unauthorized)?;
+
+    let user_events = events
+        .filter(crate::schema::events::user_fk.eq(user_id))
+        .load::<Event>(&mut conn)
+        .map_err(|_| EventError::InternalServerError)?;
+
+    Ok(Json(user_events))
+}
+
 pub async fn get_all_events() -> Result<Json<Vec<Event>>, EventError> {
     info!("Called get_all_events");
     let mut conn = db::connect_db();

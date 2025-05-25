@@ -15,6 +15,8 @@ import LocationsMap from "./pages/map/LocationsMap.jsx";
 import EventsMap from "./pages/map/EventsMap.jsx";
 import Logout from "./pages/user/Logout.jsx";
 import ListUsers from "./components/Chat/ListUsers.jsx";
+import MainPage from "./pages/MainPage.jsx";
+
 
 // Routers
 const router = createBrowserRouter([
@@ -56,7 +58,7 @@ const router = createBrowserRouter([
         ),
     },
     {
-        path: "/friend_chat",
+        path: "/chat",
         element: (
             <ErrorBoundary FallbackComponent={ErrorPage}>
                 <FriendChat />
@@ -64,7 +66,7 @@ const router = createBrowserRouter([
         ),
     },
     {
-        path: "/add_friends",
+        path: "/friends",
         element: (
             <ErrorBoundary FallbackComponent={ErrorPage}>
                 <ListUsers />
@@ -80,10 +82,10 @@ const router = createBrowserRouter([
         ),
     },
     {
-        path: "/events_map",
+        path: "/map",
         element: (
             <ErrorBoundary FallbackComponent={ErrorPage}>
-                <EventsMap />
+                <MainPage />
             </ErrorBoundary>
         ),
     },
@@ -92,6 +94,30 @@ const router = createBrowserRouter([
         element: (
             <ErrorBoundary FallbackComponent={ErrorPage}>
                 <Dashbord />
+            </ErrorBoundary>
+        ),
+    },
+    {
+        path: "/events",
+        element: (
+            <ErrorBoundary FallbackComponent={ErrorPage}>
+                <MainPage />
+            </ErrorBoundary>
+        ),
+    },
+    {
+        path: "/events/add",
+        element: (
+            <ErrorBoundary FallbackComponent={ErrorPage}>
+                <MainPage />
+            </ErrorBoundary>
+        ),
+    },
+        {
+        path: "/event/edit",
+        element: (
+            <ErrorBoundary FallbackComponent={ErrorPage}>
+                <MainPage />
             </ErrorBoundary>
         ),
     },

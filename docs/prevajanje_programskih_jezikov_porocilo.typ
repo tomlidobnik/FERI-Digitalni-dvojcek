@@ -1,6 +1,5 @@
 #set page(
   paper: "us-letter",
-  numbering: "1",
 )
 
 #align(center)[
@@ -18,6 +17,10 @@
   title: [Kazalo],
 )
 #set heading(numbering: "1.1.1")
+#set page(
+  paper: "us-letter",
+  numbering: "1",
+)
 #pagebreak()
 
 = Uvod
@@ -54,10 +57,11 @@ city ["Maribor"]{
 ?{[(1,1),$p,$q,(3,4)],[(1,1),3]};
 let @r = (fst(p),snd(q));
 ```
+
 == Konstrukti
 Uporabljen jezik vsebuje naslednje konstrukte.
 
-=== Enota !
+=== Enota
 Naša nevtralna enota je:
 `null`
 
@@ -75,6 +79,7 @@ S koordinatami lahko predstavimo lokacije na zemljevidu, v tem primeru je prva k
 
 === Bloki
 Blok je sestavljen iz imena objekta, ki ga želimo definirati, definiramo jih lahko s "polygon", "polyline" in "circle". Blok se zaključi z okroglimi oklepaji.
+
 ==== City
 Blok "City" je osrednji blok, ki ga uporabljamo za definiranje mesta. Vsebuje lahko druge bloke, kot so ceste, stavbe, območja, parki in jezera.
 ```
@@ -90,6 +95,7 @@ Blok "City" je osrednji blok, ki ga uporabljamo za definiranje mesta. Vsebuje la
         COMMANDS
     };
 ```
+
 ==== Building
 "Building" je blok, ki ga uporabljamo za definiranje stavb. Vsebuje lahko ukaze za izris stavbe.
 ```
@@ -97,6 +103,7 @@ Blok "City" je osrednji blok, ki ga uporabljamo za definiranje mesta. Vsebuje la
         COMMANDS
     };
 ```
+
 ==== Area
 "Area" je blok, ki ga uporabljamo za definiranje območij. Vsebuje lahko ukaze za izris območij.
 ```
@@ -107,21 +114,25 @@ Blok "City" je osrednji blok, ki ga uporabljamo za definiranje mesta. Vsebuje la
 
 === Ukazi
 Bloki vsebujejo ukaze, ki jih lahko uporabimo za izris geometrijskih oblik. Ukazi so lahko "polyline", "polygon" in "circle".
+
 ==== Polyline
 "Polyline" je ukaz, ki ga uporabljamo za izris polilinij. Vsebuje lahko koordinate za točke, med katerimi so izrisane črte. Končna in začetna točki sta lahko poljubni.
 ```
   polyline[TOČKA,TOČKA,TOČKA];
 ```
+
 ==== Polygon
 "Polygon" je ukaz, ki ga uporabljamo za izris poligonov. Vsebuje lahko koordinate za točke, med katerimi so izrisane črte. Poligon se mora zaključi z začetno točko.
 ```
   polygon[TOČKA1,TOČKA2,TOČKA3,TOČKA1];
 ```
+
 ==== Circle
 "Circle" je ukaz, ki ga uporabljamo za izris krogov. Vsebuje lahko koordinato za središče in polmer kroga.
 ```
   circle[TOČKA, RADIJ];
 ```
+
 = Nadgradja
 Jezik smo nadgradili z validacijo, dodatnimi elementi, spremenljivkami, izjavami in povpraševanji.
 
@@ -141,6 +152,7 @@ Na zemljevidu lahko definiramo tudi dodatne elemente, ki jih lahko uporabljamo z
         COMMANDS
     };
 ```
+
 === Park
 "Park" je blok, ki ga uporabljamo za definiranje parkov. Vsebuje lahko ukaze za izris parkov.
 ```
@@ -154,23 +166,28 @@ V jeziku lahko definiramo spremenljivke, ki jih lahko uporabljamo za shranjevanj
 ```
   let @IME = (KOORDINATA X,KOORDINATA Y);
 ```
+
 == Izjave
 Podprte izjave v jeziku vključujejo: seštevanje, odštevanje, dostop do prve koordinate in dostop do druge koordinate.
+
 === Seštevanje
 Seštevanje dveh točk se izvede tako, da se seštejeta obe komponenti točk. Rezultat je nova točka.
 ```
   polyline[(3,4),(2,1)+(3,4)];
 ```
+
 === Odštevanje
 Odštevanje dveh točk se izvede tako, da se odštejeta obe komponenti točk. Rezultat je nova točka.
 ```
   polyline[(1,1),$q,(2,4)-$q];
 ```
+
 === First & Second
 Dostop do prve in druge komponente točke se izvede tako, da se uporabita funkciji `fst` in `snd`.
 ```
   let @r = (fst($p),snd($q));
 ```
+
 == Povpraševanja
 Povpraševanje je določeno z množico točk, zapisanih v oglatih oklepajih. Poleg te množice je podana dodatna točka z določenim radijem, ki opredeljuje krožno območje povpraševanja. Rezultat povpraševanja je množica vseh točk iz začetne množice, ki ležijo znotraj tega krožnega območja.
 ```
@@ -281,6 +298,7 @@ FIRST(REALNO*) =  { [0-9], ε }
 FIRST(IME) = { [a-zA-Z0-9_] }
 FIRST(IME*) = { [a-zA-Z0-9_], ε }
 ```
+
 == Izračun FOLLOW množic
 ```
 FOLLOW(IZRAZ) = { let, ?, city, ε }
@@ -329,8 +347,11 @@ FOLLOW(IME*) = { let, ?, city, ε }
 = Implementacija razčlenjevalnika (parser)
 
 = Implementacija izvoza v GeoJSON
+*/
 
 = Priprava smiselnih testnih primerov
+
+== Primer
 ```
 city{
     road["Ptujska cesta"]{
@@ -352,5 +373,142 @@ city{
     ?{[(1,1),$p,$q,(3,4)],[(1,1),3]};
 
     let $r = (fst(p),snd(q));
+```
+
+== Primer
+
+```
+let $a = (0,0);
+let $b = (1,1);
+let $c = (2,2);
+let $d = (3,3);
+
+city["Veliko mesto"] {
+    road["Glavna ulica"] {
+        polyline[$a,$b,$c,$d];
+    };
+
+    building["Občina"] {
+        polygon[(1,1),(2,1),(2,2),(1,2),(1,1)];
+    };
+
+    area["Trg"] {
+        polygon[(3,3),(4,3),(4,4),(3,4),(3,3)];
+    };
+
+    park["Zeleni park"] {
+        circle[(5,5),2.5];
+    };
+
+    lake["Veliko jezero"] {
+        circle[(6,6),4];
+    };
 }
-```*/
+```
+
+== Primer
+
+```
+let $x = (3,3);
+let $y = (6,6);
+
+city["Kompleksno mesto"] {
+    road["Severna"] {
+        polyline[(0,0),$x,(6,0)];
+    };
+    building["Muzej"] {
+        polygon[(2,2),(4,2),(4,4),(2,4),(2,2)];
+    };
+    area["Stadion"] {
+        polygon[(5,5),(6,6),(7,5),(6,4),(5,5)];
+    };
+    park["Jugozahodni park"] {
+        circle[(1,1),2];
+    };
+    lake["Ribnik"] {
+        circle[$y, 1.5];
+    };
+    road["Vzhodna"] {
+        polyline[$x, $y, $x+$y];
+    };
+
+    ?{[(3,3),$x,$y,(5,5)],[(4,4),2]};
+}
+```
+
+== Primer
+
+```
+let $a = (1,1);
+let $b = (2,3);
+let $c = $a + $b;
+let $d = (fst($b), snd($c));
+
+city["Ljubljana"]{
+    road["Dunajska"]{
+        polyline[(1,2), (2,3), $c];
+    };
+    road["Celovška"]{
+        polyline[$a, (2,2), $d];
+    };
+    building["Modra stavba"]{
+        polygon[(1,1),(1,2),(2,2),(2,1),(1,1)];
+    };
+    area["Trg Republike"]{
+        polygon[(1,1), (2,4), (4,4), (4,2), (1,1)];
+    };
+    lake["Zbiljsko jezero"]{
+        circle[(5,5), 2.5];
+    };
+    park["Park Tivoli"]{
+        circle[(4,3), 3];
+    };
+}
+
+?{[$a, $b, $c, $d],[(2,2),2]};
+let $rez = ($a + $b) - (1,1);
+```
+
+== Primer
+
+```
+let $p1 = (3,3);
+let $p2 = (1,2);
+let $p3 = (2,2);
+let $mid = ($p1 + $p2) - (1,1);
+let $origin = (0,0);
+let $z = (fst($mid), snd($p3));
+
+city["Koper"]{
+    road["Obalna"]{
+        polyline[$p1, $p2, $p3, $p1];
+    };
+    area["Trg Koper"]{
+        polygon[(1,1), (2,2), (2,4), (1,1)];
+    };
+    building["Zgradba A"]{
+        polygon[(0,0), (0,2), (2,2), (2,0), (0,0)];
+    };
+    lake["Jezero Koper"]{
+        circle[$p2, 1.8];
+    };
+}
+
+city["Celje"]{
+    road["Kidričeva"]{
+        polyline[(0,0), $mid, $mid + (1,1)];
+    };
+    park["Mestni park"]{
+        circle[$origin, 3];
+    };
+    area["Stari trg"]{
+        polygon[(1,1),(2,2),(3,3),(4,4),(1,1)];  // validacija: pravilno zaprt
+    };
+    building["Dvorana"]{
+        polygon[(1,1),(1,3),(2,3),(2,1),(1,1)];
+    };
+}
+
+?{[ $p1, $p2, $p3, (4,4) ], [ $p2, 2.0 ]};
+let $v = (fst($p1) + 1, snd($p2) - 1);
+```
