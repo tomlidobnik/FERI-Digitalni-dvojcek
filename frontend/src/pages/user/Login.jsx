@@ -55,6 +55,17 @@ export default function Login() {
                 const storedToken = Cookies.get("token");
                 if (storedToken) {
                     console.log("Token successfully set:", storedToken);
+
+                    await fetch(`https://${import.meta.env.VITE_API_URL}/api/user/by_token`, {
+                        method: "GET",
+                        headers: {
+                            "Authorization": `Bearer ${Cookies.get("token")}`,
+                        },
+                    }).then((res) => res.json())
+                    .then((data) => {
+                        //console.log(data)
+                        Cookies.set("user", JSON.stringify(data), { expires: expirationDate, sameSite: "strict" });
+                    });
                 } else {
                     setError("root", {
                         message: "Napaka pri nastavitvi piškotka",

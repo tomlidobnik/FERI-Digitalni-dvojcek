@@ -4,15 +4,18 @@ import { useDispatch } from "react-redux";
 import ListAllEventsDetail from "./ListAllEventsDetail";
 import { useSelector } from "react-redux";
 import { setEventFilter } from "../../state/window/eventFilterSlice";
+import { getItem, setItem } from "../../utils/localStorage";
 
 const Event = () => {
-    const [selectMode, setSelectMode] = useState(useSelector((state) => state.eventFilter.value));
+    const [selectMode, setSelectMode] = useState(() => {
+        const mode = getItem("eventFilterMode");
+        return mode !== undefined ? mode : 0;
+    });
     const [menuOpen, setMenuOpen] = useState(false);
-    const dispatch = useDispatch();
 
     const handleSelectMode = (mode) => {
         setMenuOpen(false);
-        dispatch(setEventFilter({ mode }));
+        setItem("eventFilterMode", mode);
         setSelectMode(mode);
     };
 

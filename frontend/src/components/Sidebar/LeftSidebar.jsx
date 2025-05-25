@@ -1,5 +1,6 @@
 import {useState, useEffect} from "react";
 import { Link, useLocation } from "react-router-dom";
+import Cookies from "js-cookie";
 
 // Match the App page button style: bg-quaternary text-white font-semibold rounded-lg
 const navButton =
@@ -11,8 +12,11 @@ const navButtonCurrent =
 const LeftSidebar = () => {
     const [navShow, setNavShow] = useState(false);
     const location = useLocation().pathname;
+    const userCookie = Cookies.get("user");
+    const user = userCookie ? JSON.parse(userCookie) : null;
 
     useEffect(() => {
+        console.log("user",user)
         const handleResize = () => {
             if (window.innerWidth > 1024) {
                 setNavShow(false);
@@ -156,8 +160,8 @@ const LeftSidebar = () => {
                         J
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-lg font-semibold whitespace-nowrap overflow-hidden text-ellipsis w-42">JoeDoe</span>
-                        <span className=" text-black/60 whitespace-nowrap overflow-hidden text-ellipsis w-42 text-sm">joe.doe@gmail.com</span>
+                        <span className="text-lg font-semibold whitespace-nowrap overflow-hidden text-ellipsis w-42">{user.username}</span>
+                        <span className=" text-black/60 whitespace-nowrap overflow-hidden text-ellipsis w-42 text-sm">{user.email}</span>
                     </div>
                 </Link>
                 <nav className="lg:pt-2 flex flex-col pt-0 hidden lg:block border-t-4 border-black/40">
