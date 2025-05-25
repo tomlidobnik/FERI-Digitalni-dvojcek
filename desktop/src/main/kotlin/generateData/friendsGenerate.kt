@@ -1,0 +1,4 @@
+package generateData
+
+class friendsGenerate {
+}
