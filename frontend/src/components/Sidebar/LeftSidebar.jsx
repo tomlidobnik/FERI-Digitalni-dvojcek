@@ -27,7 +27,7 @@ const LeftSidebar = () => {
     return (
         <aside className="w-full lg:w-64 h-fit min-h-full flex flex-col p-4 lg:rounded-3xl  bg-primary border-b-2 border-black/30">
       <div className="flex items-center justify-between lg:mb-8 lg:mt-2">
-        <Link to="/">
+        <Link to="/home">
             <h2 className="text-2xl lg:text-3xl font-bold text-text">
             Copycats
             </h2>

@@ -22,6 +22,7 @@ pub struct UserResponse {
     pub first_name: String,
     pub last_name: String,
     pub email: String,
+    pub id: Option<i32>,
 }
 
 #[derive(Debug, Clone, serde::Deserialize)]
@@ -153,6 +154,7 @@ pub async fn get_all_users() -> Result<Json<Vec<UserResponse>>, UserError> {
                 first_name: user.firstname,
                 last_name: user.lastname,
                 email: user.email,
+                id: Some(user.id)
             }).collect();
             Ok(Json(safe_users))
         },
@@ -172,6 +174,28 @@ pub async fn get_user_by_id(
                 first_name: user.firstname,
                 last_name: user.lastname,
                 email: user.email,
+                id: Some(user.id),
+            };
+            Ok(Json(user_response))
+        },
+        Err(diesel::result::Error::NotFound) => Err(UserError::UserNotFound),
+        Err(_) => Err(UserError::InternalServerError),
+    }
+}
+
+pub async fn get_user_by_token(
+    user: AuthenticatedUser
+) -> Result<Json<UserResponse>, UserError> {
+    info!("Called get_user_by_token for username: {}", user.0.sub);
+    let mut conn = db::connect_db();
+        match users.filter(username.eq(&user.0.sub)).first::<User>(&mut conn) {
+        Ok(user) => {
+            let user_response = UserResponse {
+                username: user.username,
+                first_name: user.firstname,
+                last_name: user.lastname,
+                email: user.email,
+                id: Some(user.id),
             };
             Ok(Json(user_response))
         },
