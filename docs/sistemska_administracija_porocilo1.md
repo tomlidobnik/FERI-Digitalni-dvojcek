@@ -407,6 +407,39 @@ server {
         }
 }
 ```
+<b>Zaledni del:</b><br>
+`server_name` 132.220.216.19; Nginx bo sprejemal zahtevke, poslane na ta IP
+
+`location /api/` { Vse zahteve, ki začnejo z /api/, bodo preusmerjene na lokalni strežnik na portu 8000<br>
+&nbsp;&nbsp;&nbsp;`proxy_pass` https://localhost:8000;
+
+`proxy_ssl_verify` off; Izklopi preverjanje TLS certifikata
+
+`proxy_http_version` 1.1; http verzija 1.1<br>
+`proxy_set_header` Host $host; ohranimo originalno gostiteljsko ime
+
+X-Real-IP ter X-Forwarded-For omogočita zalednemu delu prepoznavo pravega IP-ja "clienta"<br>
+`proxy_set_header` X-Real-IP $remote_addr;<br>
+`proxy_set_header` X-Forwarded-For $proxy_add_x_forwarded_for;
+
+`proxy_set_header` X-Forwarded-Proto $scheme; ali je bil zahtevek HTTP ali HTTPS<br>
+
+<b>Čelni del:</b><br>
+`location /` { Vse preostale zahteve bodo preusmerjene na lokalni strežnik na portu 3000<br>
+&nbsp;&nbsp;&nbsp;`proxy_pass` http://localhost:3000;
+
+`proxy_http_version` 1.1; verzija http 1.1
+
+Omogoča WebSocket podporo za "hot reloading" in druge zadeve. `Upgrade` in `Connection: upgrade` omogočata preklop HTTP na WebSocket protokol.<br>
+`proxy_set_header` Upgrade $http_upgrade;<br>
+`proxy_set_header` Connection "upgrade";
+
+Enako kot pri zalednem delu se ti ukazi uporabljajo za ohranjanje informacij o izvorni zahtevi.<br>
+`proxy_set_header` Host $host;<br>
+`proxy_set_header` X-Real-IP $remote_addr;<br>
+`proxy_set_header` X-Forwarded-For $proxy_add_x_forwarded_for;<br>
+`proxy_set_header` X-Forwarded-Proto $scheme;
+
 
 ### Vzpostavitev dockerja
 
