@@ -1,21 +1,23 @@
-# Use a Node.js base image
-FROM node:23-slim
+FROM node:23-alpine AS build
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json (or yarn.lock)
 COPY package*.json ./
+RUN npm ci --legacy-peer-deps
 
-# Install the dependencies
-RUN npm install
-
-# Copy the rest of the project files
 COPY . .
+ENV VITE_API_URL=tom.thehomeserver.net
+RUN npm run build
 
-# Expose port 5173 for Vite (default port)
-EXPOSE 5173
+FROM node:23-alpine
 
-# Command to run Vite in development mode (bound to 0.0.0.0)
-CMD ["npm", "run", "dev"]
+WORKDIR /app
+
+RUN npm install -g serve
+
+COPY --from=build /app/dist ./dist
+
+EXPOSE 3000
+
+CMD ["serve", "-s", "dist"]
 

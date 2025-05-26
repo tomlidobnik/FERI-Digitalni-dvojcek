@@ -1,18 +1,111 @@
 use crate::config::db;
+use crate::error::user_error::UserError;
 use crate::middleware::auth::create_jwt;
-use crate::models::{AuthenticatedUser, CreateUserRequest, LoginRequest, NewUser, User};
+use crate::models::{
+    AuthenticatedUser, User
+};
 use crate::schema::users::dsl::*;
-use axum::{Json, http::StatusCode, response::IntoResponse};
+use axum::{Json, extract::Path, http::StatusCode};
+use bcrypt::{DEFAULT_COST, hash, verify};
 use diesel::prelude::*;
 use log::info;
-use serde_json::json;
-use crate::error::user_error::UserError;
+use serde::{Serialize,Deserialize};
 
-pub async fn hello_user_json(user: AuthenticatedUser) -> impl IntoResponse {
-    info!("Called hello_user_json");
-    let other_username = user.0.sub;
-    let body = json!({ "message": format!("Hello, {}", other_username) });
-    (StatusCode::OK, Json(body))
+#[derive(Serialize, Deserialize)]
+pub struct PublicUserDataRequest {
+    pub username: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct UserResponse {
+    pub username: String,
+    pub first_name: String,
+    pub last_name: String,
+    pub email: String,
+    pub id: Option<i32>,
+}
+
+#[derive(Debug, Clone, serde::Deserialize)]
+pub struct LoginRequest {
+    pub username: String,
+    pub password: String,
+}
+
+#[derive(Insertable)]
+#[diesel(table_name = crate::schema::users)]
+pub struct NewUser {
+    pub username: String,
+    pub firstname: String,
+    pub lastname: String,
+    pub email: String,
+    pub password: String,
+}
+#[derive(Deserialize)]
+pub struct CreateUserRequest {
+    pub username: String,
+    pub firstname: String,
+    pub lastname: String,
+    pub email: String,
+    pub password: String,
+}
+
+#[derive(Deserialize)]
+pub struct UpdateUserRequest {
+    pub username: String,
+    pub firstname: String,
+    pub lastname: String,
+    pub email: String,
+    pub password: String,
+}
+
+async fn get_user_id(user: AuthenticatedUser) -> Result<i32, StatusCode> {
+    let mut conn = db::connect_db();
+    let user_id: i32 = users
+        .filter(username.eq(&user.0.sub))
+        .select(crate::schema::users::id)
+        .first(&mut conn)
+        .map_err(|_| StatusCode::UNAUTHORIZED)?;
+
+    Ok(user_id)
+}
+
+pub async fn create_user(Json(payload): Json<CreateUserRequest>) -> Result<StatusCode, UserError> {
+    info!("Called create_user for username: {}", payload.username);
+    let mut conn = db::connect_db();
+
+    match users
+        .filter(username.eq(&payload.username).or(email.eq(&payload.email)))
+        .first::<User>(&mut conn)
+        .optional()
+    {
+        Ok(Some(existing_user)) => {
+            if existing_user.username == payload.username {
+                Err(UserError::UserAlreadyExists)
+            } else {
+                Err(UserError::EmailAlreadyExists)
+            }
+        }
+        Ok(None) => {
+            let hashed_password = hash(payload.password, DEFAULT_COST)
+                .map_err(|_| UserError::InternalServerError)?;
+            let new_user = NewUser {
+                username: payload.username,
+                firstname: payload.firstname,
+                lastname: payload.lastname,
+                email: payload.email,
+                password: hashed_password,
+            };
+
+            match diesel::insert_into(users)
+                .values(&new_user)
+                .execute(&mut conn)
+            {
+                Ok(_) => Ok(StatusCode::CREATED),
+                Err(_) => Err(UserError::UserNotFound),
+            }
+        }
+        Err(_) => Err(UserError::UserNotFound),
+    }
 }
 
 pub async fn validate_user(
@@ -26,10 +119,10 @@ pub async fn validate_user(
         .first::<User>(&mut connection)
     {
         Ok(user) => {
-            if user.password == payload.password {
-                Ok((StatusCode::OK, "Valid user".into()))
-            } else {
-                Err(UserError::InvalidPassword)
+            match verify(payload.password, &user.password) {
+                Ok(true) => Ok((StatusCode::OK, "Valid user".into())),
+                Ok(false) => Err(UserError::InvalidPassword),
+                Err(_) => Err(UserError::InternalServerError),
             }
         }
         Err(diesel::result::Error::NotFound) => Err(UserError::UserNotFound),
@@ -37,7 +130,9 @@ pub async fn validate_user(
     }
 }
 
-pub async fn generate_token(Json(payload): Json<LoginRequest>) -> Result<(StatusCode, String), UserError> {
+pub async fn generate_token(
+    Json(payload): Json<LoginRequest>,
+) -> Result<(StatusCode, String), UserError> {
     info!("Called generate_token for username: {}", payload.username);
     match validate_user(Json(payload.clone())).await {
         Ok((StatusCode::OK, _)) => {
@@ -49,32 +144,133 @@ pub async fn generate_token(Json(payload): Json<LoginRequest>) -> Result<(Status
     }
 }
 
-pub async fn create_user(
-    Json(payload): Json<CreateUserRequest>,
+pub async fn get_all_users() -> Result<Json<Vec<UserResponse>>, UserError> {
+    info!("Called get_all_users");
+    let mut conn = db::connect_db();
+    match users.load::<User>(&mut conn) {
+        Ok(user_list) => {
+            let safe_users: Vec<UserResponse> = user_list.into_iter().map(|user| UserResponse {
+                username: user.username,
+                first_name: user.firstname,
+                last_name: user.lastname,
+                email: user.email,
+                id: Some(user.id)
+            }).collect();
+            Ok(Json(safe_users))
+        },
+        Err(_) => Err(UserError::InternalServerError),
+    }
+}
+
+pub async fn get_user_by_id(
+    Path(user_id): Path<i32>,
+) -> Result<Json<UserResponse>, UserError> {
+    info!("Called get_user_by_id for id: {}", user_id);
+    let mut conn = db::connect_db();
+    match users.filter(id.eq(user_id)).first::<User>(&mut conn) {
+        Ok(user) => {
+            let user_response = UserResponse {
+                username: user.username,
+                first_name: user.firstname,
+                last_name: user.lastname,
+                email: user.email,
+                id: Some(user.id),
+            };
+            Ok(Json(user_response))
+        },
+        Err(diesel::result::Error::NotFound) => Err(UserError::UserNotFound),
+        Err(_) => Err(UserError::InternalServerError),
+    }
+}
+
+pub async fn get_user_by_token(
+    user: AuthenticatedUser
+) -> Result<Json<UserResponse>, UserError> {
+    info!("Called get_user_by_token for username: {}", user.0.sub);
+    let mut conn = db::connect_db();
+        match users.filter(username.eq(&user.0.sub)).first::<User>(&mut conn) {
+        Ok(user) => {
+            let user_response = UserResponse {
+                username: user.username,
+                first_name: user.firstname,
+                last_name: user.lastname,
+                email: user.email,
+                id: Some(user.id),
+            };
+            Ok(Json(user_response))
+        },
+        Err(diesel::result::Error::NotFound) => Err(UserError::UserNotFound),
+        Err(_) => Err(UserError::InternalServerError),
+    }
+}
+
+pub async fn delete_user(
+    user: AuthenticatedUser
+) -> Result<StatusCode, StatusCode> {
+    info!("Called delete_user for username: {}", user.0.sub);
+    let mut conn = db::connect_db();
+    let user_id: i32 = get_user_id(user).await?;
+    match diesel::delete(users.filter(id.eq(user_id))).execute(&mut conn) {
+        Ok(affected) if affected > 0 => Ok(StatusCode::NO_CONTENT),
+        Ok(_) => Err(StatusCode::NOT_FOUND),
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+    }
+}
+
+pub async fn update_user(
+    user: AuthenticatedUser,
+    Json(payload): Json<UpdateUserRequest>
 ) -> Result<StatusCode, UserError> {
-    info!("Called create_user for username: {}", payload.username);
+    info!(
+        "Called update_user for username: {} (id: {})",
+        user.0.sub, payload.username
+    );
     let mut conn = db::connect_db();
 
-    match users
-        .filter(username.eq(&payload.username))
-        .first::<User>(&mut conn)
-        .optional()
-    {
-        Ok(Some(_)) => Err(UserError::UserAlreadyExists),
-        Ok(None) => {
-            let new_user = NewUser {
-                username: &payload.username,
-                password: &payload.password,
-            };
+    let current_user = match users.filter(username.eq(&user.0.sub)).first::<User>(&mut conn) {
+        Ok(user) => user,
+        Err(diesel::result::Error::NotFound) => return Err(UserError::UserNotFound),
+        Err(_) => return Err(UserError::UserNotFound),
+    };
 
-            match diesel::insert_into(users)
-                .values(&new_user)
-                .execute(&mut conn)
-            {
-                Ok(_) => Ok(StatusCode::CREATED),
-                Err(_) => Err(UserError::UserNotFound),
-            }
+    let current_user_id: i32 = get_user_id(user).await.map_err(|_| UserError::Unauthorized)?;
+    if payload.username != current_user.username {
+        if users
+            .filter(username.eq(&payload.username))
+            .filter(id.ne(current_user_id))
+            .first::<User>(&mut conn)
+            .optional()
+            .map_err(|_| UserError::InternalServerError)?
+            .is_some()
+        {
+            return Err(UserError::UsernameTaken);
         }
+    }
+
+    if payload.email != current_user.email {
+        if users
+            .filter(email.eq(&payload.email))
+            .filter(id.ne(current_user_id))
+            .first::<User>(&mut conn)
+            .optional()
+            .map_err(|_| UserError::InternalServerError)?
+            .is_some()
+        {
+            return Err(UserError::EmailTaken);
+        }
+    }
+
+    match diesel::update(users.filter(id.eq(current_user_id)))
+        .set((
+            username.eq(&payload.username),
+            firstname.eq(&payload.firstname),
+            lastname.eq(&payload.lastname),
+            email.eq(&payload.email),
+            password.eq(&payload.password),
+        ))
+        .execute(&mut conn)
+    {
+        Ok(_) => Ok(StatusCode::OK),
         Err(_) => Err(UserError::UserNotFound),
     }
 }

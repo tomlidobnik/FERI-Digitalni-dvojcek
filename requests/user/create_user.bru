@@ -1,0 +1,21 @@
+meta {
+  name: create_user
+  type: http
+  seq: 2
+}
+
+post {
+  url: https://0.0.0.0:8000/api/user/create
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "username": "janez",
+    "firstname": "janez",
+    "lastname": "novak",
+    "email": "janez.novak@mail.com",
+    "password": "1234"
+  }
+}

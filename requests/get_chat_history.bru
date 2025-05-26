@@ -1,0 +1,11 @@
+meta {
+  name: get_chat_history
+  type: http
+  seq: 2
+}
+
+get {
+  url: https://0.0.0.0:8000/api/chat/history
+  body: none
+  auth: inherit
+}

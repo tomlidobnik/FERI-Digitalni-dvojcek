@@ -1,0 +1,35 @@
+meta {
+  name: create_location_outline
+  type: http
+  seq: 13
+}
+
+post {
+  url: https://0.0.0.0:8000/api/location_outline/create
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "info": "outline",
+    "points": [
+      {
+        "longitude": 10.0,
+        "latitude": 20.0
+      },
+      {
+        "longitude": 20.0,
+        "latitude": 20.0
+      },
+      {
+        "longitude": 20.0,
+        "latitude": 30.0
+      },
+      {
+        "longitude": 10.0,
+        "latitude": 30.0
+      }
+    ]
+  }
+}

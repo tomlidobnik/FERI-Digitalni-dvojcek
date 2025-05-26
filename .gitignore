@@ -6,6 +6,7 @@ node_modules/
 
 # Environment variables
 **/.env
+**/.env.prod
 
 # Python cache files
 **/__pycache__/
@@ -17,4 +18,9 @@ venv/
 
 **/db/config.json
 
+**/slim.report.json
 
+**/cert.pem
+**/key.pem
+
+**/.idea/*

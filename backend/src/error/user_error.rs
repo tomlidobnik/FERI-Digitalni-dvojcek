@@ -1,19 +1,29 @@
 use axum::{
+    Json,
     http::StatusCode,
     response::{IntoResponse, Response},
-    Json,
 };
 use serde_json::json;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum UserError {
-    #[error("User not found")]
+    #[error("Uporabnik ni bil najden")]
     UserNotFound,
-    #[error("User already exists")]
+    #[error("Uporabnik že obstaja")]
     UserAlreadyExists,
-    #[error("Invalid password")]
+    #[error("Neveljavno geslo")]
     InvalidPassword,
+    #[error("E-naslov že obstaja")]
+    EmailAlreadyExists,
+    #[error("Uporabniško ime je že zasedeno")]
+    UsernameTaken,
+    #[error("E-naslov je že zaseden")]
+    EmailTaken,
+    #[error("Ni dovoljenja za spremembo tega uporabnika")]
+    Unauthorized,
+    #[error("Napaka strežnika")]
+    InternalServerError,
 }
 
 impl IntoResponse for UserError {
@@ -22,6 +32,11 @@ impl IntoResponse for UserError {
             UserError::UserNotFound => StatusCode::NOT_FOUND,
             UserError::UserAlreadyExists => StatusCode::BAD_REQUEST,
             UserError::InvalidPassword => StatusCode::BAD_REQUEST,
+            UserError::EmailAlreadyExists => StatusCode::BAD_REQUEST,
+            UserError::UsernameTaken => StatusCode::BAD_REQUEST,
+            UserError::EmailTaken => StatusCode::BAD_REQUEST,
+            UserError::Unauthorized => StatusCode::UNAUTHORIZED,
+            UserError::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
         };
 
         let body = Json(json!({

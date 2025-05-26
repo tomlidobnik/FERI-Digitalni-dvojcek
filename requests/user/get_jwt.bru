@@ -1,0 +1,22 @@
+meta {
+  name: get_jwt
+  type: http
+  seq: 2
+}
+
+post {
+  url: https://0.0.0.0:8000/api/user/token
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "username": "janez",
+    "password": "1234"
+  }
+}
+
+script:post-response {
+  bru.setVar("token", res.body);
+}

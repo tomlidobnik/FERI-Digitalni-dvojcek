@@ -1,0 +1,16 @@
+meta {
+  name: make_event_private
+  type: http
+  seq: 8
+}
+
+put {
+  url: https://0.0.0.0:8000/api/event/make_private/2
+  body: none
+  auth: inherit
+}
+
+script:pre-request {
+  const token = bru.getVar("token");
+  req.setHeader("Authorization", `Bearer ${token}`);
+}

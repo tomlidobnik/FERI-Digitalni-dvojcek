@@ -1,0 +1,20 @@
+meta {
+  name: update_location
+  type: http
+  seq: 1
+}
+
+put {
+  url: https://0.0.0.0:8000/api/location/update
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "id": 1,
+    "info": "Location 2",
+    "longitude": 5.123456,
+    "latitude": 6.123456
+  }
+}
