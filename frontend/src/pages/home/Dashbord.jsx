@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from 'js-cookie';
 import LeftSidebar from "../../components/Sidebar/LeftSidebar.jsx";
-import Map from "../map/LocationsMap.jsx";
+import Map from "../map/EventsMap.jsx";
 import ListAllEvents from "../../components/Events/ListAllEvents.jsx";
 import ListAllFriends from "../../components/Friends/ListAllFriends.jsx";
 
