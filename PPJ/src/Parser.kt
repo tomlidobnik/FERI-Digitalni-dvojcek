@@ -10,34 +10,39 @@ class Parser(private val scanner: Scanner) {
             currentToken = scanner.nextToken()
             return token
         } else {
-            throw IllegalArgumentException("Expected token $expectedType but got ${currentToken.type}")
+            throw IllegalArgumentException("Expected token $expectedType but got ${currentToken.type} at line ${currentToken.line}, at column ${currentToken.column} with lexeme '${currentToken.lexeme}'")
         }
     }
 
-    fun parseExpr() {
+    fun parseExpr(): List<Expr> {
+        val exprs = mutableListOf<Expr>()
         while (currentToken.type in listOf(LET, QUESTION_MARK, CITY)) {
-            when (currentToken.type) {
+            val expr = when (currentToken.type) {
                 LET -> parseVariableDef()
                 QUESTION_MARK -> parseQuery()
                 CITY -> parseCity()
                 else -> throw IllegalArgumentException("Unexpected token ${currentToken.type}")
             }
+            exprs.add(expr)
         }
+        return exprs
     }
 
-    private fun parseCity() {
+    private fun parseCity(): City {
         readToken(CITY)
         readToken(LBRACKET)
-        readToken(STRING)
+        val name = readToken(STRING).lexeme
         readToken(RBRACKET)
         readToken(LBRACE)
-        parseBlocks()
+        val blocks = parseBlocks()
         readToken(RBRACE)
+        return City(name, blocks)
     }
 
-    private fun parseBlocks() {
+    private fun parseBlocks(): List<Block> {
+        val blocks = mutableListOf<Block>()
         while (currentToken.type in listOf(ROAD, BUILDING, AREA, LAKE, PARK)) {
-            when (currentToken.type) {
+            val block: Block = when (currentToken.type) {
                 ROAD -> parseRoad()
                 BUILDING -> parseBuilding()
                 AREA -> parseArea()
@@ -45,199 +50,241 @@ class Parser(private val scanner: Scanner) {
                 PARK -> parsePark()
                 else -> throw IllegalArgumentException("Unexpected block type: ${currentToken.type}")
             }
+            blocks.add(block)
         }
+        return blocks
     }
 
-    private fun parseRoad() {
+    private fun parseRoad(): Road {
         readToken(ROAD)
         readToken(LBRACKET)
-        readToken(STRING)
+        val name = readToken(STRING).lexeme
         readToken(RBRACKET)
         readToken(LBRACE)
-        parsePolyline()
+        val polyline = parsePolyline()
         readToken(RBRACE)
         readToken(SEMICOLON)
+        return Road(name, polyline)
     }
 
-    private fun parseBuilding() {
+    private fun parseBuilding(): Building {
         readToken(BUILDING)
         readToken(LBRACKET)
-        readToken(STRING)
+        val name = readToken(STRING).lexeme
         readToken(RBRACKET)
         readToken(LBRACE)
-        parseShape()
+        val shape = parseShape()
         readToken(RBRACE)
         readToken(SEMICOLON)
+        return Building(name, shape)
     }
 
-    private fun parseArea() {
+    private fun parseArea(): Area {
         readToken(AREA)
         readToken(LBRACKET)
-        readToken(STRING)
+        val name = readToken(STRING).lexeme
         readToken(RBRACKET)
         readToken(LBRACE)
-        parseShape()
+        val shape = parseShape()
         readToken(RBRACE)
         readToken(SEMICOLON)
+        return Area(name, shape)
     }
 
-    private fun parseLake() {
+    private fun parseLake(): Lake {
         readToken(LAKE)
         readToken(LBRACKET)
-        readToken(STRING)
+        val name = readToken(STRING).lexeme
         readToken(RBRACKET)
         readToken(LBRACE)
-        parseShape()
+        val shape = parseShape()
         readToken(RBRACE)
         readToken(SEMICOLON)
+        return Lake(name, shape)
     }
 
-    private fun parsePark() {
+    private fun parsePark(): Park {
         readToken(PARK)
         readToken(LBRACKET)
-        readToken(STRING)
+        val name = readToken(STRING).lexeme
         readToken(RBRACKET)
         readToken(LBRACE)
-        parseShape()
+        val shape = parseShape()
         readToken(RBRACE)
         readToken(SEMICOLON)
+        return Park(name, shape)
     }
 
-    private fun parseShape() {
-        when (currentToken.type) {
+    private fun parseShape(): Shape {
+        return when (currentToken.type) {
             POLYGON -> parsePolygon()
             CIRCLE -> parseCircle()
             else -> throw IllegalArgumentException("Expected POLYGON or CIRCLE but got ${currentToken.type}")
         }
     }
 
-    private fun parsePolyline() {
+    private fun parsePolyline(): Polyline {
         readToken(POLYLINE)
         readToken(LBRACKET)
-        parsePoints()
+        val points = parsePoints()
         readToken(RBRACKET)
         readToken(SEMICOLON)
+        return Polyline(points)
     }
 
-    private fun parsePolygon() {
+    private fun parsePolygon(): Polygon {
         readToken(POLYGON)
         readToken(LBRACKET)
-        parsePoints()
+        val points = parsePoints()
         readToken(RBRACKET)
         readToken(SEMICOLON)
+        return Polygon(points)
     }
 
-    private fun parseCircle() {
+    private fun parseCircle(): Circle {
         readToken(CIRCLE)
         readToken(LBRACKET)
-        parsePoint()
+        val center = parsePoint()
         readToken(COMMA)
-        parseCircleValue()
+        val radius = parseCircleValue()
         readToken(RBRACKET)
         readToken(SEMICOLON)
+        return Circle(center, radius)
     }
 
-    private fun parseCircleValue() {
-        when (currentToken.type) {
+    private fun parseCircleValue(): Expr {
+        return when (currentToken.type) {
             FST, SND -> parseFirstSecond()
-            NUMBER -> readToken(NUMBER)
+            NUMBER -> {
+                val numberToken = readToken(NUMBER)
+                NumberLiteral(numberToken.lexeme.toDouble())
+            }
             else -> throw IllegalArgumentException("Expected FST/SND or NUMBER in circle but got ${currentToken.type}")
         }
     }
 
-    private fun parsePoints() {
-        parsePoint()
+    private fun parsePoints(): List<Point> {
+        val points = mutableListOf<Point>()
+        points.add(parsePoint())
         while (currentToken.type == COMMA) {
             readToken(COMMA)
-            parsePoint()
+            points.add(parsePoint())
         }
+        return points
     }
 
-    private fun parsePoint() {
-        parsePointComponent()
+    private fun parsePoint(): Point {
+        val components = mutableListOf<PointComponent>()
+        components.add(parsePointComponent())
+
         while (currentToken.type == PLUS || currentToken.type == MINUS) {
-            readToken(currentToken.type)
-            parsePointComponent()
+            val op = readToken(currentToken.type).type
+            val next = parsePointComponent()
+            components.add(next)
         }
+
+        return Point(components)
     }
 
-    private fun parsePointComponent() {
-        when (currentToken.type) {
+    private fun parsePointComponent(): PointComponent {
+        return when (currentToken.type) {
             LPAREN -> {
                 readToken(LPAREN)
-
-                val tempToken = currentToken
-                parseCoordinate()
-
-                if (currentToken.type == COMMA) {
-
-                    readToken(COMMA)
-                    parseCoordinate()
-                } else {
-                    // do nothing
-                }
-
+                val x = parseCoordinate()
+                readToken(COMMA)
+                val y = parseCoordinate()
                 readToken(RPAREN)
+                CoordinatePair(x, y)
             }
-
             DOLLAR -> {
                 readToken(DOLLAR)
-                readToken(ID)
+                val name = readToken(ID).lexeme
+                VariableRef(name)
             }
-
-            FST, SND -> parseFirstSecond()
-
+            FST -> {
+                readToken(FST)
+                val inner = parsePoint()
+                First(inner)
+            }
+            SND -> {
+                readToken(SND)
+                val inner = parsePoint()
+                Second(inner)
+            }
             else -> throw IllegalArgumentException("Expected point or variable in POINT but got ${currentToken.type}")
         }
     }
 
-
-    private fun parseCoordinate() {
-        when (currentToken.type) {
-            NUMBER -> readToken(NUMBER)
-            FST, SND -> parseFirstSecond()
-            ID -> readToken(ID)
-            else -> throw IllegalArgumentException("Expected NUMBER, ID or FIRST_SECOND in COORDINATE but got ${currentToken.type}")
-        }
-    }
-
-
-    private fun parseFirstSecond() {
-        when (currentToken.type) {
+    private fun parseCoordinate(): Expr {
+        return when (currentToken.type) {
+            NUMBER -> {
+                val value = readToken(NUMBER).lexeme.toDouble()
+                NumberLiteral(value)
+            }
+            ID -> {
+                val name = readToken(ID).lexeme
+                VariableReference(name)
+            }
             FST -> {
                 readToken(FST)
-                parsePoint()
+                val inner = parseCoordinate()
+                FirstCoordinate(inner)
             }
             SND -> {
                 readToken(SND)
-                parsePoint()
+                val inner = parseCoordinate()
+                SecondCoordinate(inner)
+            }
+            LPAREN -> {
+                readToken(LPAREN)
+                val expr = parseCoordinate()
+                readToken(RPAREN)
+                expr
+            }
+            else -> throw IllegalArgumentException("Expected coordinate expression but got ${currentToken.type}, line: ${currentToken.line}, col: ${currentToken.column} ")
+        }
+    }
+
+    private fun parseFirstSecond(): Expr {
+        return when (currentToken.type) {
+            FST -> {
+                readToken(FST)
+                val inner = parseCoordinate()
+                FirstCoordinate(inner)
+            }
+            SND -> {
+                readToken(SND)
+                val inner = parseCoordinate()
+                SecondCoordinate(inner)
             }
             else -> throw IllegalArgumentException("Expected FST or SND but got ${currentToken.type}")
         }
     }
 
-    private fun parseVariableDef() {
+    private fun parseVariableDef(): VariableDefinition {
         readToken(LET)
         readToken(AT)
-        readToken(ID)
+        val name = readToken(ID).lexeme
         readToken(EQUAL)
-        parsePoint()
+        val value = parsePoint()
         readToken(SEMICOLON)
+        return VariableDefinition(name, value)
     }
 
-    private fun parseQuery() {
+    private fun parseQuery(): Query {
         readToken(QUESTION_MARK)
         readToken(LBRACE)
         readToken(LBRACKET)
-        parsePoints()
+        val points = parsePoints()
         readToken(RBRACKET)
         readToken(COMMA)
         readToken(LBRACKET)
-        parsePoint()
+        val center = parsePoint()
         readToken(COMMA)
-        parseCircleValue()
+        val radius = parseCircleValue()
         readToken(RBRACKET)
         readToken(RBRACE)
         readToken(SEMICOLON)
+        return Query(points, center, radius)
     }
 }
