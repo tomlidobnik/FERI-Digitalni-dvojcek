@@ -77,18 +77,16 @@ fun Block.toGeoJSONFeature(variables: List<VariableDefinition>): String {
         is Park -> """{
             "type": "Feature",
             "geometry": {
-                "type": "Point",
-                "coordinates": ${(shape as Circle).center.toGeoJSONCoordinates(variables)},
-                "radius": ${(shape as Circle).radius.toGeoJSONValue()}
+                "type": "Polygon",
+                "coordinates": [${(shape as Polygon).points.toGeoJSONCoordinates(variables)}]
             },
             "properties": {"name": "$name"}
         }"""
         is Lake -> """{
             "type": "Feature",
             "geometry": {
-                "type": "Point",
-                "coordinates": ${(shape as Circle).center.toGeoJSONCoordinates(variables)},
-                "radius": ${(shape as Circle).radius.toGeoJSONValue()}
+                "type": "Polygon",
+                "coordinates": [${(shape as Polygon).points.toGeoJSONCoordinates(variables)}]
             },
             "properties": {"name": "$name"}
         }"""
