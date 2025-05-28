@@ -2,14 +2,7 @@ import Cookies from "js-cookie";
 
 const API_BASE_URL = `https://${import.meta.env.VITE_API_URL}/api`;
 
-/**
- * A utility function for making API requests.
- * @param {string} endpoint - The API endpoint (e.g., '/location/list').
- * @param {object} options - Fetch options (method, body, headers, etc.).
- * @returns {Promise<any>} - A promise that resolves with the JSON response or null.
- * @throws {Error} - Throws an error if the request fails or the response is not ok.
- */
-export const fetchApi = async (endpoint, options = {}) => {
+const baseFetchApi = async (endpoint, options = {}) => {
     const token = Cookies.get("token");
     const defaultHeaders = {};
 
@@ -44,8 +37,15 @@ export const fetchApi = async (endpoint, options = {}) => {
             } catch (e) {}
             const errorMessage =
                 errorData?.message ||
+                errorData?.error ||
                 `API request failed: ${response.status} ${response.statusText}`;
-            throw new Error(errorMessage);
+
+            const error = new Error(errorMessage);
+            error.status = response.status;
+            if (errorData) {
+                error.data = errorData;
+            }
+            throw error;
         }
 
         const text = await response.text();
@@ -61,10 +61,27 @@ export const fetchApi = async (endpoint, options = {}) => {
                     100
                 )}`
             );
-            return null;
+            return text;
         }
     } catch (error) {
-        console.error(`API call to ${endpoint} failed:`, error);
+        console.error(`API call to ${endpoint} failed:`, error.message);
         throw error;
     }
 };
+
+const apiService = {
+    get: (endpoint, options = {}) =>
+        baseFetchApi(endpoint, { ...options, method: "GET" }),
+    post: (endpoint, body, options = {}) =>
+        baseFetchApi(endpoint, { ...options, method: "POST", body }),
+    put: (endpoint, body, options = {}) =>
+        baseFetchApi(endpoint, { ...options, method: "PUT", body }),
+    delete: (endpoint, options = {}) =>
+        baseFetchApi(endpoint, { ...options, method: "DELETE" }),
+    patch: (endpoint, body, options = {}) =>
+        baseFetchApi(endpoint, { ...options, method: "PATCH", body }),
+};
+
+export default apiService;
+
+export { baseFetchApi as fetchApi };
