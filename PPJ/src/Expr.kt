@@ -35,3 +35,96 @@ data class VariableRef(val name: String) : PointComponent
 data class First(val point: Point) : PointComponent
 data class Second(val point: Point) : PointComponent
 
+fun Expr.toGeoJSON(variables: List<VariableDefinition>): String {
+    return when (this) {
+        is City -> {
+            val features = blocks.map { it.toGeoJSONFeature(variables) }
+            """{
+                "type": "FeatureCollection",
+                "features": [${features.joinToString(",")}]
+            }"""
+        }
+        else -> throw IllegalArgumentException("Unsupported Expr type for GeoJSON conversion")
+    }
+}
+
+fun Block.toGeoJSONFeature(variables: List<VariableDefinition>): String {
+    return when (this) {
+        is Road -> """{
+            "type": "Feature",
+            "geometry": {
+                "type": "LineString",
+                "coordinates": ${polyline.points.toGeoJSONCoordinates(variables)}
+            },
+            "properties": {"name": "$name"}
+        }"""
+        is Building -> """{
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [${(shape as Polygon).points.toGeoJSONCoordinates(variables)}]
+            },
+            "properties": {"name": "$name"}
+        }"""
+        is Area -> """{
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [${(shape as Polygon).points.toGeoJSONCoordinates(variables)}]
+            },
+            "properties": {"name": "$name"}
+        }"""
+        is Park -> """{
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": ${(shape as Circle).center.toGeoJSONCoordinates(variables)},
+                "radius": ${(shape as Circle).radius.toGeoJSONValue()}
+            },
+            "properties": {"name": "$name"}
+        }"""
+        is Lake -> """{
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": ${(shape as Circle).center.toGeoJSONCoordinates(variables)},
+                "radius": ${(shape as Circle).radius.toGeoJSONValue()}
+            },
+            "properties": {"name": "$name"}
+        }"""
+        else -> throw IllegalArgumentException("Unsupported Block type for GeoJSON conversion")
+    }
+}
+
+fun List<Point>.toGeoJSONCoordinates(variables: List<VariableDefinition>): String {
+    val nestedCoordinates = map { it.toGeoJSONCoordinates(variables) }
+    return "[${nestedCoordinates.joinToString(",")}]"
+}
+
+fun Point.toGeoJSONCoordinates(variables: List<VariableDefinition>): String {
+    val pair = components.filterIsInstance<CoordinatePair>().firstOrNull()
+    if (pair != null) {
+        return "[${pair.x.toGeoJSONValue()}, ${pair.y.toGeoJSONValue()}]"
+    }
+
+    val variableRef = components.filterIsInstance<VariableRef>().firstOrNull()
+    if (variableRef != null) {
+        val resolvedPoint = resolveVariableRef(variableRef, variables)
+        return resolvedPoint.toGeoJSONCoordinates(variables)
+    }
+
+    throw IllegalArgumentException("Point must contain a CoordinatePair or a resolvable VariableRef.")
+}
+
+fun Expr.toGeoJSONValue(): String {
+    return when (this) {
+        is NumberLiteral -> value.toString()
+        else -> throw IllegalArgumentException("Unsupported Expr type for GeoJSON value conversion")
+    }
+}
+
+fun resolveVariableRef(ref: VariableRef, variables: List<VariableDefinition>): Point {
+    val definition = variables.find { it.name == ref.name }
+        ?: throw IllegalArgumentException("VariableRef '${ref.name}' is not defined.")
+    return definition.value
+}
