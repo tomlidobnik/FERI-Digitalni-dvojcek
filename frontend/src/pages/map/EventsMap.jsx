@@ -72,16 +72,14 @@ const Map = () => {
             });
     }, []);
 
-    const defaultPosition = [46.5547, 15.6467];
-
     return (
         <MapContainer
-            center={defaultPosition}
+            center={[46.554736193959975, 15.645613823633967]}
             zoom={13}
-            className="h-full md:rounded-2xl">
+            style={{ height: "100vh", width: "100%" }}>
             <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                attribution="&copy; OpenStreetMap contributors"
             />
             {geojson && (
                 <GeoJSON data={geojson} onEachFeature={onEachFeature} />

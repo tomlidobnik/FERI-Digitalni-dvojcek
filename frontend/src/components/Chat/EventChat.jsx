@@ -1,46 +1,20 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
-import Cookies from "js-cookie";
 import ChatMessages from "./ChatMessages";
 import ChatInput from "./ChatInput";
-import apiService from "../../utils/apiService";
+import Cookies from "js-cookie";
 
-const EventChat = () => {
-    const [events, setEvents] = useState([]);
-    const [selectedEventId, setSelectedEventId] = useState("");
-    const [messages, setMessages] = useState([]);
+const ChatBox = () => {
+    const [username, setUsername] = useState("");
     const [message, setMessage] = useState("");
     const [isConnected, setIsConnected] = useState(false);
-    const [currentUsername, setCurrentUsername] = useState("");
+    const [messages, setMessages] = useState([]);
+    const [events, setEvents] = useState([]);
+    const [selectedEventId, setSelectedEventId] = useState("");
     const socketRef = useRef(null);
     const messagesContainerRef = useRef(null);
 
     const API_URL = import.meta.env.VITE_API_URL;
-
-    useEffect(() => {
-        const token = Cookies.get("token");
-        if (token) {
-            try {
-                const decoded = jwtDecode(token);
-                setCurrentUsername(decoded.sub || decoded.username || "");
-            } catch (err) {
-                console.error("Failed to decode token", err);
-                setCurrentUsername("");
-            }
-        }
-    }, []);
-
-    useEffect(() => {
-        apiService
-            .get("/events/all_events")
-            .then((response) => {
-                setEvents(response.data || []);
-            })
-            .catch((error) => {
-                console.error("Error fetching events:", error);
-                setEvents([]);
-            });
-    }, []);
 
     useEffect(() => {
         if (messagesContainerRef.current) {
@@ -50,6 +24,15 @@ const EventChat = () => {
     }, [messages]);
 
     useEffect(() => {
+        fetch(`https://${API_URL}/api/event/available`)
+            .then((res) => res.json())
+            .then((data) => {
+                setEvents(data);
+                if (data.length > 0) setSelectedEventId(data[0].id);
+            });
+    }, [API_URL]);
+
+    useEffect(() => {
         if (!selectedEventId) return;
 
         if (socketRef.current) {
@@ -57,45 +40,23 @@ const EventChat = () => {
             setIsConnected(false);
         }
 
-        const token = Cookies.get("token");
-        let usernameFromToken = "";
-        if (token) {
-            try {
-                const decoded = jwtDecode(token);
-                usernameFromToken = decoded.sub || decoded.username || "";
-            } catch (err) {
-                console.error("Failed to decode token", err);
-            }
-        }
-
         const socket = new WebSocket(
-            `wss://${API_URL}/ws/event/${selectedEventId}?token=${token}&username=${encodeURIComponent(
-                usernameFromToken
-            )}`
+            `wss://${API_URL}/ws/event/${selectedEventId}`
         );
         socketRef.current = socket;
 
         socket.onopen = () => {
             setIsConnected(true);
-            fetch(
-                `https://${API_URL}/api/chat/event_history/${selectedEventId}`,
-                {
-                    headers: {
-                        Authorization: token ? `Bearer ${token}` : "",
-                    },
-                }
-            )
+            fetch(`https://${API_URL}/api/chat/history/${selectedEventId}`)
                 .then((res) => res.json())
                 .then((data) => {
                     setMessages(data);
                 });
         };
-
         socket.onmessage = (event) => {
             const received = JSON.parse(event.data);
             setMessages((prev) => [...prev, received]);
         };
-
         socket.onerror = (err) => console.error("WebSocket error:", err);
         socket.onclose = () => setIsConnected(false);
 
@@ -109,72 +70,54 @@ const EventChat = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (
-            socketRef.current?.readyState === WebSocket.OPEN &&
-            currentUsername
-        ) {
-            const now = new Date();
-            const dateString = now.toISOString().replace("T", " ").slice(0, 19);
-            const msg = {
-                username: currentUsername,
-                message,
-                date: dateString,
-            };
-            socketRef.current.send(
-                JSON.stringify({ username: currentUsername, message })
-            );
+        if (socketRef.current?.readyState === WebSocket.OPEN) {
+            const msg = { username: username, message };
+            socketRef.current.send(JSON.stringify(msg));
             setMessages((prev) => [...prev, msg]);
             setMessage("");
         }
     };
 
+    useEffect(() => {
+        const token = Cookies.get("token");
+        if (token) {
+            try {
+                const decoded = jwtDecode(token);
+                setUsername(decoded.sub || decoded.username || "");
+            } catch (e) {
+                setUsername("");
+            }
+        }
+    }, []);
+
     return (
-        <div className="bg-primary p-6 rounded-lg shadow-lg text-text-custom h-full flex flex-col">
-            <h2 className="text-2xl font-semibold mb-4 text-quaternary">
-                Klepet dogodka
-            </h2>
-            <div className="mb-4">
-                <label
-                    htmlFor="event-select"
-                    className="block text-sm font-medium text-text-custom mb-1">
-                    Izberi dogodek:
-                </label>
+        <div className="min-h-screen p-6 text-text">
+            <h2 className="text-2xl font-bold mb-4">WebSocket Chat</h2>
+            <div className="flex items-center gap-3 mb-4">
                 <select
-                    id="event-select"
+                    className="px-2 py-1 border rounded"
                     value={selectedEventId}
                     onChange={(e) => setSelectedEventId(e.target.value)}
-                    className="w-full p-2 rounded-md bg-input-bg text-text-custom border border-input-border focus:ring-accent focus:border-accent">
-                    <option value="">Izberi dogodek</option>
+                    disabled={false}>
                     {events.map((event) => (
                         <option key={event.id} value={event.id}>
-                            {event.name}
+                            {event.title} (ID: {event.id})
                         </option>
                     ))}
                 </select>
             </div>
-            {selectedEventId ? (
-                <>
-                    <ChatMessages
-                        messages={messages}
-                        containerRef={messagesContainerRef}
-                        currentUsername={currentUsername}
-                    />
-                    <ChatInput
-                        message={message}
-                        setMessage={setMessage}
-                        handleSubmit={handleSubmit}
-                        isConnected={isConnected}
-                    />
-                </>
-            ) : (
-                <div className="flex-grow flex items-center justify-center">
-                    <p className="text-text-secondary">
-                        Izberite dogodek za ogled klepeta.
-                    </p>
-                </div>
-            )}
+            <ChatMessages
+                messages={messages}
+                containerRef={messagesContainerRef}
+            />
+            <ChatInput
+                message={message}
+                setMessage={setMessage}
+                handleSubmit={handleSubmit}
+                isConnected={isConnected}
+            />
         </div>
     );
 };
 
-export default EventChat;
+export default ChatBox;
