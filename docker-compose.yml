@@ -19,6 +19,7 @@ services:
     environment:
       DATABASE_URL: postgres://user:password@db:5432/db
       RUST_LOG: debug
+      TZ: Europe/Ljubljana
     volumes:
       - ./backend:/usr/src/backend
     command: cargo watch -x run

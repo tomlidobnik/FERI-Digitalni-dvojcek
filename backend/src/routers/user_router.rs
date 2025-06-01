@@ -16,5 +16,6 @@ pub fn create_router() -> Router {
         .route("/delete", delete(delete_user))
         .route("/validate", post(validate_user))
         .route("/token", post(generate_token))
+        .route("/stats", get(get_stats))
         .nest("/friends", friend_router::create_router())
 }
