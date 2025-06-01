@@ -21,6 +21,12 @@ const EventForList = ({event}) => {
             <div className="flex px-2 bg-secondary/30 rounded text-sm font-semibold w-fit">
                 {formatDateTime(event.start_date)}
             </div>
+            {event.location ? (
+                <div className="flex items-center px-2 mt-1 bg-tertiary/30 rounded text-sm font-semibold w-fit">
+                    <img src="icons/location-marker.svg" className="w-4 h-4 mr-1" alt="location" />
+                    {event.location ? (event.location.name || event.location.info || "Neznana lokacija") : "Neznana lokacija"}
+                </div>
+            ) : null}
         </div>
         <div className="flex flex-wrap sm:items-center text-base font-medium ml-2">
             <Link

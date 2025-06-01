@@ -7,13 +7,14 @@ import 'react-datetime-picker/dist/DateTimePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import 'react-clock/dist/Clock.css';
 import { useSelector } from "react-redux";
+import SelectMap from "../Map/SelectMap";
 
 export default function EditEventForm() {
     const navigate = useNavigate();
     const event = useSelector((state) => state.event); 
     const [startTime, setStartTime] = useState(new Date());
     const [endTime, setEndTime] = useState(new Date());
-
+    const [selectedLocation, setSelectedLocation] = useState(event.location || null);
 
     const changeStartTime = (value) => {
         setStartTime(value);
@@ -58,7 +59,17 @@ export default function EditEventForm() {
             setStartTime(new Date(event.start_date));
             setEndTime(new Date(event.end_date));
         }
-    }, [navigate]);
+        //console.log(event);
+        if (event.location_fk) {
+            fetch(`https://${import.meta.env.VITE_API_URL}/api/location/by_id/${event.location_fk}`)
+                .then(res => res.json())
+                .then(data => {
+                    setSelectedLocation(data);
+                    //console.log(data);
+                })
+                .catch(() => setSelectedLocation(null));
+        }
+    }, [navigate, event]);
 
 const onSubmit = async (data) => {
     clearErrors();
@@ -70,7 +81,7 @@ const onSubmit = async (data) => {
             description: data.description,
             start_date: toLocalISOString(startTime),
             end_date: toLocalISOString(endTime),
-            location_fk: null,
+            location_fk: selectedLocation ? selectedLocation.id : null,
             public: data.public === "true",
         };
         if (startTime >= endTime) {
@@ -163,13 +174,14 @@ const onSubmit = async (data) => {
                     </div>
 
                     <div className="flex flex-col gap-0.5">
-                        <label className="font-semibold text-xl">Location</label>
+                        <label className="font-semibold text-xl">Lokacija</label>
                         <input
                             type="text"
                             className="bg-black/10 p-3 text-xl rounded-2xl shadow-md focus:border-tertiary focus:outline-tertiary focus:outline-0 border-black/20 border-4"
-                            value="TODO (ne deluje sedaj)"
+                            value={selectedLocation ? selectedLocation.info : ""}
                             readOnly
-                        />                        
+                        />
+                        <SelectMap onLocationSelect={setSelectedLocation} selectedLocation={selectedLocation} />
                         <div className="text-error h-2">
                             {errors.password && <>{errors.password.message}</>}
                         </div>

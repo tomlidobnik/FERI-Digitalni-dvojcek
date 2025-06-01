@@ -9,6 +9,7 @@ const ListAllEventsDetail = ({selectMode}) => {
     const [response, setResponse] = useState([]);
     const [filteredResponse, setFilteredResponse] = useState([]);
     const [dogodkiTitle, setDogodkiTitle] = useState("Dogodki");
+    const [allLocations, setAllLocations] = useState([]);
 
     // Fetch events when selectMode or API_URL changes
     useEffect(() => {
@@ -23,6 +24,14 @@ const ListAllEventsDetail = ({selectMode}) => {
         const headers = selectMode === 4 && token
             ? { Authorization: `Bearer ${token}` }
             : {};
+        
+        fetch(`https://${API_URL}/api/location/all`)
+            .then(res => res.json())
+            .then(data => {setAllLocations(data); console.log("Fetched locations:", data);})
+            .catch(err => {
+                console.error("Error fetching locations:", err);
+                setAllLocations([]);
+            });
 
         fetch(url, { headers })
             .then(res => res.json())
@@ -67,13 +76,25 @@ const ListAllEventsDetail = ({selectMode}) => {
                 ) : filteredResponse.length < 1 ? (
                     <div className="text-center text-text/70 text-lg py-8">Ni dogodkov za prikaz.</div>
                 ) : (
-                    filteredResponse.map((event) => (
-                        <EventForListDetail
-                            key={event.id}
-                            event={event}
-                            selectMode={selectMode}
-                        />
-                    ))
+                    filteredResponse.map((event) => {
+                        //console.log(event)
+
+                        const locationEvent = allLocations.find(
+                            (loc) => loc.id === event.location_fk
+                        );
+
+                        
+
+                        //console.log(locationEvent);
+                        return (
+                            <EventForListDetail
+                                key={event.id}
+                                event={event}
+                                selectMode={selectMode}
+                                location={locationEvent}
+                            />
+                        );
+                    })
                 )}
             </div>
         </div>

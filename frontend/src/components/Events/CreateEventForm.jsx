@@ -3,11 +3,13 @@ import { useForm } from "react-hook-form";
 import Cookies from 'js-cookie';
 import { useEffect, useState } from "react";
 import DateTimePicker from 'react-datetime-picker';
+import SelectMap from "../Map/SelectMap";
 
 export default function CreateEventForm() {
     const navigate = useNavigate();
     const [startTime, setStartTime] = useState(new Date());
     const [endTime, setEndTime] = useState(new Date());
+    const [selectedLocation, setSelectedLocation] = useState(null);
 
     const changeStartTime = (value) => {
         setStartTime(value);
@@ -51,7 +53,7 @@ const onSubmit = async (data) => {
             description: data.description,
             start_date: toLocalISOString(startTime),
             end_date: toLocalISOString(endTime),
-            location_fk: null,
+            location_fk: selectedLocation ? selectedLocation.id : null,
             public: data.public === "true",
         };
         if (startTime >= endTime) {
@@ -148,9 +150,10 @@ const onSubmit = async (data) => {
                         <input
                             type="text"
                             className="bg-black/10 p-3 text-xl rounded-2xl shadow-md focus:border-tertiary focus:outline-tertiary focus:outline-0 border-black/20 border-4"
-                            value="TODO (ne deluje sedaj)"
+                            value={selectedLocation ? selectedLocation.name : ""}
                             readOnly
                         />
+                        <SelectMap  onLocationSelect={setSelectedLocation} selectedLocation={selectedLocation} />
                         <div className="text-error h-2">
                             {errors.password && <>{errors.password.message}</>}
                         </div>
