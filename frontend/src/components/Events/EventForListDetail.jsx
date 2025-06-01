@@ -87,7 +87,7 @@ const EventForListDetail = ({event, selectMode, location}) => {
                     </>
                 ): null}
                 <Link
-                    to="/event"
+                    to={`/event/${event.id}`}
                     className="flex-shrink-0 text-right bg-black/10 rounded-2xl p-2 md:p-4 md:px-6 xl:px-8 flex items-center justify-center hover:bg-quaternary/70 hover:text-white transition group"
                 >
                     <img

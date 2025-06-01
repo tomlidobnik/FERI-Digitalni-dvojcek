@@ -7,6 +7,7 @@ import Event from "../components/Events/Event.jsx";
 import ListAllFriends from "../components/Friends/ListAllFriends.jsx";
 import CreateEvent from "../components/Events/CreateEvent.jsx";
 import EditEvent from "../components/Events/EditEvent.jsx";
+import EventView from "../components/Events/EventView.jsx";
 
 function MainPage() {
     const navigate = useNavigate();
@@ -27,10 +28,11 @@ function MainPage() {
                 </div>
                 <div className="flex-1 ml-0 h-full overflow-y-auto">
                     <div className="flex flex-col h-full md:p-6">
-                        {location === "/map" ? <Map />: <></>}
-                        {location === "/events" ? <Event />: <></>}
-                        {location === "/events/add" ? <CreateEvent />: <></>}
-                        {location === "/event/edit" ? <EditEvent />: <></>}
+                        {location === "/map" ? <Map />: null}
+                        {location === "/events" ? <Event />: null}
+                        {location === "/events/add" ? <CreateEvent />: null}
+                        {location === "/event/edit" ? <EditEvent />: null}
+                        {/^\/event\/\d+$/.test(location) ? <EventView/>: null}
                     </div>
 
                 </div>

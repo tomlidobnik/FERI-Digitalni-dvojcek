@@ -121,6 +121,14 @@ const router = createBrowserRouter([
             </ErrorBoundary>
         ),
     },
+    {
+        path: "/event/:id",
+        element: (
+            <ErrorBoundary FallbackComponent={ErrorPage}>
+                <MainPage />
+            </ErrorBoundary>
+        ),
+    },
 ]);
 
 export default router;

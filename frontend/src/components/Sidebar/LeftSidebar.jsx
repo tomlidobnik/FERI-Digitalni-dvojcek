@@ -65,7 +65,7 @@ const LeftSidebar = () => {
                 <Link to="/profile" className={location.startsWith("/profile") ? "btn-nav-active" : "btn-nav"}>
                     Profil
                 </Link>
-                <Link to="/events" className={location.startsWith("/events") ? "btn-nav-active" : "btn-nav"}>
+                <Link to="/events" className={location.startsWith("/events") || location.startsWith("/event") ? "btn-nav-active" : "btn-nav"}>
                     Dogodki
                 </Link>
                 <Link to="/map" className={location === "/map" ? "btn-nav-active" : "btn-nav"}>
@@ -101,7 +101,7 @@ const LeftSidebar = () => {
                     />
                     Profil
                 </Link>
-                <Link to="/events" className={location.startsWith("/events") ? "btn-nav-active-side" : "btn-nav-side"}>
+                <Link to="/events" className={location.startsWith("/events") || location.startsWith("/event") ? "btn-nav-active-side" : "btn-nav-side"}>
                     <img
                     src="/icons/calendar-day.svg"
                     className="w-6 h-6 lg:w-8 lg:h-8 mr-2"
