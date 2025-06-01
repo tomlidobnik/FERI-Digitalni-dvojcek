@@ -129,10 +129,7 @@ const EventChat = () => {
     };
 
     return (
-        <div className="bg-primary p-6 rounded-lg shadow-lg text-text-custom h-full flex flex-col">
-            <h2 className="text-2xl font-semibold mb-4 text-quaternary">
-                Klepet dogodka
-            </h2>
+        <div className=" rounded-lg text-text-custom h-full flex flex-col">
             <div className="mb-4">
                 <label
                     htmlFor="event-select"

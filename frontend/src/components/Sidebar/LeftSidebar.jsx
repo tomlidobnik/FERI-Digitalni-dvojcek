@@ -65,7 +65,7 @@ const LeftSidebar = () => {
                 <Link to="/profile" className={location.startsWith("/profile") ? "btn-nav-active" : "btn-nav"}>
                     Profil
                 </Link>
-                <Link to="/events" className={location.startsWith("/events") ? "btn-nav-active" : "btn-nav"}>
+                <Link to="/events" className={location.startsWith("/events") || location.startsWith("/event") ? "btn-nav-active" : "btn-nav"}>
                     Dogodki
                 </Link>
                 <Link to="/map" className={location === "/map" ? "btn-nav-active" : "btn-nav"}>
@@ -88,20 +88,13 @@ const LeftSidebar = () => {
             <>
                 <nav className="flex-col gap-0 md:gap-3 hidden lg:flex">
                 <Link to="/home" className={location.startsWith("/home") ? "btn-nav-active-side" : "btn-nav-side"}>
-                                <img
+                    <img
                     src="/icons/home.svg"
                     className="w-6 h-6 lg:w-8 lg:h-8 mr-2"
                     />
                     Domov
                 </Link>
-                <Link to="/profile" className={location.startsWith("/profile") ? "btn-nav-active-side" : "btn-nav-side"}>
-                    <img
-                    src="/icons/user.svg"
-                    className="w-6 h-6 lg:w-8 lg:h-8 mr-2"
-                    />
-                    Profil
-                </Link>
-                <Link to="/events" className={location.startsWith("/events") ? "btn-nav-active-side" : "btn-nav-side"}>
+                <Link to="/events" className={location.startsWith("/events") || location.startsWith("/event") ? "btn-nav-active-side" : "btn-nav-side"}>
                     <img
                     src="/icons/calendar-day.svg"
                     className="w-6 h-6 lg:w-8 lg:h-8 mr-2"
@@ -130,7 +123,7 @@ const LeftSidebar = () => {
                     Klepetalnica
                 </Link>
                 </nav>
-                <Link to="/profile/public" className="mt-auto pt-16 lg:flex items-center gap-3 mb-2 hidden">
+                <Link to="/profile" className="mt-auto pt-16 lg:flex items-center gap-3 mb-2 hidden">
                     <div className="w-10 h-10 rounded-full bg-quaternary flex items-center justify-center text-white text-xl font-bold shadow">
                         {user ? <>{user.username ? user.username.charAt(0).toUpperCase() : "U"}</>: "U"}
                     </div>
