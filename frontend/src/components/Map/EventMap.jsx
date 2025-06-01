@@ -11,30 +11,9 @@ const customMarkerIcon = L.icon({
     popupAnchor: [0, -45],
 });
 
-const EventMap = ({ location_fk }) => {
+const EventMap = ({ location , outline}) => {
     const API_URL = import.meta.env.VITE_API_URL;
-    const [location, setLocation] = useState(null);
-    const [outline, setOutline] = useState(null);
     const [error, setError] = useState(null);
-
-    useEffect(() => {
-        if (!location_fk) return;
-        fetch(`https://${API_URL}/api/location/by_id/${location_fk}`)
-            .then(res => res.json())
-            .then(data => {
-                setLocation(data);
-                // If location_outline_fk exists, fetch the outline
-                if (data.location_outline_fk) {
-                    fetch(`https://${API_URL}/api/location_outline/by_id/${data.location_outline_fk}`)
-                        .then(res => res.json())
-                        .then(outlineData => {setOutline(outlineData); console.log(outlineData);})
-                        .catch(() => setOutline(null));
-                } else {
-                    setOutline(null);
-                }
-            })
-            .catch(err => setError("Napaka pri pridobivanju lokacije."));
-    }, [API_URL, location_fk]);
 
     if (error) {
         return <div className="text-red-500">{error}</div>;
@@ -61,12 +40,12 @@ const EventMap = ({ location_fk }) => {
     // Center map on marker or polygon
     const center = hasCoords
         ? [location.latitude, location.longitude]
-        : (polygonCoords[0] || [46.5547, 15.6467]);
+        : (polygonCoords[0] || [46.5460, 15.6467]);
 
     return (
         <MapContainer
             center={center}
-            zoom={13}
+            zoom={14}
             className="h-full w-full rounded-2xl"
             style={{ minHeight: 300 }}
         >
