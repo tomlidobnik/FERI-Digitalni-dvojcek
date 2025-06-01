@@ -8,6 +8,7 @@ import Cookies from "js-cookie";
 
 import EventViewDetail from "./EventViewDetail";
 import EventMap from "../Map/EventMap";
+import EventChat from "../Chat/EventChat";
 
 const EventView = () => {
     const API_URL = import.meta.env.VITE_API_URL;
@@ -103,7 +104,7 @@ const EventView = () => {
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-text"></div>
                     </div>
                 ):(
-                    <>{event != null? event.title : null}</>
+                    <EventChat />
                 )}
             </div>
         </div>

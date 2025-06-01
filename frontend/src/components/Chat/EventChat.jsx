@@ -129,7 +129,7 @@ const EventChat = () => {
     };
 
     return (
-        <div className="bg-primary p-6 rounded-lg shadow-lg text-text-custom h-full flex flex-col">
+        <div className=" rounded-lg shadow-lg text-text-custom h-full flex flex-col">
             <h2 className="text-2xl font-semibold mb-4 text-quaternary">
                 Klepet dogodka
             </h2>
