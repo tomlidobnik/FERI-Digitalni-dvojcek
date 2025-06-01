@@ -181,7 +181,7 @@ const onSubmit = async (data) => {
                             value={selectedLocation ? selectedLocation.info : ""}
                             readOnly
                         />
-                        <SelectMap onLocationSelect={setSelectedLocation} />
+                        <SelectMap onLocationSelect={setSelectedLocation} selectedLocation={selectedLocation} />
                         <div className="text-error h-2">
                             {errors.password && <>{errors.password.message}</>}
                         </div>

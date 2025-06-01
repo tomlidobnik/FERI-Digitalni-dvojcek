@@ -16,7 +16,28 @@ const customMarkerIcon = L.icon({
     popupAnchor: [0, -45],
 });
 
-const geoJSONStyleOptions = (feature) => {
+const customMarkerIconGreen = L.icon({
+    iconUrl: "/assets/custom-marker-blue.svg",
+    iconAnchor: [19, 45],
+    popupAnchor: [0, -45],
+});
+
+
+const geoJSONStyleOptions = (feature, selectedLocationUp) => {
+    if (
+        feature.geometry.type === "Polygon" &&
+        selectedLocationUp &&
+        (feature.properties.id === selectedLocationUp.id ||
+         feature.properties.outline_id === selectedLocationUp.id)
+    ) {
+        return {
+            color: "#69A1DD",
+            weight: 3,
+            opacity: 1,
+            fillColor: "#69A1DD",
+            fillOpacity: 0.4,
+        };
+    }
     if (feature.geometry.type === "Polygon") {
         return {
             color: "#A94A4A",
@@ -29,7 +50,7 @@ const geoJSONStyleOptions = (feature) => {
     return {};
 };
 
-const LocationsMapSelect = ({ onLocationSelect }) => {
+const LocationsMapSelect = ({ onLocationSelect, selectedLocationUp }) => {
     const [geojson, setGeojson] = useState(null);
     const [notification, setNotification] = useState({
         message: null,
@@ -141,60 +162,71 @@ const LocationsMapSelect = ({ onLocationSelect }) => {
     }, [fetchLocations]);
 
     // Custom onEachFeature to handle click
-    function onEachFeature(feature, layer) {
-        if (feature.properties && feature.properties.name) {
-            layer.bindPopup(feature.properties.name, { className: "custom-popup" });
-        }
-        if (feature.geometry.type === "Point") {
-            layer.setIcon(customMarkerIcon);
-        }
-        layer.on("click", () => {
-            setSelectedLocationRef.current(feature.properties);
-            if (onLocationSelect) {
-                onLocationSelect(feature.properties);
-            }
-            // eslint-disable-next-line no-console
-            console.log("Selected location:", feature.properties);
-        });
+function onEachFeature(feature, layer) {
+    if (feature.properties && feature.properties.name) {
+        layer.bindPopup(feature.properties.name, { className: "custom-popup" });
     }
+    if (feature.geometry.type === "Point") {
+        // Set icon based on whether this point is the selected location
+        const isSelected =
+            selectedLocationUp &&
+            (
+                feature.properties.id === selectedLocationUp.id ||
+                feature.properties.outline_id === selectedLocationUp.id
+            );
+        layer.setIcon(isSelected ? customMarkerIconGreen : customMarkerIcon);
+    }
+    layer.on("click", () => {
+        setSelectedLocationRef.current(feature.properties);
+        if (onLocationSelect) {
+            onLocationSelect(feature.properties);
+        }
+        // eslint-disable-next-line no-console
+        console.log("Selected location:", feature.properties);
+    });
+}
 
     // Show notification when selectedLocation changes
     useEffect(() => {
-        if (selectedLocation) {
-            setNotification({
-                message: `Izbrana lokacija: ${selectedLocation.name || "Brez imena"}${selectedLocation.info ? " (" + selectedLocation.info + ")" : ""}`,
-                type: "info",
-            });
-        }
-    }, [selectedLocation]);
+        if (!geojson) return;
+
+        document.querySelectorAll('.leaflet-marker-icon').forEach((iconEl) => {
+            if (selectedLocation) {
+                setNotification({
+                    message: `Izbrana lokacija: ${selectedLocation.name || "Brez imena"}${selectedLocation.info ? "" : ""}`,
+                    type: "info",
+                });
+            }
+        });
+    }, [selectedLocation, geojson]);
 
     return (
-        <div className="h-full w-full relative">
-            <Notification
-                message={notification.message}
-                type={notification.type}
-                onClose={() => setNotification({ message: null, type: "info" })}
-                className="absolute top-2 right-2 z-[1000]"
+    <div className="h-full w-full relative">
+        <Notification
+            message={notification.message}
+            type={notification.type}
+            onClose={() => setNotification({ message: null, type: "info" })}
+            className="absolute top-2 right-2 z-[1000]"
+        />
+        <MapContainer
+            center={[46.554736193959975, 15.645613823633967]}
+            zoom={13}
+            className="h-full md:rounded-2xl"
+        >
+            <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution="&copy; OpenStreetMap contributors"
             />
-            <MapContainer
-                center={[46.554736193959975, 15.645613823633967]}
-                zoom={13}
-                className="h-full md:rounded-2xl"
-            >
-                <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution="&copy; OpenStreetMap contributors"
+            {geojson && (
+                <GeoJSON
+                    key={JSON.stringify(geojson) + JSON.stringify(selectedLocationUp)}
+                    data={geojson}
+                    onEachFeature={onEachFeature}
+                    style={feature => geoJSONStyleOptions(feature, selectedLocationUp)}
                 />
-                {geojson && (
-                    <GeoJSON
-                        key={JSON.stringify(geojson)}
-                        data={geojson}
-                        onEachFeature={onEachFeature}
-                        style={geoJSONStyleOptions}
-                    />
-                )}
-            </MapContainer>
-        </div>
+            )}
+        </MapContainer>
+    </div>
     );
 };
 

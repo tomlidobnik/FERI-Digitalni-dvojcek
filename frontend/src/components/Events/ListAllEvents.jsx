@@ -7,9 +7,19 @@ const ListAllEvents = () => {
 
     const [response, setResponse] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [allLocations, setAllLocations] = useState([]);
 
     useEffect(() => {
         setIsLoading(true);
+
+        fetch(`https://${API_URL}/api/location/all`)
+            .then(res => res.json())
+            .then(data => {setAllLocations(data);})
+            .catch(err => {
+                console.error("Error fetching locations:", err);
+                setAllLocations([]);
+        });
+
         fetch(`https://${API_URL}/api/event/available`)
             .then((res) => res.json())
             .then((data) => {
@@ -35,12 +45,14 @@ const ListAllEvents = () => {
                         {response.length === 0 ? (
                             <div className="text-center text-text/70 text-lg py-8">Ni dogodkov za prikaz.</div>
                         ) : (
-                            response.map((event) => (
-                                <EventForList
-                                    key={event.id}
-                                    event={event}
-                                />
-                            ))
+                            response.map((event) => {
+                                return (
+                                    <EventForList
+                                        key={event.id}
+                                        event={event}
+                                    />
+                                );
+                            })
                         )}
                     </>
                 )}
