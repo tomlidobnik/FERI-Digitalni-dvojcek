@@ -32,9 +32,10 @@ const EventChat = () => {
 
     useEffect(() => {
         apiService
-            .get("/events/all_events")
+            .get("/event/all")
             .then((response) => {
-                setEvents(response.data || []);
+                const eventList = response?.data || response;
+                setEvents(eventList || []);
             })
             .catch((error) => {
                 console.error("Error fetching events:", error);
@@ -78,14 +79,27 @@ const EventChat = () => {
         socket.onopen = () => {
             setIsConnected(true);
             fetch(
-                `https://${API_URL}/api/chat/event_history/${selectedEventId}`,
+                `https://${API_URL}/api/chat/history/${selectedEventId}`,
                 {
                     headers: {
                         Authorization: token ? `Bearer ${token}` : "",
                     },
                 }
             )
-                .then((res) => res.json())
+                .then(async (res) => {
+                    const text = await res.text();
+                    if (!text) return [];
+                    try {
+                        return JSON.parse(text);
+                    } catch (e) {
+                        console.error(
+                            "Failed to parse chat history JSON:",
+                            e,
+                            text
+                        );
+                        return [];
+                    }
+                })
                 .then((data) => {
                     setMessages(data);
                 });
@@ -144,7 +158,7 @@ const EventChat = () => {
                     <option value="">Izberi dogodek</option>
                     {events.map((event) => (
                         <option key={event.id} value={event.id}>
-                            {event.name}
+                            {event.id} - {event.title || event.name}
                         </option>
                     ))}
                 </select>
