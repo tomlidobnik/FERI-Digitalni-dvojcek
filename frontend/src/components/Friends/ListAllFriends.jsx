@@ -37,16 +37,7 @@ const ListAllFriends = () => {
                 <div className="flex-1 flex items-center justify-center h-full">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-text-custom"></div>
                 </div>
-            ) : response.length === 0 ? (
-                <div className="flex-1 flex flex-col items-center justify-center">
-                    <div className="text-center text-text-custom/70 text-lg py-8">
-                        Ni prijateljev.
-                    </div>
-                    <Link to="/add_friends" className="btn-nav w-auto px-6">
-                        Dodaj prijatelje
-                    </Link>
-                </div>
-            ) : (
+            ):(
                 <div className="flex-1 flex flex-col overflow-y-auto min-h-0">
                     <ListUsers />
                 </div>
