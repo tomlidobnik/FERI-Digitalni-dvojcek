@@ -137,6 +137,14 @@ const router = createBrowserRouter([
             </ErrorBoundary>
         ),
     },
+    {
+        path: "/profile/:id",
+        element: (
+            <ErrorBoundary FallbackComponent={ErrorPage}>
+                <MainPage />
+            </ErrorBoundary>
+        ),
+    },
 ]);
 
 export default router;

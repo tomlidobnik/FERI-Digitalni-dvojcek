@@ -1,13 +1,15 @@
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useState} from "react";
 import Cookies from "js-cookie";
 import Notification from "../Notification";
-import ShowUserInfo from "./ShowUserInfo";
+import ShowPublicUserInfo from "./ShowPublicUserInfo";
+import { useParams } from "react-router-dom";
 
-const Profile = () => {
+const PublicProfile = () => {
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const API_URL = import.meta.env.VITE_API_URL;
     const token = Cookies.get("token");
+    const { id } = useParams();
     const [notification, setNotification] = useState({
         message: null,
         type: "info",
@@ -22,7 +24,7 @@ const Profile = () => {
         }
 
         setIsLoading(true);
-        fetch(`https://${API_URL}/api/user/by_token`, {
+        fetch(`https://${API_URL}/api/user/by_id/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -31,12 +33,11 @@ const Profile = () => {
             .then((data) => {
                 setUser(data);
                 setIsLoading(false);
-                console.log("User profile fetched:", data);
             })
             .catch((err) => {
                 setNotification({
                     message: `Napaka pri pridobivanju uporabnika.`,
-                    type: "error",
+                    type: "erroe",
                 });
                 setIsLoading(false);
             });
@@ -55,10 +56,10 @@ const Profile = () => {
                 </div>
             ) : (
                 user && (
-                    <ShowUserInfo userData={user}/>
+                    <ShowPublicUserInfo userData={user}/>
                 )
             )}
         </div>
     );
 }
-export default Profile;
+export default PublicProfile;
