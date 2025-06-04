@@ -27,6 +27,7 @@ diesel::table! {
         end_date -> Timestamp,
         location_fk -> Nullable<Int4>,
         public -> Bool,
+        tag -> Nullable<Text>,
     }
 }
 

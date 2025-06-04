@@ -38,6 +38,7 @@ pub struct Event {
     pub end_date: NaiveDateTime,
     pub location_fk: Option<i32>,
     pub public: bool,
+    pub tag: Option<String>,
 }
 
 #[derive(Queryable, Selectable, Serialize)]

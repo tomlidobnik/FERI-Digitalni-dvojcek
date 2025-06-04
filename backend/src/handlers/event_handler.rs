@@ -21,6 +21,7 @@ pub struct NewEvent {
     pub end_date: NaiveDateTime,
     pub location_fk: Option<i32>,
     pub public: bool,
+    pub tag: Option<String>,
 }
 #[derive(Deserialize)]
 pub struct CreateEventRequest {
@@ -30,6 +31,7 @@ pub struct CreateEventRequest {
     pub end_date: NaiveDateTime,
     pub location_fk: Option<i32>,
     pub public: bool,
+    pub tag: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -41,6 +43,7 @@ pub struct UpdateEventRequest {
     pub end_date: NaiveDateTime,
     pub location_fk: Option<i32>,
     pub public: bool,
+    pub tag: Option<String>,
 }
 
 #[derive(Queryable)]
@@ -75,6 +78,7 @@ pub struct EventWithLocation {
     pub end_date: chrono::NaiveDateTime,
     pub public: bool,
     pub location: Option<LocationWithOutline>,
+    pub tag: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -98,8 +102,8 @@ pub async fn create_event(
     Json(payload): Json<CreateEventRequest>,
 ) -> Result<StatusCode, EventError> {
     info!(
-        "Called create_event by user: {} with title: {}, start_date: {}, end_date: {:?}, location_fk: {:?}",
-        user.0.sub, payload.title, payload.start_date, payload.end_date, payload.location_fk
+        "Called create_event by user: {} with title: {}, start_date: {}, end_date: {:?}, location_fk: {:?}, tag: {:?}",
+        user.0.sub, payload.title, payload.start_date, payload.end_date, payload.location_fk, payload.tag
     );
 
     let mut conn = db::connect_db();
@@ -113,6 +117,7 @@ pub async fn create_event(
         location_fk: payload.location_fk,
         user_fk: Some(user_id),
         public: payload.public,
+        tag: payload.tag,
     };
 
     match diesel::insert_into(events)
@@ -193,8 +198,8 @@ pub async fn update_event(
     Json(payload): Json<UpdateEventRequest>,
 ) -> Result<StatusCode, EventError> {
     info!(
-        "Called update_event by user: {} for event id: {} with title: {}",
-        user.0.sub, payload.id, payload.title
+        "Called update_event by user: {} for event id: {} with title: {} and tag: {:?}",
+        user.0.sub, payload.id, payload.title, payload.tag
     );
     let mut conn = db::connect_db();
     match diesel::update(events.filter(event_id_col.eq(&payload.id)))
@@ -205,6 +210,7 @@ pub async fn update_event(
             end_date.eq(&payload.end_date),
             location_fk.eq(&payload.location_fk),
             public.eq(&payload.public),
+            crate::schema::events::tag.eq(&payload.tag),
         ))
         .execute(&mut conn)
     {
@@ -234,6 +240,7 @@ pub async fn get_available_events() -> Result<Json<Vec<EventWithLocation>>, Even
             start_date,
             end_date,
             public,
+            tag,
             (
                 location_id.nullable(),
                 loc_info.nullable(),
@@ -254,6 +261,7 @@ pub async fn get_available_events() -> Result<Json<Vec<EventWithLocation>>, Even
             chrono::NaiveDateTime,
             chrono::NaiveDateTime,
             bool,
+            Option<String>,
             (
                 Option<i32>,
                 Option<String>,
@@ -268,7 +276,7 @@ pub async fn get_available_events() -> Result<Json<Vec<EventWithLocation>>, Even
         Ok(rows) => {
             let events_with_location = rows
                 .into_iter()
-                .map(|(other_event_id, other_user_fk, other_title, other_description, other_start_date, other_end_date, other_public, (loc_id, info, other_longitude, other_latitude, _other_location_outline_fk, (outline_id_opt, points_opt)))| {
+                .map(|(other_event_id, other_user_fk, other_title, other_description, other_start_date, other_end_date, other_public, other_tag, (loc_id, info, other_longitude, other_latitude, _other_location_outline_fk, (outline_id_opt, points_opt)))| {
                     EventWithLocation {
                         id: other_event_id,
                         user_fk:other_user_fk,
@@ -277,6 +285,7 @@ pub async fn get_available_events() -> Result<Json<Vec<EventWithLocation>>, Even
                         start_date:other_start_date,
                         end_date:other_end_date,
                         public:other_public,
+                        tag: other_tag,
                         location: loc_id.map(|lid| LocationWithOutline {
                             id: lid,
                             info,
