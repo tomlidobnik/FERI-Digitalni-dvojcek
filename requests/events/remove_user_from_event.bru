@@ -1,11 +1,11 @@
 meta {
-  name: add_user_to_event
+  name: remove_user_from_event
   type: http
-  seq: 9
+  seq: 13
 }
 
-post {
-  url: https://0.0.0.0:8000/api/event/add_user_to_event/1
+delete {
+  url: https://0.0.0.0:8000/api/event/remove_user_from_event/1/1
   body: json
   auth: inherit
 }

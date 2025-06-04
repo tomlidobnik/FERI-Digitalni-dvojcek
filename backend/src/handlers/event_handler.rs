@@ -1,6 +1,6 @@
 use crate::config::db;
 use crate::error::event_error::EventError;
-use crate::models::{AuthenticatedUser, Event, LocationOutline};
+use crate::models::{AuthenticatedUser, Event, LocationOutline, EventUser};
 use crate::schema::events::dsl::{events, title, description};
 use crate::schema::events::{id as event_id_col, start_date, end_date, location_fk, public};
 use crate::schema::users::dsl::*;
@@ -355,44 +355,126 @@ pub async fn make_event_private(
     }
 }
 
-pub async fn add_event_allowed_user(
+pub async fn join_public_event(
+    user: AuthenticatedUser,
+    Path(event_id): Path<i32>,
+) -> Result<StatusCode, EventError> {
+    let mut conn = db::connect_db();
+    let event = events
+        .filter(event_id_col.eq(event_id))
+        .first::<Event>(&mut conn)
+        .map_err(|_| EventError::EventNotFound)?;
+    if !event.public {
+        return Err(EventError::Unauthorized);
+    }
+    let user_id = get_user_id(user).await.map_err(|_| EventError::Unauthorized)?;
+    let exists = crate::schema::event_users::table
+        .filter(crate::schema::event_users::event_id.eq(event_id))
+        .filter(crate::schema::event_users::user_id.eq(user_id))
+        .first::<EventUser>(&mut conn)
+        .optional()
+        .map_err(|_| EventError::InternalServerError)?;
+    if exists.is_some() {
+        return Ok(StatusCode::OK);
+    }
+    let new_event_user = EventUser { event_id, user_id };
+    diesel::insert_into(crate::schema::event_users::table)
+        .values(&new_event_user)
+        .execute(&mut conn)
+        .map_err(|_| EventError::InternalServerError)?;
+    Ok(StatusCode::CREATED)
+}
+
+
+pub async fn add_user_to_private_event(
     user: AuthenticatedUser,
     Path(event_id): Path<i32>,
     Json(payload): Json<AddEventAllowedUserRequest>,
 ) -> Result<StatusCode, EventError> {
     let mut conn = db::connect_db();
-
     let event = events
         .filter(event_id_col.eq(event_id))
         .first::<Event>(&mut conn)
         .map_err(|_| EventError::EventNotFound)?;
-
+    if event.public {
+        return Err(EventError::Unauthorized);
+    }
     let user_id = get_user_id(user).await.map_err(|_| EventError::Unauthorized)?;
     if event.user_fk != Some(user_id) {
         return Err(EventError::Unauthorized);
     }
-
     let user_exists = users
         .filter(crate::schema::users::id.eq(payload.user_id))
         .select(crate::schema::users::id)
         .first::<i32>(&mut conn)
         .optional()
         .map_err(|_| EventError::InternalServerError)?;
-
     if user_exists.is_none() {
         return Err(EventError::InternalServerError);
     }
-
-    let new_allowed = NewEventAllowedUser {
-        event_id,
-        user_id: payload.user_id,
-    };
-
-    match diesel::insert_into(event_allowed_users::table)
-        .values(&new_allowed)
+    let exists = crate::schema::event_users::table
+        .filter(crate::schema::event_users::event_id.eq(event_id))
+        .filter(crate::schema::event_users::user_id.eq(payload.user_id))
+        .first::<EventUser>(&mut conn)
+        .optional()
+        .map_err(|_| EventError::InternalServerError)?;
+    if exists.is_some() {
+        return Ok(StatusCode::OK);
+    }
+    let new_event_user = EventUser { event_id, user_id: payload.user_id };
+    diesel::insert_into(crate::schema::event_users::table)
+        .values(&new_event_user)
         .execute(&mut conn)
-    {
-        Ok(_) => Ok(StatusCode::CREATED),
-        Err(_) => Err(EventError::InternalServerError),
+        .map_err(|_| EventError::InternalServerError)?;
+    Ok(StatusCode::CREATED)
+}
+
+pub async fn leave_event(
+    user: AuthenticatedUser,
+    Path(event_id): Path<i32>,
+) -> Result<StatusCode, EventError> {
+    let mut conn = db::connect_db();
+    let user_id = get_user_id(user).await.map_err(|_| EventError::Unauthorized)?;
+    let deleted = diesel::delete(
+        crate::schema::event_users::table
+            .filter(crate::schema::event_users::event_id.eq(event_id))
+            .filter(crate::schema::event_users::user_id.eq(user_id))
+    )
+    .execute(&mut conn)
+    .map_err(|_| EventError::InternalServerError)?;
+    if deleted > 0 {
+        Ok(StatusCode::NO_CONTENT)
+    } else {
+        Err(EventError::EventNotFound)
+    }
+}
+
+pub async fn remove_user_from_private_event(
+    user: AuthenticatedUser,
+    Path((event_id, user_id_to_remove)): Path<(i32, i32)>,
+) -> Result<StatusCode, EventError> {
+    let mut conn = db::connect_db();
+    let event = events
+        .filter(event_id_col.eq(event_id))
+        .first::<Event>(&mut conn)
+        .map_err(|_| EventError::EventNotFound)?;
+    if event.public {
+        return Err(EventError::Unauthorized);
+    }
+    let user_id = get_user_id(user).await.map_err(|_| EventError::Unauthorized)?;
+    if event.user_fk != Some(user_id) {
+        return Err(EventError::Unauthorized);
+    }
+    let deleted = diesel::delete(
+        crate::schema::event_users::table
+            .filter(crate::schema::event_users::event_id.eq(event_id))
+            .filter(crate::schema::event_users::user_id.eq(user_id_to_remove))
+    )
+    .execute(&mut conn)
+    .map_err(|_| EventError::InternalServerError)?;
+    if deleted > 0 {
+        Ok(StatusCode::NO_CONTENT)
+    } else {
+        Err(EventError::EventNotFound)
     }
 }
