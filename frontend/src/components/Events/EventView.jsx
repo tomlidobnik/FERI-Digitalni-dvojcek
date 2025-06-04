@@ -88,7 +88,7 @@ const EventView = () => {
                 )}
             </div>
             {/* Map */}
-            <div className="col-span-1 bg-primary md:rounded-2xl shadow-xl min-h-[300px] h-full flex flex-col">
+            <div className="col-span-1 bg-primary md:rounded-2xl shadow-xl min-h-[50vh] h-full flex flex-col">
                 {isLoading ? (
                     <div className="flex items-center justify-center h-full pt-8">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-text"></div>
@@ -98,7 +98,7 @@ const EventView = () => {
                 )}
             </div>
             {/* Chat - full width on mobile, 2 columns on desktop */}
-            <div className="col-span-1 md:col-span-3 bg-primary md:rounded-2xl shadow-xl min-h-[200px] h-full p-4">
+            <div className="col-span-1 md:col-span-3 bg-primary md:rounded-2xl shadow-xl min-h-[300px] h-[44vh] p-4">
                 {isLoading ? (
                     <div className="flex items-center justify-center h-full pt-8">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-text"></div>
