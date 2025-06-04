@@ -5,7 +5,7 @@ const ChatInput = ({ message, setMessage, handleSubmit, isConnected }) => (
         <input
             type="text"
             placeholder="Napišite sporočilo..."
-            className="flex-1 px-4 py-2 border border-quaternary/50 rounded-lg bg-primary text-text-custom focus:outline-none focus:ring-2 focus:ring-tertiary focus:border-transparent transition-colors duration-150"
+            className="flex-1 px-4 py-2 border border-quaternary/50 rounded-xl bg-primary text-text-custom focus:outline-none focus:ring-2 focus:ring-tertiary focus:border-transparent transition-colors duration-150"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             disabled={!isConnected}

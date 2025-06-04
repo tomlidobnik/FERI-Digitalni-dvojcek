@@ -8,6 +8,8 @@ import ListAllFriends from "../components/Friends/ListAllFriends.jsx";
 import CreateEvent from "../components/Events/CreateEvent.jsx";
 import EditEvent from "../components/Events/EditEvent.jsx";
 import EventView from "../components/Events/EventView.jsx";
+import Profile from "../components/User/Profile.jsx";
+import PublicProfile from "../components/User/PublicProfile.jsx";
 
 function MainPage() {
     const navigate = useNavigate();
@@ -33,6 +35,8 @@ function MainPage() {
                         {location === "/events/add" ? <CreateEvent />: null}
                         {location === "/event/edit" ? <EditEvent />: null}
                         {/^\/event\/\d+$/.test(location) ? <EventView/>: null}
+                        {location === "/profile" ? <Profile />: null}
+                        {/^\/profile\/\d+$/.test(location) ? <PublicProfile/>: null}
                     </div>
 
                 </div>

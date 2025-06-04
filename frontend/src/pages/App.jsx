@@ -3,16 +3,28 @@ import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import "../index.css";
 import { FaHome, FaSignInAlt, FaUserPlus, FaSignOutAlt } from "react-icons/fa";
+import { Bar, Doughnut } from "react-chartjs-2";
+import { Chart as ChartJS, BarElement, ArcElement, CategoryScale, LinearScale, Tooltip, Legend } from "chart.js";
+ChartJS.register(BarElement, ArcElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const token = Cookies.get("token");
   const [isScrolled, setIsScrolled] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL;
+  const [response, setResponse] = useState([]);
 
   useEffect(() => {
+
+      fetch(`https://${API_URL}/api/user/stats`)
+        .then(res => res.json())
+        .then(data => {setResponse(data), console.log(data);})
+        .catch(() => setUserStats(null));
+
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
+
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -146,6 +158,55 @@ function App() {
             </div>
             <img src="landing/plan.svg" alt="event" className="rounded-xl w-full md:w-1/2 object-cover" />
         </section>
+
+      <section className="flex flex-col items-center justify-center bg-white/70 backdrop-blur-md p-4 rounded-2xl shadow-xl border mt-10">
+        <h2 className="text-3xl font-bold mb-3 text-black">Statistika</h2>
+        {response ? (
+          <div className="w-full md:w-2/3 flex flex-col md:flex-row items-center justify-center gap-8">
+            {/* Number of users on the left */}
+            <div className="flex flex-col items-center justify-center md:w-1/3 w-full">
+              <span className="text-5xl font-extrabold text-quaternary">{response.total_users}</span>
+              <span className="text-lg font-semibold text-gray-700 mt-2">Uporabnikov</span>
+            </div>
+            {/* Events chart on the right */}
+            <div className="md:w-2/3 w-full">
+              <Bar
+                data={{
+                  labels: ["Vsi dogodki", "Aktivni dogodki", "Prihodnji dogodki"],
+                  datasets: [
+                    {
+                      label: "Dogodki",
+                      data: [
+                        response.total_events,
+                        response.active_events,
+                        response.upcoming_events
+                      ],
+                      backgroundColor: [
+                        "#69A1DD",
+                        "#A94A4A",
+                        "#F7B801"
+                      ],
+                      borderRadius: 8,
+                    }
+                  ]
+                }}
+                options={{
+                  responsive: true,
+                  plugins: {
+                    legend: { display: false },
+                  },
+                  scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                  }
+                }}
+                height={200}
+              />
+            </div>
+          </div>
+        ) : (
+          <p className="text-gray-700">Podatki o statistiki niso na voljo.</p>
+        )}
+      </section>
 
         {/* How to */}
         <section className="flex flex-col md:flex-row items-center gap-10 bg-white/70 backdrop-blur-md p-8 rounded-2xl shadow-xl border">

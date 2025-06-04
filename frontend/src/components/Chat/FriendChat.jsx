@@ -143,7 +143,7 @@ const ChatBox = ({ friendId, friendName, onClose }) => {
 
     return (
         <div
-            className={`fixed bottom-4 right-4 w-96 h-[500px] bg-primary shadow-2xl rounded-lg p-4 flex flex-col text-text-custom z-50 border-black/20 border-4 transform transition-all duration-500 ease-out ${
+            className={`fixed bottom-4 right-4 w-96 h-[500px] bg-primary shadow-2xl rounded-lg p-4 flex flex-col text-text-custom border-black/20 border-4 transform transition-all duration-500 ease-out ${
                 showContent
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 translate-y-10"

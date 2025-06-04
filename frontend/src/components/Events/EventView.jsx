@@ -104,7 +104,7 @@ const EventView = () => {
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-text"></div>
                     </div>
                 ):(
-                    <EventChat />
+                    <EventChat eventId={id}/>
                 )}
             </div>
         </div>

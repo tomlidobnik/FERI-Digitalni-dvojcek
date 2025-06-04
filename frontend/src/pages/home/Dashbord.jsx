@@ -25,7 +25,7 @@ function Dashbord() {
                 </div>
                 <div className="flex-1  ml-0 h-full overflow-y-auto">
                     <div className="grid grid-cols-1 md:grid-rows-2 md:grid-cols-2 md:gap-6 h-fit min-h-screen md:p-6">
-                        <div className="row-span-1 md:row-span-1 col-span-1 md:col-span-2 md:rounded-2xl shadow-xl min-h-[500px] h-[calc(50vh-4rem)] md:h-full w-full">
+                        <div className="row-span-1 md:row-span-1 col-span-1 md:col-span-2 md:rounded-2xl shadow-xl min-h-[500px] h-[calc(50vh-4rem)] md:h-full w-full z-0">
                             <Map />
                         </div>
                         <div className="md:flex min-h-[500px] h-full md:rounded-2xl md:shadow-xl max-h-[500px] lg:max-h-full">

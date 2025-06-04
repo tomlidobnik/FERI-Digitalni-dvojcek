@@ -72,6 +72,9 @@ export default function EditEventForm() {
     }, [navigate, event]);
 
 const onSubmit = async (data) => {
+    console.log("Submitting event data:", data);
+    console.log("selected location id:",selectedLocation.id)
+    console.log("selected location id:",selectedLocation)
     clearErrors();
     try {
         const token = Cookies.get("token");

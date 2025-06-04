@@ -5,7 +5,7 @@ import ChatMessages from "./ChatMessages";
 import ChatInput from "./ChatInput";
 import apiService from "../../utils/apiService";
 
-const EventChat = () => {
+const EventChat = ({eventId}) => {
     const [events, setEvents] = useState([]);
     const [selectedEventId, setSelectedEventId] = useState("");
     const [messages, setMessages] = useState([]);
@@ -28,6 +28,7 @@ const EventChat = () => {
                 setCurrentUsername("");
             }
         }
+        setSelectedEventId(eventId);
     }, []);
 
     useEffect(() => {
@@ -144,25 +145,6 @@ const EventChat = () => {
 
     return (
         <div className=" rounded-lg text-text-custom h-full flex flex-col">
-            <div className="mb-4">
-                <label
-                    htmlFor="event-select"
-                    className="block text-sm font-medium text-text-custom mb-1">
-                    Izberi dogodek:
-                </label>
-                <select
-                    id="event-select"
-                    value={selectedEventId}
-                    onChange={(e) => setSelectedEventId(e.target.value)}
-                    className="w-full p-2 rounded-md bg-input-bg text-text-custom border border-input-border focus:ring-accent focus:border-accent">
-                    <option value="">Izberi dogodek</option>
-                    {events.map((event) => (
-                        <option key={event.id} value={event.id}>
-                            {event.id} - {event.title || event.name}
-                        </option>
-                    ))}
-                </select>
-            </div>
             {selectedEventId ? (
                 <>
                     <ChatMessages
