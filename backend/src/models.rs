@@ -75,3 +75,10 @@ pub struct ChatMessage {
     pub created_at: NaiveDateTime,
     pub event_fk: i32,
 }
+
+#[derive(Queryable, Insertable, Serialize)]
+#[diesel(table_name = crate::schema::event_users)]
+pub struct EventUser {
+    pub event_id: i32,
+    pub user_id: i32,
+}

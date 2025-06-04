@@ -1,19 +1,13 @@
 meta {
-  name: add_user_to_event
+  name: leave_event
   type: http
-  seq: 9
+  seq: 12
 }
 
 post {
-  url: https://0.0.0.0:8000/api/event/add_user_to_event/1
-  body: json
+  url: https://0.0.0.0:8000/api/event/leave_event/1
+  body: none
   auth: inherit
-}
-
-body:json {
-  {
-    "user_id": 1
-  }
 }
 
 script:pre-request {
