@@ -47,7 +47,6 @@ const ShowUserInfo = ({ userData }) => {
             }
             const data = await response.json();
             setUser(data);
-            console.log("User data refreshed:", data);
             return data;
         } catch (error) {
             setNotification({
@@ -119,7 +118,8 @@ const ShowUserInfo = ({ userData }) => {
                         message: "Uporabniški podatki so bili uspešno posodobljeni.",
                         type: "success",
                     });
-                    refreshUserData();
+                    await refreshUserData();
+                    Cookies.set("user", JSON.stringify(data), { expires: expirationDate, sameSite: "strict" });
                     setIsEditing(false);
                     setIsLoading(false);
                 }

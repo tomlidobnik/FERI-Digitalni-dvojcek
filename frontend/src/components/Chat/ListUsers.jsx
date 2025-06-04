@@ -275,6 +275,7 @@ const ListUsers = () => {
                 <FriendChat
                     friendId={chattingWithFriendId}
                     friendName={chattingWithFriendName}
+                    className="z-50"
                     onClose={closeChat}
                 />
             )}
