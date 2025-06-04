@@ -133,7 +133,7 @@ const LocationsMapSelect = ({ onLocationSelect, selectedLocationUp }) => {
                                 },
                                 properties: {
                                     name: loc.name || loc.info || "Unnamed Area",
-                                    id: loc.location_outline.id,
+                                    id: loc.id,
                                     info: loc.info,
                                 },
                             },
@@ -171,8 +171,7 @@ function onEachFeature(feature, layer) {
         const isSelected =
             selectedLocationUp &&
             (
-                feature.properties.id === selectedLocationUp.id ||
-                feature.properties.outline_id === selectedLocationUp.id
+                feature.properties.id === selectedLocationUp.id
             );
         layer.setIcon(isSelected ? customMarkerIconGreen : customMarkerIcon);
     }
