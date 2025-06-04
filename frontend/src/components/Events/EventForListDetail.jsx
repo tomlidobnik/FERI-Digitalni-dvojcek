@@ -97,6 +97,9 @@ const EventForListDetail = ({event, selectMode, location}) => {
                 <img src="icons/hourglass-end.svg" className="w-5 h-5 mr-2" alt="location" />
                 {formatDateTime(event.end_date)}
             </div>
+            <div className="flex items-center px-2 mt-1 bg-primary/20 rounded text-xs font-semibold w-fit">
+                        #{event.tag}
+                    </div>
             {location ? (
                 <div className="flex px-2 py-1 bg-tertiary/30 rounded text-sm font-semibold w-fit">
                     <img src="icons/location-marker.svg" className="w-5 h-5 mr-2" alt="location" />

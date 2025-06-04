@@ -23,6 +23,7 @@ const ListAllEvents = () => {
         fetch(`https://${API_URL}/api/event/available`)
             .then((res) => res.json())
             .then((data) => {
+                console.log(data)
                 const sorted = data.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
                 setResponse(sorted);
             })

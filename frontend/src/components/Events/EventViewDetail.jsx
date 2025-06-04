@@ -30,6 +30,11 @@ const EventViewDetail = ({ event, owner, location }) => {
                     <img src="../icons/user-bold.svg" className="w-4 h-4" alt="location" />
                     {owner ? <> {owner.username ? owner.username : "User"} </> : "User"}
             </Link>)}
+            {event.tag && (
+                <div className="flex flex-row items-center gap-2 w-fit bg-primary/20 rounded-xl font-semibold p-3 shadow-md">
+                    #{event.tag}
+                </div>
+            )}
             <div className="">
                 <div className="text-text bg-white/30 rounded-xl shadow-md p-4 w-full h-full text-lg font-semibold break-words">{event.description || "Brez opisa."}</div>
             </div>
