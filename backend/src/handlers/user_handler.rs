@@ -56,7 +56,6 @@ pub struct UpdateUserRequest {
     pub firstname: String,
     pub lastname: String,
     pub email: String,
-    pub password: String,
 }
 
 #[derive(Serialize)]
@@ -275,7 +274,6 @@ pub async fn update_user(
             firstname.eq(&payload.firstname),
             lastname.eq(&payload.lastname),
             email.eq(&payload.email),
-            password.eq(&payload.password),
         ))
         .execute(&mut conn)
     {

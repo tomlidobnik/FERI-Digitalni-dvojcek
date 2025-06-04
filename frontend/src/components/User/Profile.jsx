@@ -55,7 +55,7 @@ const Profile = () => {
                 </div>
             ) : (
                 user && (
-                    <ShowUserInfo user={user}/>
+                    <ShowUserInfo userData={user}/>
                 )
             )}
         </div>

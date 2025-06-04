@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 
-const Notification = ({ message, type = "info", duration = 3000, onClose }) => {
+const Notification = ({ message, type = "info", duration = 6000, onClose }) => {
     const [visible, setVisible] = useState(false);
     const autoCloseTimerRef = useRef(null);
 
@@ -12,7 +12,7 @@ const Notification = ({ message, type = "info", duration = 3000, onClose }) => {
             }
             autoCloseTimerRef.current = setTimeout(() => {
                 setVisible(false);
-                setTimeout(onClose, 250);
+                setTimeout(onClose, 300);
             }, duration);
         } else {
             setVisible(false);
@@ -32,7 +32,7 @@ const Notification = ({ message, type = "info", duration = 3000, onClose }) => {
             clearTimeout(autoCloseTimerRef.current);
         }
         setVisible(false);
-        setTimeout(onClose, 250);
+        setTimeout(onClose, 300);
     };
 
     if (!message && !visible) return null;
