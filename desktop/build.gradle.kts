@@ -34,6 +34,8 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-dao:0.49.0")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.49.0")
     implementation("it.skrape:skrapeit:1.2.2")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 }
 
 compose.desktop {

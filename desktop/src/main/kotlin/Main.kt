@@ -23,6 +23,11 @@ import androidx.compose.ui.window.rememberWindowState
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import data.User
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import requests.createUser
 
 
 enum class MenuState {
@@ -257,8 +262,6 @@ fun AboutAppButton(menuState: MutableState<MenuState>, modifier: Modifier = Modi
         }
     }
 }
-
-
 // TABS
 @Composable
 fun AddUserTab() {
@@ -307,6 +310,20 @@ fun AddUserTab() {
                 value = password,
                 onValueChange = { password = it },
             )
+            Button(onClick = {
+                val user = User(username, firstname, lastname, email, password)
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        val response = createUser(user)
+                        println("User created successfully: $response")
+                    } catch (e: Exception) {
+                        println("Failed to create user: ${e.message}")
+                    }
+                }
+            }) {
+                Text("Add User")
+            }
+
         }
     }
 }
@@ -418,3 +435,5 @@ fun PasswordInputField(
             .height(70.dp)
     )
 }
+
+// API calls
