@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const UserForList = ({
     user,
@@ -76,11 +77,16 @@ const UserForList = ({
     }
 
     return (
-        <div className="bg-white/30 p-4 rounded-lg shadow-md mb-4 text-text-custom">
+        <div className="bg-white/30 p-4 rounded-2xl shadow-md mb-4 text-text-custom">
             <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-2">
-                <span className="font-semibold text-lg text-black truncate">
-                    {user.username}
-                </span>
+                <Link to={"/profile/"+user.id} className="flex items-center">
+                    <div className="w-10 h-10 rounded-full bg-quaternary flex items-center justify-center text-white text-lg font-bold shadow mr-2">
+                        {user ? <>{user.username ? user.username.charAt(0).toUpperCase() : "U"}</>: "U"}
+                    </div>
+                    <span className="font-semibold text-lg text-black truncate">
+                        {user.username}
+                    </span>
+                </Link>
                 <span
                     className={`text-xs sm:text-sm font-medium px-2 py-1 rounded-full mt-1 sm:mt-0
                     ${

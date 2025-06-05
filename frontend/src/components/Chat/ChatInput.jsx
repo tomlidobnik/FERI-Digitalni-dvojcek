@@ -1,11 +1,11 @@
 import React from "react";
 
-const ChatInput = ({ message, setMessage, handleSubmit, isConnected }) => (
+const ChatInput = ({css,  message, setMessage, handleSubmit, isConnected }) => (
     <form onSubmit={handleSubmit} className="flex gap-3 mt-auto pt-2">
         <input
             type="text"
             placeholder="Napišite sporočilo..."
-            className="flex-1 px-4 py-2 border border-quaternary/50 rounded-xl bg-primary text-text-custom focus:outline-none focus:ring-2 focus:ring-tertiary focus:border-transparent transition-colors duration-150"
+            className={"flex-1 px-4 py-2 border border-quaternary/50 rounded-xl text-text-custom focus:outline-none focus:ring-2 focus:ring-tertiary focus:border-transparent transition-colors duration-150 "+ css }
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             disabled={!isConnected}

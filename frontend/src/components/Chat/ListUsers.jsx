@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import FriendChat from "./FriendChat";
 import UserForList from "./UserForList";
 
-const ListUsers = () => {
+const ListUsers = ({selectedMode, onOpenChat, searchQuery}) => {
     const [users, setUsers] = useState([]);
     const [myUsername, setMyUsername] = useState("");
     const [requestStatus, setRequestStatus] = useState({});
@@ -224,9 +224,7 @@ const ListUsers = () => {
     };
 
     const openChat = (friendId, friendName) => {
-        setChattingWithFriendId(friendId);
-        setChattingWithFriendName(friendName);
-        setShowChatBox(true);
+        onOpenChat(friendId, friendName)
     };
 
     const closeChat = () => {
@@ -235,7 +233,40 @@ const ListUsers = () => {
         setChattingWithFriendName("");
     };
 
-    const displayedUsers = users.filter((user) => user.username !== myUsername);
+    const displayedUsers = useMemo(() => {
+        setIsLoading(true);
+        return users
+            .filter((user) => user.username !== myUsername)
+            .filter((user) => {
+                if (selectedMode === false) {
+                    return friendStatuses[user.username]?.status === "Friends";
+                }
+                return true;
+            })
+            .filter((user) => {
+
+                if (!searchQuery) return true;
+                return user.username
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase());
+            })
+            .sort((a, b) => {
+                const aStatus = friendStatuses[a.username]?.status;
+                const bStatus = friendStatuses[b.username]?.status;
+
+                if (aStatus === "Friends" && bStatus !== "Friends") return -1;
+                if (aStatus !== "Friends" && bStatus === "Friends") return 1;
+                return 0;
+            });
+    }, [users, myUsername, selectedMode, friendStatuses, searchQuery]);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setIsLoading(false);
+        }, 200);
+
+        return () => clearTimeout(timeout);
+    }, [displayedUsers]);
 
     return (
         <div className="flex flex-col h-full overflow-y-auto">
