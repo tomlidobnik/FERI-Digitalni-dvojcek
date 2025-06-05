@@ -69,7 +69,7 @@ const router = createBrowserRouter([
         path: "/friends",
         element: (
             <ErrorBoundary FallbackComponent={ErrorPage}>
-                <ListUsers />
+                <MainPage />
             </ErrorBoundary>
         ),
     },

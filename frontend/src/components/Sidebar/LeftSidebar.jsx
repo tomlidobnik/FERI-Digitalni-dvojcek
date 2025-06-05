@@ -74,9 +74,6 @@ const LeftSidebar = () => {
                 <Link to="/friends" className={location.startsWith("/friends") ? "btn-nav-active" : "btn-nav"}>
                     Prijatelji
                 </Link>
-                <Link to="/chat" className={location.startsWith("/chat") ? "btn-nav-active" : "btn-nav"}>
-                    Klepetalnica
-                </Link>
                 </nav>
                 <nav className="lg:pt-2 flex flex-col pt-0 lg:mt-auto">
                 <Link to="/logout" className={"btn-nav"}>
@@ -114,13 +111,6 @@ const LeftSidebar = () => {
                     className="w-6 h-6 lg:w-8 lg:h-8 mr-2"
                     />
                     Prijatelji
-                </Link>
-                <Link to="/chat" className={location.startsWith("/chat") ? "btn-nav-active-side" : "btn-nav-side"}> 
-                     <img
-                    src="/icons/comment-alt.svg"
-                    className="w-6 h-6 lg:w-8 lg:h-8 mr-2"
-                    />
-                    Klepetalnica
                 </Link>
                 </nav>
                 <Link to="/profile" className="mt-auto pt-16 lg:flex items-center gap-3 mb-2 hidden">
