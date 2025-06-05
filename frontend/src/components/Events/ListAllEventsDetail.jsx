@@ -79,61 +79,81 @@ const ListAllEventsDetail = ({ selectMode }) => {
         setTimeout(() => setIsLoading(false), 300);
     }, [response, selectMode, selectedTag, searchValue]);
 
-    const handleTagClick = (tag) => setSelectedTag(tag);
+    const handleTagClick = (tag) => {
+        setSelectedTag(tag);
+
+    };
     const handleSearchChange = (e) => setSearchValue(e.target.value);
+
+    const getTagStyle = (tag, selectedTag) => {
+    if (selectedTag === tag) {
+            switch (tag) {
+        case "event":
+            return "bg-blue-400 hover:bg-blue-300";
+        case "sport":
+            return "bg-red-400 hover:bg-red-300";
+        case "school":
+            return "bg-yellow-400 hover:bg-yellow-300";
+        case "other":
+            return "bg-purple-400 hover:bg-purple-300";
+        default:
+            return "bg-primary/40 hover:bg-primary/30";
+    }
+    }
+
+    switch (tag) {
+        case "event":
+            return "bg-blue-100 hover:bg-blue-300";
+        case "sport":
+            return "bg-red-100 hover:bg-red-300";
+        case "school":
+            return "bg-yellow-100 hover:bg-yellow-300";
+        case "other":
+            return "bg-purple-100 hover:bg-purple-300";
+        default:
+            return "bg-primary/10 hover:bg-primary/30";
+    }
+};
 
     return (
         <div className="w-full flex flex-col h-full">
-            <h1 className="text-2xl p-4 xl:p-6 xl:text-5xl font-bold text-text bg-black/10 md:rounded-t-2xl flex-shrink-0">
+            <h1 className="text-2xl p-4 xl:p-6 xl:text-5xl font-bold text-text bg-primary md:rounded-t-2xl flex-shrink-0">
                 <span className="hidden md:inline">Dogodki</span>
                 <span className="md:hidden">{dogodkiTitle}</span>
             </h1>
             {/* Search and tag filter bar */}
-            <div className="p-2 flex flex-col gap-2">
+            <div className="p-2 flex flex-col gap-2 m-2 ">
                 <input
                     type="text"
                     placeholder="Išči po imenu dogodka..."
                     value={searchValue}
                     onChange={handleSearchChange}
-                    className="p-2 rounded border border-gray-300 w-full text-base"
+                    className="p-3 rounded-xl border-0 border-none shadow-lg text-2xl bg-white/40 text-text font-semibold w-full"
                 />
                 <div className="flex flex-wrap gap-2 mt-1">
                     <button
-                        className={`px-3 py-1 rounded ${
-                            !selectedTag ? "bg-primary/60" : "bg-primary/20"
-                        } hover:bg-primary/60 text-xs font-semibold`}
+                        className={`px-3 py-1 rounded-lg ${
+                            !selectedTag ? "bg-black/50" : "bg-black/20"
+                        } hover:bg-black/30 text-xs font-semibold `}
                         onClick={() => handleTagClick("")}>
-                        Vse
+                        <div className="text-lg font-bold text-text">
+                            Vse
+                        </div>
                     </button>
                     {allTags.map((tag) => (
                         <button
                             key={tag}
-                            className={`px-3 py-1 rounded ${
-                                selectedTag === tag
-                                    ? "bg-primary/60"
-                                    : "bg-primary/20"
-                            } hover:bg-primary/60 text-xs font-semibold flex items-center gap-1`}
+                            className={`px-3 py-1 rounded-lg ${getTagStyle(tag, selectedTag)} text-xs shadow font-semibold flex items-center gap-1`}
                             onClick={() => handleTagClick(tag)}>
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={1.5}
-                                stroke="currentColor"
-                                className="w-4 h-4">
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M2.25 12.75V6.375c0-.621.504-1.125 1.125-1.125h6.375c.298 0 .584.118.796.329l9.375 9.375a1.125 1.125 0 010 1.591l-6.375 6.375a1.125 1.125 0 01-1.591 0l-9.375-9.375a1.125 1.125 0 010-1.591z"
-                                />
-                                <circle
-                                    cx="7.5"
-                                    cy="7.5"
-                                    r="1.5"
-                                    fill="currentColor"
-                                />
-                            </svg>
-                            {tag}
+                            <img
+                                src="../icons/hashtag.svg"
+                                className="h-4 w-4"
+                                alt="hashtag"
+                            />
+                            <div className="text-lg font-bold text-text">
+                                {tag}
+                            </div>
+                            
                         </button>
                     ))}
                 </div>

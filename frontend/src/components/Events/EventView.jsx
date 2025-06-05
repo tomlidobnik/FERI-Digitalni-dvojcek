@@ -76,38 +76,38 @@ const EventView = () => {
     },[API_URL, id]);
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 md:gap-6 min-h-full">
-            {/* Event Info - spans 2 columns on desktop */}
-            <div className="col-span-1 md:col-span-2 bg-primary md:rounded-2xl shadow-xl min-h-[300px] h-full p-4">
-                {isLoading ? (
-                    <div className="flex items-center justify-center h-full pt-8">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-text"></div>
-                    </div>
-                ):(
-                    <>{event != null? <EventViewDetail event={event} owner={owner} location={location}/> : null}</>
-                )}
-            </div>
-            {/* Map */}
-            <div className="col-span-1 bg-primary md:rounded-2xl shadow-xl min-h-[50vh] h-full flex flex-col">
-                {isLoading ? (
-                    <div className="flex items-center justify-center h-full pt-8">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-text"></div>
-                    </div>
-                ):(
-                    <>{location != null ? <EventMap location={location} outline={outline}/> : <div className="flex items-center justify-center h-full w-full text-center">Ni lokacije</div>}</>
-                )}
-            </div>
-            {/* Chat - full width on mobile, 2 columns on desktop */}
-            <div className="col-span-1 md:col-span-3 bg-primary md:rounded-2xl shadow-xl min-h-[300px] h-[44vh] p-4">
-                {isLoading ? (
-                    <div className="flex items-center justify-center h-full pt-8">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-text"></div>
-                    </div>
-                ):(
-                    <EventChat eventId={id}/>
-                )}
-            </div>
+    <div className="grid grid-cols-1 md:grid-cols-3 w-full">
+        {/* Event Info - spans 2 columns on desktop */}
+        <div className="col-span-1 md:col-span-2 bg-primary md:rounded-2xl shadow-xl p-2 md:p-4 min-h-0 md:mr-6">
+            {isLoading ? (
+                <div className="flex items-center justify-center pt-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-text"></div>
+                </div>
+            ) : (
+                <>{event != null ? <EventViewDetail event={event} owner={owner} location={location}/> : null}</>
+            )}
         </div>
+        {/* Map */}
+        <div className="col-span-1 bg-primary md:rounded-2xl shadow-xl md:h-[50vh] min-h-full flex flex-col">
+            {isLoading ? (
+                <div className="flex items-center justify-center pt-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-text"></div>
+                </div>
+            ) : (
+                <>{location != null ? <EventMap location={location} outline={outline}/> : <div className="flex items-center justify-center w-full text-center">Ni lokacije</div>}</>
+            )}
+        </div>
+        {/* Chat - full width on mobile, 2 columns on desktop */}
+        <div className="col-span-1 md:col-span-3 bg-primary md:rounded-2xl shadow-xl h-[44vh] md:mt-6 min-h-[500px] p-2 md:p-4 min-h-0">
+            {isLoading ? (
+                <div className="flex items-center justify-center pt-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-text"></div>
+                </div>
+            ) : (
+                <EventChat eventId={id}/>
+            )}
+        </div>
+    </div>
     );
 };
 
