@@ -6,14 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.List
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.filled.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -26,6 +20,10 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+
 
 enum class MenuState {
     USERS_LIST, ABOUT_APP, ADD_USER, ADD_EVENT, EVENTS_LIST
@@ -142,6 +140,7 @@ fun AddUserButton(menuState: MutableState<MenuState>, modifier: Modifier = Modif
         }
     }
 }
+
 @Composable
 fun UsersListButton(menuState: MutableState<MenuState>, modifier: Modifier = Modifier) {
     Box(
@@ -170,6 +169,7 @@ fun UsersListButton(menuState: MutableState<MenuState>, modifier: Modifier = Mod
         }
     }
 }
+
 @Composable
 fun AddEventButton(menuState: MutableState<MenuState>, modifier: Modifier = Modifier) {
     Box(
@@ -199,6 +199,7 @@ fun AddEventButton(menuState: MutableState<MenuState>, modifier: Modifier = Modi
         }
     }
 }
+
 @Composable
 fun EventsListButton(menuState: MutableState<MenuState>, modifier: Modifier = Modifier) {
     Box(
@@ -227,6 +228,7 @@ fun EventsListButton(menuState: MutableState<MenuState>, modifier: Modifier = Mo
         }
     }
 }
+
 @Composable
 fun AboutAppButton(menuState: MutableState<MenuState>, modifier: Modifier = Modifier) {
     Box(
@@ -260,20 +262,70 @@ fun AboutAppButton(menuState: MutableState<MenuState>, modifier: Modifier = Modi
 // TABS
 @Composable
 fun AddUserTab() {
-    Text("Add User Tab")
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            var username by remember { mutableStateOf("") }
+            var email by remember { mutableStateOf("") }
+            var password by remember { mutableStateOf("") }
+            var firstname by remember { mutableStateOf("") }
+            var lastname by remember { mutableStateOf("") }
+
+            Text(
+                "Add a new User",
+                fontWeight = FontWeight.Bold,
+                fontSize = 30.sp,
+            )
+            Spacer(modifier = Modifier.height(30.dp))
+            TextInputField(
+                value = username,
+                onValueChange = { username = it },
+                label = "Username",
+                icon = Icons.Filled.AccountCircle
+            )
+            TextInputField(
+                value = firstname,
+                onValueChange = { firstname = it },
+                label = "First name",
+                icon = Icons.Filled.Person
+            )
+            TextInputField(
+                value = lastname,
+                onValueChange = { lastname = it },
+                label = "Last name",
+                icon = Icons.Filled.PersonOutline
+            )
+            TextInputField(
+                value = email,
+                onValueChange = { email = it },
+                label = "E-mail",
+                icon = Icons.Filled.Email
+            )
+            PasswordInputField(
+                value = password,
+                onValueChange = { password = it },
+            )
+        }
+    }
 }
+
 @Composable
 fun UsersListTab() {
     Text("Users List Tab")
 }
+
 @Composable
 fun AddEventTab() {
     Text("Add Event Tab")
 }
+
 @Composable
 fun EventsListTab() {
     Text("Events List Tab")
 }
+
 @Composable
 fun AboutAppTab() {
     Box(
@@ -301,5 +353,68 @@ fun DividerLine() {
         color = Color.LightGray,
         thickness = 1.dp,
         modifier = Modifier.padding(vertical = 4.dp)
+    )
+}
+
+@Composable
+fun TextInputField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    icon: ImageVector,
+    modifier: Modifier = Modifier
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        singleLine = true,
+        leadingIcon = {
+            Icon(
+                imageVector = icon,
+                contentDescription = "$label Icon"
+            )
+        },
+        modifier = Modifier
+            .width(300.dp)
+            .height(70.dp)
+    )
+}
+
+@Composable
+fun PasswordInputField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var passwordVisibility by remember { mutableStateOf(false) }
+    val icon = if (passwordVisibility) {
+        Icons.Filled.Visibility
+    } else {
+        Icons.Filled.VisibilityOff
+    }
+    OutlinedTextField(
+        value = value,
+        label = { Text("Password") },
+        onValueChange = onValueChange,
+        singleLine = true,
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Filled.Lock,
+                contentDescription = "Lock Icon"
+            )
+        },
+        trailingIcon = {
+            IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = if (passwordVisibility) "Visibility Icon" else "VisibilityOff Icon"
+                )
+            }
+        },
+        visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+        modifier = Modifier
+            .width(300.dp)
+            .height(70.dp)
     )
 }

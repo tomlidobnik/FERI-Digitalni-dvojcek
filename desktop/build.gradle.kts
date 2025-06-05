@@ -1,5 +1,6 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
+val composeVersion = "1.5.10"
 plugins {
     kotlin("jvm")
     id("org.jetbrains.compose")
@@ -22,6 +23,8 @@ dependencies {
     // (in a separate module for demo project and in testMain).
     // With compose.desktop.common you will also lose @Preview functionality
     implementation(compose.desktop.currentOs)
+    implementation("org.jetbrains.compose.desktop:desktop:$composeVersion")
+    implementation("org.jetbrains.compose.material:material-icons-extended:$composeVersion")
     testImplementation(kotlin("test"))
     implementation(kotlin("stdlib"))
     implementation("mysql:mysql-connector-java:8.0.28")
