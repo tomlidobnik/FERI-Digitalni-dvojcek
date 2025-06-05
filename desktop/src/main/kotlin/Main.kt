@@ -23,11 +23,13 @@ import androidx.compose.ui.window.rememberWindowState
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import data.User
+import data.CreateUser
+import data.PublicUser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import requests.createUser
+import requests.getAllUsers
 
 
 enum class MenuState {
@@ -262,6 +264,7 @@ fun AboutAppButton(menuState: MutableState<MenuState>, modifier: Modifier = Modi
         }
     }
 }
+
 // TABS
 @Composable
 fun AddUserTab() {
@@ -269,13 +272,13 @@ fun AddUserTab() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+        var username by remember { mutableStateOf("") }
+        var email by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
+        var firstname by remember { mutableStateOf("") }
+        var lastname by remember { mutableStateOf("") }
+        var showValidationDialog by remember { mutableStateOf(false) }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            var username by remember { mutableStateOf("") }
-            var email by remember { mutableStateOf("") }
-            var password by remember { mutableStateOf("") }
-            var firstname by remember { mutableStateOf("") }
-            var lastname by remember { mutableStateOf("") }
-
             Text(
                 "Add a new User",
                 fontWeight = FontWeight.Bold,
@@ -310,27 +313,89 @@ fun AddUserTab() {
                 value = password,
                 onValueChange = { password = it },
             )
+            Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = {
-                val user = User(username, firstname, lastname, email, password)
-                CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        val response = createUser(user)
-                        println("User created successfully: $response")
-                    } catch (e: Exception) {
-                        println("Failed to create user: ${e.message}")
+                if (username.isBlank() || firstname.isBlank() || lastname.isBlank() || email.isBlank() || password.isBlank()) {
+                    showValidationDialog = true
+                } else {
+                    val user = CreateUser(username, firstname, lastname, email, password)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val response = createUser(user)
+                            println("User created successfully: $response")
+                        } catch (e: Exception) {
+                            println("Failed to create user: ${e.message}")
+                        }
                     }
                 }
             }) {
                 Text("Add User")
             }
+        }
 
+        if (showValidationDialog) {
+            AlertBox(
+                title = "Testing",
+                text = "loremipsummmmmmmmmmmasadsadadad",
+                onDismiss = { showValidationDialog = false }
+            )
         }
     }
 }
 
 @Composable
 fun UsersListTab() {
-    Text("Users List Tab")
+    val users = remember { mutableStateOf<List<PublicUser>>(emptyList()) }
+
+    LaunchedEffect(Unit) {
+        users.value = getAllUsers() ?: emptyList()
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            "All Users",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        users.value.forEach { user ->
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+                    .clickable {
+                        // TODO: Open edit screen or set selected user
+                        println("Clicked on ${user.firstname} ${user.lastname}")
+                    },
+                elevation = 4.dp,
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Filled.Person,
+                            contentDescription = "Person Icon"
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text("${user.firstname} ${user.lastname}")
+                    }
+                    Box(modifier = Modifier.align(Alignment.CenterVertically)) {
+                        Text(user.username, color = Color.Gray)
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 @Composable
@@ -436,4 +501,32 @@ fun PasswordInputField(
     )
 }
 
-// API calls
+@Composable
+fun AlertBox(
+    title: String,
+    text: String,
+    onDismiss: (() -> Unit)? = null,
+) {
+    AlertDialog(
+        onDismissRequest = { onDismiss?.invoke() },
+        title = { Text(title) },
+        text = { Text(text) },
+        confirmButton = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                contentAlignment = Alignment.BottomEnd
+            ) {
+                TextButton(
+                    onClick = { onDismiss?.invoke() },
+                    modifier = Modifier
+                        .background(Color(0xFF6200EE), RoundedCornerShape(4.dp))
+                ) {
+                    Text("Ok", color = Color.White)
+                }
+            }
+
+        }
+    )
+}
