@@ -86,34 +86,49 @@ const ListAllEventsDetail = ({ selectMode }) => {
     const handleSearchChange = (e) => setSearchValue(e.target.value);
 
     const getTagStyle = (tag, selectedTag) => {
-    if (selectedTag === tag) {
+        if (selectedTag === tag) {
             switch (tag) {
-        case "event":
-            return "bg-blue-400 hover:bg-blue-300";
-        case "sport":
-            return "bg-red-400 hover:bg-red-300";
-        case "school":
-            return "bg-yellow-400 hover:bg-yellow-300";
-        case "other":
-            return "bg-purple-400 hover:bg-purple-300";
-        default:
-            return "bg-primary/40 hover:bg-primary/30";
-    }
+                case "event":
+                    return "bg-blue-400 hover:bg-blue-300";
+                case "sport":
+                    return "bg-red-400 hover:bg-red-300";
+                case "school":
+                    return "bg-yellow-400 hover:bg-yellow-300";
+                case "other":
+                    return "bg-purple-400 hover:bg-purple-300";
+                default:
+                    return "bg-primary/40 hover:bg-primary/30";
+            }
+        }
+
+        switch (tag) {
+            case "event":
+                return "bg-blue-100 hover:bg-blue-300";
+            case "sport":
+                return "bg-red-100 hover:bg-red-300";
+            case "school":
+                return "bg-yellow-100 hover:bg-yellow-300";
+            case "other":
+                return "bg-purple-100 hover:bg-purple-300";
+            default:
+                return "bg-primary/10 hover:bg-primary/30";
+        }
     }
 
-    switch (tag) {
-        case "event":
-            return "bg-blue-100 hover:bg-blue-300";
-        case "sport":
-            return "bg-red-100 hover:bg-red-300";
-        case "school":
-            return "bg-yellow-100 hover:bg-yellow-300";
-        case "other":
-            return "bg-purple-100 hover:bg-purple-300";
-        default:
-            return "bg-primary/10 hover:bg-primary/30";
+    const getTagDisplay = (tag) => {
+        switch (tag) {
+            case "event":
+                return "Dogodek";
+            case "sport":
+                return "Šport";
+            case "school":
+                return "Šola";
+            case "other":
+                return "Drugo";
+            default:
+                return tag.charAt(0).toUpperCase() + tag.slice(1);
+        }
     }
-};
 
     return (
         <div className="w-full flex flex-col h-full">
@@ -151,7 +166,7 @@ const ListAllEventsDetail = ({ selectMode }) => {
                                 alt="hashtag"
                             />
                             <div className="text-lg font-bold text-text">
-                                {tag}
+                                {getTagDisplay(tag)}
                             </div>
                             
                         </button>

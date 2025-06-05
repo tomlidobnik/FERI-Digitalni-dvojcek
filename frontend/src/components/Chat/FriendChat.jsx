@@ -165,6 +165,7 @@ const ChatBox = ({ friendId, friendName, onClose }) => {
                 currentUsername={currentUsername}
             />
             <ChatInput
+                css="bg-transparent"
                 message={message}
                 setMessage={setMessage}
                 handleSubmit={handleSubmit}
