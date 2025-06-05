@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom";
 import { formatDateTime } from "../../utils/formatDateTime";
+import Tag from "./Tag"
 
 const EventForList = ({ event }) => {
+    if (event) {
+        console.log("EventForList event:", event);
+    }
     return (
         <div className="flex flex-row justify-between bg-white/30 rounded-2xl shadow-md p-2 mb-4 items-center">
             <div className="flex flex-col flex-1 min-w-0">
@@ -11,9 +15,11 @@ const EventForList = ({ event }) => {
                 <div className="flex px-2 bg-secondary/30 rounded text-sm font-semibold w-fit">
                     {formatDateTime(event.start_date)}
                 </div>
-                    <div className="flex items-center px-2 mt-1 bg-primary/20 rounded text-xs font-semibold w-fit">
-                        #{event.tag}
-                    </div>
+                {event.tag ? (                    
+                    <div className="w-fit text-sm">
+                        <Tag tag={event.tag} specialCssImage={"w-4 h-4 mr-1"} specialCssText={"mt-1 px-2"}/>
+                    </div>): null
+                }
                 {event.location ? (
                     <div className="flex items-center px-2 mt-1 bg-tertiary/30 rounded text-sm font-semibold w-fit">
                         <img

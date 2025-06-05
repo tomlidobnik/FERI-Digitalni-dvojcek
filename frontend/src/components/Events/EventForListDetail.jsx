@@ -7,6 +7,7 @@ import { setEvent } from "../../state/event/eventSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { formatDateTime } from "../../utils/formatDateTime";
+import Tag from "./Tag";
 
 const EventForListDetail = ({event, selectMode, location}) => {
     const [showConfirm, setShowConfirm] = useState(false);
@@ -97,9 +98,11 @@ const EventForListDetail = ({event, selectMode, location}) => {
                 <img src="icons/hourglass-end.svg" className="w-5 h-5 mr-2" alt="location" />
                 {formatDateTime(event.end_date)}
             </div>
-            <div className="flex items-center px-2 mt-1 bg-primary/20 rounded text-xs font-semibold w-fit">
-                        #{event.tag}
-                    </div>
+                {event.tag ? (                    
+                    <div className="flex sm:items-center w-fit text-sm">
+                        <Tag tag={event.tag} specialCssText={"px-2 py-1"} specialCssImage={"w-5 h-5 mr-2"}/>
+                    </div>): null
+                }
             {location ? (
                 <div className="flex px-2 py-1 bg-tertiary/30 rounded text-sm font-semibold w-fit">
                     <img src="icons/location-marker.svg" className="w-5 h-5 mr-2" alt="location" />
