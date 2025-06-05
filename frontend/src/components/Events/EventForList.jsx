@@ -3,9 +3,6 @@ import { formatDateTime } from "../../utils/formatDateTime";
 import Tag from "./Tag"
 
 const EventForList = ({ event }) => {
-    if (event) {
-        console.log("EventForList event:", event);
-    }
     return (
         <div className="flex flex-row justify-between bg-white/30 rounded-2xl shadow-md p-2 mb-4 items-center">
             <div className="flex flex-col flex-1 min-w-0">

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import ChatBox from "../Chat/FriendChat";
 import { Link } from "react-router-dom";
-import ListUsers from "../Chat/ListUsers";
 import Cookies from "js-cookie";
+import ListFriends from "../Chat/ListFriends";
 
 const ListAllFriends = () => {
     const API_URL = import.meta.env.VITE_API_URL;
@@ -39,7 +39,7 @@ const ListAllFriends = () => {
                 </div>
             ):(
                 <div className="flex-1 flex flex-col overflow-y-auto min-h-0">
-                    <ListUsers />
+                    <ListFriends />
                 </div>
             )}
         </div>
