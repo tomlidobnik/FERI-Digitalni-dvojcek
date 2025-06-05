@@ -263,7 +263,7 @@ const ListUsers = ({selectedMode, onOpenChat, searchQuery}) => {
     useEffect(() => {
         const timeout = setTimeout(() => {
             setIsLoading(false);
-        }, 200);
+        }, 0);
 
         return () => clearTimeout(timeout);
     }, [displayedUsers]);

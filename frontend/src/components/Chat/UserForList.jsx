@@ -78,24 +78,24 @@ const UserForList = ({
 
     return (
         <div className="bg-white/30 p-4 rounded-2xl shadow-md mb-4 text-text-custom">
-            <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-2">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                 <Link to={"/profile/"+user.id} className="flex items-center">
                     <div className="w-10 h-10 rounded-full bg-quaternary flex items-center justify-center text-white text-lg font-bold shadow mr-2">
                         {user ? <>{user.username ? user.username.charAt(0).toUpperCase() : "U"}</>: "U"}
                     </div>
-                    <span className="font-semibold text-lg text-black truncate">
+                    <span className="font-semibold text-lg flex items-center text-black truncate">
                         {user.username}
                     </span>
                 </Link>
                 <span
-                    className={`text-xs sm:text-sm font-medium px-2 py-1 rounded-full mt-1 sm:mt-0
+                    className={`text-xs sm:text-sm font-medium px-2 py-1 mr-auto rounded-full sm:mt-0
                     ${
                         isFriend
-                            ? "bg-tertiary/30 text-tertiary"
+                            ? "bg-tertiary/20 text-quaternary"
                             : isPending
-                            ? "bg-warning/30 text-warning"
+                            ? "bg-warning/20 text-warning"
                             : isAccept
-                            ? "bg-secondary/30 text-secondary"
+                            ? "bg-secondary/20 text-secondary"
                             : isNotFriend
                             ? "bg-quaternary/20 text-quaternary"
                             : "bg-gray-500/20 text-gray-500"
@@ -106,8 +106,6 @@ const UserForList = ({
                         ? "Nalaganje statusa..."
                         : "Status ni znan"}
                 </span>
-            </div>
-            <div className="flex flex-wrap gap-2 justify-start sm:justify-end">
                 {button1Text && (
                     <button
                         className={`px-3 py-1.5 text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-60 ${button1Styles}`}
@@ -123,7 +121,7 @@ const UserForList = ({
                 )}
                 {button2Text && (
                     <button
-                        className={`px-3 py-1.5 text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-60 ${button2Styles}`}
+                        className={`px-3 py-1.5 h-8 text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-60 ${button2Styles}`}
                         onClick={button2Action}
                         disabled={
                             buttonDisabled ||
@@ -135,14 +133,18 @@ const UserForList = ({
                 )}
                 {isFriend && friendshipId && (
                     <button
-                        className="px-3 py-1.5 text-sm font-medium rounded-md shadow-sm bg-secondary text-text-custom hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary/50 disabled:opacity-60"
+                        className=" flex-shrink-0 text-right bg-black/10 rounded-2xl p-3 px-4 flex items-center justify-center hover:bg-quaternary/70 hover:text-white transition group"
                         onClick={() => onOpenChat(friendshipId, user.username)}
                         disabled={
                             !friendshipId ||
                             status === null ||
                             typeof status === "undefined"
                         }>
-                        Klepet
+                        <img
+                            src="icons/chat.svg"
+                            className="w-4 h-4 md:w-8 md:h-8 transition-transform duration-300 group-hover:scale-125"
+                            alt="details"
+                        />
                     </button>
                 )}
             </div>
