@@ -148,11 +148,13 @@ const EventChat = ({eventId}) => {
             {selectedEventId ? (
                 <>
                     <ChatMessages
+                        css={"bg-primary"}
                         messages={messages}
                         containerRef={messagesContainerRef}
                         currentUsername={currentUsername}
                     />
                     <ChatInput
+                        css={"bg-primary"}
                         message={message}
                         setMessage={setMessage}
                         handleSubmit={handleSubmit}

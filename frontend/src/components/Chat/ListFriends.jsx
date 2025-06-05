@@ -1,10 +1,11 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import FriendChat from "./FriendChat";
 import UserForList from "./UserForList";
+import FriendsForList from "./FriendsForList";
 
-const ListUsers = ({selectedMode, onOpenChat, searchQuery}) => {
+const ListFriends = () => {
     const [users, setUsers] = useState([]);
     const [myUsername, setMyUsername] = useState("");
     const [requestStatus, setRequestStatus] = useState({});
@@ -224,7 +225,9 @@ const ListUsers = ({selectedMode, onOpenChat, searchQuery}) => {
     };
 
     const openChat = (friendId, friendName) => {
-        onOpenChat(friendId, friendName)
+        setChattingWithFriendId(friendId);
+        setChattingWithFriendName(friendName);
+        setShowChatBox(true);
     };
 
     const closeChat = () => {
@@ -233,40 +236,12 @@ const ListUsers = ({selectedMode, onOpenChat, searchQuery}) => {
         setChattingWithFriendName("");
     };
 
-    const displayedUsers = useMemo(() => {
-        setIsLoading(true);
-        return users
-            .filter((user) => user.username !== myUsername)
-            .filter((user) => {
-                if (selectedMode === false) {
-                    return friendStatuses[user.username]?.status === "Friends";
-                }
-                return true;
-            })
-            .filter((user) => {
-
-                if (!searchQuery) return true;
-                return user.username
-                    .toLowerCase()
-                    .includes(searchQuery.toLowerCase());
-            })
-            .sort((a, b) => {
-                const aStatus = friendStatuses[a.username]?.status;
-                const bStatus = friendStatuses[b.username]?.status;
-
-                if (aStatus === "Friends" && bStatus !== "Friends") return -1;
-                if (aStatus !== "Friends" && bStatus === "Friends") return 1;
-                return 0;
-            });
-    }, [users, myUsername, selectedMode, friendStatuses, searchQuery]);
-
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            setIsLoading(false);
-        }, 0);
-
-        return () => clearTimeout(timeout);
-    }, [displayedUsers]);
+    const displayedUsers = users.filter(
+    (user) =>
+        user.username !== myUsername &&
+        friendStatuses[user.username] &&
+        friendStatuses[user.username].status === "Friends"
+    );
 
     return (
         <div className="flex flex-col h-full overflow-y-auto">
@@ -283,7 +258,7 @@ const ListUsers = ({selectedMode, onOpenChat, searchQuery}) => {
                             </div>
                         ) : (
                             displayedUsers.map((user) => (
-                                <UserForList
+                                <FriendsForList
                                     key={user.id ?? user.username}
                                     user={user}
                                     myUsername={myUsername}
@@ -314,4 +289,4 @@ const ListUsers = ({selectedMode, onOpenChat, searchQuery}) => {
     );
 };
 
-export default ListUsers;
+export default ListFriends;
