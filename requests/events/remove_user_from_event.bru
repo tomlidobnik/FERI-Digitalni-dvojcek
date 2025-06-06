@@ -1,0 +1,22 @@
+meta {
+  name: remove_user_from_event
+  type: http
+  seq: 13
+}
+
+delete {
+  url: https://0.0.0.0:8000/api/event/remove_user_from_event/1/1
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "user_id": 1
+  }
+}
+
+script:pre-request {
+  const token = bru.getVar("token");
+  req.setHeader("Authorization", `Bearer ${token}`);
+}

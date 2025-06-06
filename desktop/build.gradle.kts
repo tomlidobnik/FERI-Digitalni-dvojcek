@@ -38,6 +38,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("com.squareup.moshi:moshi:1.15.1") // For JSON parsing (optional)
     implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
+    implementation("io.github.serpro69:kotlin-faker:1.6.0")
+    implementation("com.github.javafaker:javafaker:1.0.2")
 }
 
 compose.desktop {

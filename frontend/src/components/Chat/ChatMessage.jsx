@@ -1,6 +1,6 @@
 import React from "react";
 
-const ChatMessage = ({ msg }) => {
+const ChatMessage = ({ msg, currentUsername }) => {
     const isoDate = msg.date
         ? msg.date.replace(" ", "T").replace(/$/, "Z")
         : "";
@@ -12,16 +12,35 @@ const ChatMessage = ({ msg }) => {
           })
         : "";
 
+    const isCurrentUser = msg.username === currentUsername;
+
     return (
-        <div className="mb-4 text-left">
-            <div className="flex items-center gap-2">
-                <p className="text-sm text-orange-400 font-semibold">
-                    {msg.username}
-                </p>
-                {time && <span className="text-xs text-gray-400">{time}</span>}
-            </div>
-            <div className="bg-blue-600 text-white px-4 py-2 rounded-lg max-w-xs break-words w-fit">
-                {msg.message}
+        <div
+            className={`mb-3 flex ${
+                isCurrentUser ? "justify-end" : "justify-start"
+            }`}>
+            <div
+                className={`max-w-[70%] w-fit p-3 rounded-xl shadow ${
+                    isCurrentUser
+                        ? "bg-tertiary text-white rounded-br-none"
+                        : "bg-secondary text-text-custom rounded-bl-none"
+                }`}>
+                {!isCurrentUser && (
+                    <p className="text-xs text-quaternary font-semibold mb-1">
+                        {msg.username}
+                    </p>
+                )}
+                <p className="text-sm break-words">{msg.message}</p>
+                {time && (
+                    <p
+                        className={`text-xs mt-1 ${
+                            isCurrentUser
+                                ? "text-primary/80"
+                                : "text-quaternary/80"
+                        } text-right`}>
+                        {time}
+                    </p>
+                )}
             </div>
         </div>
     );

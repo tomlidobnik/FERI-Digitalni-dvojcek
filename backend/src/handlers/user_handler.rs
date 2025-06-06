@@ -5,6 +5,7 @@ use crate::models::{
     AuthenticatedUser, User
 };
 use crate::schema::users::dsl::*;
+use crate::schema::events::dsl as events_dsl;
 use axum::{Json, extract::Path, http::StatusCode};
 use bcrypt::{DEFAULT_COST, hash, verify};
 use diesel::prelude::*;
@@ -22,6 +23,7 @@ pub struct UserResponse {
     pub first_name: String,
     pub last_name: String,
     pub email: String,
+    pub id: Option<i32>,
 }
 
 #[derive(Debug, Clone, serde::Deserialize)]
@@ -54,7 +56,14 @@ pub struct UpdateUserRequest {
     pub firstname: String,
     pub lastname: String,
     pub email: String,
-    pub password: String,
+}
+
+#[derive(Serialize)]
+pub struct StatsResponse {
+    pub total_events: i64,
+    pub active_events: i64,
+    pub upcoming_events: i64,
+    pub total_users: i64,
 }
 
 async fn get_user_id(user: AuthenticatedUser) -> Result<i32, StatusCode> {
@@ -153,6 +162,7 @@ pub async fn get_all_users() -> Result<Json<Vec<UserResponse>>, UserError> {
                 first_name: user.firstname,
                 last_name: user.lastname,
                 email: user.email,
+                id: Some(user.id)
             }).collect();
             Ok(Json(safe_users))
         },
@@ -172,6 +182,28 @@ pub async fn get_user_by_id(
                 first_name: user.firstname,
                 last_name: user.lastname,
                 email: user.email,
+                id: Some(user.id),
+            };
+            Ok(Json(user_response))
+        },
+        Err(diesel::result::Error::NotFound) => Err(UserError::UserNotFound),
+        Err(_) => Err(UserError::InternalServerError),
+    }
+}
+
+pub async fn get_user_by_token(
+    user: AuthenticatedUser
+) -> Result<Json<UserResponse>, UserError> {
+    info!("Called get_user_by_token for username: {}", user.0.sub);
+    let mut conn = db::connect_db();
+        match users.filter(username.eq(&user.0.sub)).first::<User>(&mut conn) {
+        Ok(user) => {
+            let user_response = UserResponse {
+                username: user.username,
+                first_name: user.firstname,
+                last_name: user.lastname,
+                email: user.email,
+                id: Some(user.id),
             };
             Ok(Json(user_response))
         },
@@ -242,11 +274,46 @@ pub async fn update_user(
             firstname.eq(&payload.firstname),
             lastname.eq(&payload.lastname),
             email.eq(&payload.email),
-            password.eq(&payload.password),
         ))
         .execute(&mut conn)
     {
         Ok(_) => Ok(StatusCode::OK),
         Err(_) => Err(UserError::UserNotFound),
     }
+}
+
+pub async fn get_stats() -> Result<Json<StatsResponse>, UserError> {
+    use chrono::Local;
+    let mut conn = db::connect_db();
+    let now = Local::now().naive_local();
+
+    let total_events = events_dsl::events
+        .count()
+        .get_result::<i64>(&mut conn)
+        .unwrap_or(0);
+
+    let upcoming_events = events_dsl::events
+        .filter(events_dsl::start_date.gt(now))
+        .count()
+        .get_result::<i64>(&mut conn)
+        .unwrap_or(0);
+
+    let active_events = events_dsl::events
+        .filter(events_dsl::start_date.le(now))
+        .filter(events_dsl::end_date.ge(now))
+        .count()
+        .get_result::<i64>(&mut conn)
+        .unwrap_or(0);
+
+    let total_users = users
+        .count()
+        .get_result::<i64>(&mut conn)
+        .unwrap_or(0);
+
+    Ok(Json(StatsResponse {
+        total_events,
+        active_events,
+        total_users,
+        upcoming_events,
+    }))
 }

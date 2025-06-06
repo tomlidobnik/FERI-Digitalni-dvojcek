@@ -1,15 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
+import "../index.css";
+import { FaHome, FaSignInAlt, FaUserPlus, FaSignOutAlt } from "react-icons/fa";
+import { Bar, Doughnut } from "react-chartjs-2";
+import { Chart as ChartJS, BarElement, ArcElement, CategoryScale, LinearScale, Tooltip, Legend } from "chart.js";
+ChartJS.register(BarElement, ArcElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 function App() {
+  const [menuOpen, setMenuOpen] = useState(false);
   const token = Cookies.get("token");
   const [isScrolled, setIsScrolled] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL;
+  const [response, setResponse] = useState([]);
 
   useEffect(() => {
+
+      fetch(`https://${API_URL}/api/user/stats`)
+        .then(res => res.json())
+        .then(data => {setResponse(data), console.log(data);})
+        .catch(() => setUserStats(null));
+
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
+
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -19,11 +34,38 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-200">
       {/* Navbar */}
-      <nav className="fixed top-6 left-10 right-10 bg-white/60 backdrop-blur-md rounded-2xl shadow-lg flex items-center justify-between px-8 py-3 z-50">
+      <nav className="
+          fixed top-0 left-0 right-0 bg-white/60 shadow-md flex items-center justify-between px-4 py-3 z-50
+          md:top-6 md:left-2 md:right-2 md:bg-white/60 md:backdrop-blur-md md:rounded-2xl md:shadow-lg md:px-8 md:py-3"
+        >
         <div className="text-xl font-bold text-black">
           Digitalni Dvojček
         </div>
-        <div className="flex space-x-4">
+        {/* Hamburger button */}
+        <button
+            className="md:hidden absolute top-3 right-4 flex flex-col justify-center items-center w-10 h-8 z-50"
+            onClick={() => setMenuOpen((prev) => !prev)}
+            aria-label="gumb"
+          >
+            <span
+              className={`block h-0.5 w-6 bg-black transition-transform duration-300 ease-in-out transform origin-center ${
+                menuOpen ? "rotate-45 translate-y-1.5" : ""
+              }`}
+            />
+            <span
+              className={`block h-0.5 w-6 bg-black my-1 transition-opacity duration-300 ease-in-out ${
+                menuOpen ? "opacity-0" : "opacity-100"
+              }`}
+            />
+            <span
+              className={`block h-0.5 w-6 bg-black transition-transform duration-300 ease-in-out transform origin-center ${
+                menuOpen ? "-rotate-45 -translate-y-1.5" : ""
+              }`}
+            />
+          </button>
+
+        {/* Desktop menu */}
+        <div className="hidden md:flex space-x-4">
           <Link to="/home" className="text-gray-900 hover:text-quaternary font-medium transition">Domov</Link>
           {token ? (
             <Link to="/logout" className="text-gray-900 hover:text-quaternary font-medium transition">Odjava</Link>
@@ -34,6 +76,37 @@ function App() {
             </>
           )}
         </div>
+        {/* Mobile menu and backdrop */}
+        {menuOpen && (
+          <div>
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 backdrop-blur-none z-40 md:hidden animate-fadeIn"
+              onClick={() => setMenuOpen(false)}
+            />
+            {/* Side panel */}
+            <div
+              className={`
+                fixed top-0 left-0 h-full w-2/4 max-w-xs bg-white shadow-lg z-50 md:hidden
+                flex flex-col items-start pt-10 px-6 space-y-4
+                transition-transform duration-300 transform
+                ${menuOpen ? "translate-x-0 slide-in-left" : "-translate-x-full"}
+              `}
+              style={{ willChange: "transform" }}
+            >
+
+              <Link to="/home" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-black hover:text-quaternary font-medium transition"><FaHome /> Domov</Link>
+              {token ? (
+                <Link to="/logout" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-black hover:text-quaternary font-medium transition"><FaSignOutAlt /> Odjava</Link>
+              ) : (
+                <>
+                  <Link to="/login" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-black hover:text-quaternary font-medium transition"><FaSignInAlt /> Prijava</Link>
+                  <Link to="/register" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-black hover:text-quaternary font-medium transition"><FaUserPlus /> Registracija</Link>
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* Hero Section */}
@@ -46,10 +119,15 @@ function App() {
       >
         <div className="absolute inset-0 bg-tertiary bg-opacity-40" />
         <div className="relative z-10 text-white text-center px-4">
-          <h1 className="text-4xl md:text-6xl font-bold drop-shadow-lg">Organiziraj. Ustvari. Doživi.</h1>
+          <h1 className="text-4xl md:text-6xl font-bold drop-shadow-lg">
+            <span className="block md:inline">Organiziraj.</span>{" "}
+            <span className="block md:inline">Ustvari.</span>{" "}
+            <span className="block md:inline">Doživi.</span>
+          </h1>
+
           <p className="mt-4 text-lg md:text-xl drop-shadow">Dogodki, kjerkoli, kadarkoli.</p>
           <Link
-            to="/TODO"
+            to="/home"
             className="inline-block mt-6 px-6 py-3 bg-white text-black font-semibold rounded-full shadow hover:bg-quaternary hover:text-white transition"
           >
             Razišči Dogodke
@@ -80,6 +158,55 @@ function App() {
             </div>
             <img src="landing/plan.svg" alt="event" className="rounded-xl w-full md:w-1/2 object-cover" />
         </section>
+
+      <section className="flex flex-col items-center justify-center bg-white/70 backdrop-blur-md p-4 rounded-2xl shadow-xl border mt-10">
+        <h2 className="text-3xl font-bold mb-3 text-black">Statistika</h2>
+        {response ? (
+          <div className="w-full md:w-2/3 flex flex-col md:flex-row items-center justify-center gap-8">
+            {/* Number of users on the left */}
+            <div className="flex flex-col items-center justify-center md:w-1/3 w-full">
+              <span className="text-5xl font-extrabold text-quaternary">{response.total_users}</span>
+              <span className="text-lg font-semibold text-gray-700 mt-2">Uporabnikov</span>
+            </div>
+            {/* Events chart on the right */}
+            <div className="md:w-2/3 w-full">
+              <Bar
+                data={{
+                  labels: ["Vsi dogodki", "Aktivni dogodki", "Prihodnji dogodki"],
+                  datasets: [
+                    {
+                      label: "Dogodki",
+                      data: [
+                        response.total_events,
+                        response.active_events,
+                        response.upcoming_events
+                      ],
+                      backgroundColor: [
+                        "#69A1DD",
+                        "#A94A4A",
+                        "#F7B801"
+                      ],
+                      borderRadius: 8,
+                    }
+                  ]
+                }}
+                options={{
+                  responsive: true,
+                  plugins: {
+                    legend: { display: false },
+                  },
+                  scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                  }
+                }}
+                height={200}
+              />
+            </div>
+          </div>
+        ) : (
+          <p className="text-gray-700">Podatki o statistiki niso na voljo.</p>
+        )}
+      </section>
 
         {/* How to */}
         <section className="flex flex-col md:flex-row items-center gap-10 bg-white/70 backdrop-blur-md p-8 rounded-2xl shadow-xl border">

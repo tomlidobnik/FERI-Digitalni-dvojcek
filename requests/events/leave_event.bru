@@ -1,0 +1,16 @@
+meta {
+  name: leave_event
+  type: http
+  seq: 12
+}
+
+post {
+  url: https://0.0.0.0:8000/api/event/leave_event/1
+  body: none
+  auth: inherit
+}
+
+script:pre-request {
+  const token = bru.getVar("token");
+  req.setHeader("Authorization", `Bearer ${token}`);
+}

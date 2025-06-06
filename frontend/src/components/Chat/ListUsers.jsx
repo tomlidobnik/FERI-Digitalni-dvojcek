@@ -1,12 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
+import FriendChat from "./FriendChat";
+import UserForList from "./UserForList";
 
-const ListUsers = () => {
+const ListUsers = ({selectedMode, onOpenChat, searchQuery}) => {
     const [users, setUsers] = useState([]);
     const [myUsername, setMyUsername] = useState("");
     const [requestStatus, setRequestStatus] = useState({});
     const [friendStatuses, setFriendStatuses] = useState({});
+    const [chattingWithFriendId, setChattingWithFriendId] = useState(null);
+    const [chattingWithFriendName, setChattingWithFriendName] = useState("");
+    const [showChatBox, setShowChatBox] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const API_URL = import.meta.env.VITE_API_URL;
 
@@ -18,25 +24,43 @@ const ListUsers = () => {
                 setMyUsername(decoded.sub || decoded.username || "");
             } catch (err) {
                 setMyUsername("");
+                console.error("Failed to decode token: ", err);
             }
         }
     }, []);
 
     useEffect(() => {
+        setIsLoading(true);
         fetch(`https://${API_URL}/api/user/all`)
             .then((res) => res.json())
-            .then((data) => setUsers(data))
+            .then((data) => {
+                setUsers(data.filter((user) => user.username !== myUsername));
+            })
             .catch((err) => {
                 setUsers([]);
-                console.error(err);
-            });
-    }, [API_URL]);
+                console.error("Failed to fetch users: ", err);
+            })
+            .finally(() => setIsLoading(false));
+    }, [API_URL, myUsername]);
 
     useEffect(() => {
+        if (!myUsername || users.length === 0) {
+            if (users.length > 0) setIsLoading(false);
+            return;
+        }
+
         const token = Cookies.get("token");
-        users
-            .filter((user) => user.username !== myUsername)
-            .forEach((user) => {
+        const usersToFetchStatusFor = users.filter(
+            (user) => user.username !== myUsername
+        );
+
+        if (usersToFetchStatusFor.length === 0) {
+            setIsLoading(false);
+            return;
+        }
+
+        Promise.all(
+            usersToFetchStatusFor.map((user) =>
                 fetch(
                     `https://${API_URL}/api/user/friends/status/${user.username}`,
                     {
@@ -46,23 +70,41 @@ const ListUsers = () => {
                     }
                 )
                     .then((res) => res.json())
-                    .then((data) => {
-                        setFriendStatuses((prev) => ({
-                            ...prev,
-                            [user.username]: data.status,
-                        }));
-                    })
-                    .catch(() => {
-                        setFriendStatuses((prev) => ({
-                            ...prev,
-                            [user.username]: "Status: error",
-                        }));
-                    });
+                    .then((data) => ({
+                        username: user.username,
+                        statusData: data,
+                    }))
+                    .catch(() => ({
+                        username: user.username,
+                        statusData: { status: "Status: error" },
+                    }))
+            )
+        )
+            .then((results) => {
+                const newFriendStatuses = {};
+                results.forEach((result) => {
+                    newFriendStatuses[result.username] = result.statusData;
+                });
+                setFriendStatuses((prev) => ({
+                    ...prev,
+                    ...newFriendStatuses,
+                }));
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
     }, [users, myUsername, API_URL]);
 
     const sendFriendRequest = (username) => {
         const token = Cookies.get("token");
+        const previousFriendStatus = friendStatuses[username];
+
+        setRequestStatus((prev) => {
+            const newReqStatus = { ...prev };
+            delete newReqStatus[username];
+            return newReqStatus;
+        });
+
         fetch(`https://${API_URL}/api/user/friends/request`, {
             method: "POST",
             headers: {
@@ -71,40 +113,68 @@ const ListUsers = () => {
             },
             body: JSON.stringify({ username }),
         })
-            .then((res) => {
+            .then(async (res) => {
                 if (res.ok) {
-                    setRequestStatus((prev) => ({
-                        ...prev,
-                        [username]: "Request sent!",
-                    }));
-                    fetch(
-                        `https://${API_URL}/api/user/friends/status/${username}`,
-                        {
-                            headers: {
-                                Authorization: token ? `Bearer ${token}` : "",
-                            },
-                        }
-                    )
-                        .then((res) => res.json())
-                        .then((data) => {
+                    try {
+                        const statusRes = await fetch(
+                            `https://${API_URL}/api/user/friends/status/${username}`,
+                            {
+                                headers: {
+                                    Authorization: token
+                                        ? `Bearer ${token}`
+                                        : "",
+                                },
+                            }
+                        );
+                        if (statusRes.ok) {
+                            const data = await statusRes.json();
                             setFriendStatuses((prev) => ({
                                 ...prev,
-                                [username]: data.status,
+                                [username]: data,
                             }));
-                        });
+                        } else {
+                            console.error(
+                                "Failed to re-fetch authoritative status for",
+                                username,
+                                "after successful request."
+                            );
+                        }
+                    } catch (statusErr) {
+                        console.error("Error re-fetching status:", statusErr);
+                    }
                 } else {
-                    return res.json().then((data) => {
-                        setRequestStatus((prev) => ({
-                            ...prev,
-                            [username]: data.error || "Request failed",
-                        }));
-                    });
+                    const errorData = await res.json().catch(() => ({
+                        error: "Neznana napaka pri pošiljanju",
+                    }));
+                    setRequestStatus((prev) => ({
+                        ...prev,
+                        [username]:
+                            errorData.error || "Pošiljanje zahteve ni uspelo",
+                    }));
+                    setFriendStatuses((prev) => ({
+                        ...prev,
+                        [username]: previousFriendStatus || {
+                            status: "Not friends",
+                            friendship_id: null,
+                        },
+                    }));
                 }
             })
-            .catch(() => {
+            .catch((err) => {
+                console.error(
+                    "Network or other error in sendFriendRequest:",
+                    err
+                );
                 setRequestStatus((prev) => ({
                     ...prev,
-                    [username]: "Request failed",
+                    [username]: "Napaka v omrežju ali druga težava",
+                }));
+                setFriendStatuses((prev) => ({
+                    ...prev,
+                    [username]: previousFriendStatus || {
+                        status: "Not friends",
+                        friendship_id: null,
+                    },
                 }));
             });
     };
@@ -121,7 +191,7 @@ const ListUsers = () => {
                 if (res.ok) {
                     setRequestStatus((prev) => ({
                         ...prev,
-                        [username]: "Removed",
+                        [username]: "Odstranjeno",
                     }));
                     fetch(
                         `https://${API_URL}/api/user/friends/status/${username}`,
@@ -135,81 +205,111 @@ const ListUsers = () => {
                         .then((data) => {
                             setFriendStatuses((prev) => ({
                                 ...prev,
-                                [username]: data.status,
+                                [username]: data,
                             }));
                         });
                 } else {
                     setRequestStatus((prev) => ({
                         ...prev,
-                        [username]: "Remove failed",
+                        [username]: "Odstranjevanje ni uspelo",
                     }));
                 }
             })
             .catch(() => {
                 setRequestStatus((prev) => ({
                     ...prev,
-                    [username]: "Remove failed",
+                    [username]: "Odstranjevanje ni uspelo",
                 }));
             });
     };
 
+    const openChat = (friendId, friendName) => {
+        onOpenChat(friendId, friendName)
+    };
+
+    const closeChat = () => {
+        setShowChatBox(false);
+        setChattingWithFriendId(null);
+        setChattingWithFriendName("");
+    };
+
+    const displayedUsers = useMemo(() => {
+        setIsLoading(true);
+        return users
+            .filter((user) => user.username !== myUsername)
+            .filter((user) => {
+                if (selectedMode === false) {
+                    return friendStatuses[user.username]?.status === "Friends";
+                }
+                return true;
+            })
+            .filter((user) => {
+
+                if (!searchQuery) return true;
+                return user.username
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase());
+            })
+            .sort((a, b) => {
+                const aStatus = friendStatuses[a.username]?.status;
+                const bStatus = friendStatuses[b.username]?.status;
+
+                if (aStatus === "Friends" && bStatus !== "Friends") return -1;
+                if (aStatus !== "Friends" && bStatus === "Friends") return 1;
+                return 0;
+            });
+    }, [users, myUsername, selectedMode, friendStatuses, searchQuery]);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setIsLoading(false);
+        }, 0);
+
+        return () => clearTimeout(timeout);
+    }, [displayedUsers]);
+
     return (
-        <div>
-            <h3 className="text-lg font-bold mb-2">All Users</h3>
-            <ul className="list-disc pl-5">
-                {users
-                    .filter((user) => user.username !== myUsername)
-                    .map((user) => {
-                        const status = friendStatuses[user.username];
-                        const isPending =
-                            status && status.toLowerCase().includes("pending");
-                        const isFriend = status === "Friends";
-                        const isNotFriend = status === "Not Friends";
-                        let buttonText = "Add Friend";
-                        let buttonAction = () =>
-                            sendFriendRequest(user.username);
-                        let buttonColor = "bg-blue-500";
-                        let buttonDisabled = false;
-
-                        if (isFriend) {
-                            buttonText = "Remove Friend";
-                            buttonAction = () =>
-                                removeFriendOrRequest(user.username);
-                            buttonColor = "bg-red-500";
-                        } else if (isPending) {
-                            buttonText = "Remove Request";
-                            buttonAction = () =>
-                                removeFriendOrRequest(user.username);
-                            buttonColor = "bg-yellow-500";
-                        } else if (!isNotFriend) {
-                            buttonDisabled = true;
-                        }
-
-                        return (
-                            <li
-                                key={user.id ?? user.username}
-                                className="mb-2 flex items-center gap-2">
-                                {user.username}
-                                <button
-                                    className={`ml-2 px-2 py-1 text-white rounded disabled:opacity-50 ${buttonColor}`}
-                                    onClick={buttonAction}
-                                    disabled={buttonDisabled}>
-                                    {buttonText}
-                                </button>
-                                <span className="ml-2 text-yellow-600">
-                                    {status
-                                        ? `Status: ${status}`
-                                        : "Status: ..."}
-                                </span>
-                                {requestStatus[user.username] && (
-                                    <span className="ml-2 text-green-600">
-                                        {requestStatus[user.username]}
-                                    </span>
-                                )}
-                            </li>
-                        );
-                    })}
-            </ul>
+        <div className="flex flex-col h-full overflow-y-auto">
+            <div className="flex-1 flex flex-col min-h-0 overflow-y-auto">
+                {isLoading ? (
+                    <div className="flex items-center justify-center h-full pt-8">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-quaternary"></div>
+                    </div>
+                ) : (
+                    <>
+                        {displayedUsers.length === 0 ? (
+                            <div className="text-center text-text-custom/70 text-lg py-8">
+                                Ni uporabnikov za prikaz.
+                            </div>
+                        ) : (
+                            displayedUsers.map((user) => (
+                                <UserForList
+                                    key={user.id ?? user.username}
+                                    user={user}
+                                    myUsername={myUsername}
+                                    friendStatusObject={
+                                        friendStatuses[user.username]
+                                    }
+                                    requestStatus={requestStatus}
+                                    onSendFriendRequest={sendFriendRequest}
+                                    onRemoveFriendOrRequest={
+                                        removeFriendOrRequest
+                                    }
+                                    onOpenChat={openChat}
+                                />
+                            ))
+                        )}
+                    </>
+                )}
+            </div>
+            {showChatBox && chattingWithFriendId && (
+                <FriendChat
+                    friendId={chattingWithFriendId}
+                    friendName={chattingWithFriendName}
+                    className="z-50"
+                    onClose={closeChat}
+                />
+            )}
         </div>
     );
 };

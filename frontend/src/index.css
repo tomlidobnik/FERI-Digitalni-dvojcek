@@ -1,40 +1,69 @@
 @import "tailwindcss";
+@import "flowbite/src/themes/default";
+@plugin "flowbite/plugin";
+@source "../node_modules/flowbite";
 
 @theme {
-  --color-primary: #E5DCC5;
-  --color-secondary: #F0BB78;
-  --color-tertiary: #A4B465;
-  --color-quaternary: #626F47;
-  --color-error: #A94A4A;
-  --color-warning: #FF9B17;
-  --color-background: #FFF9E5;
+    --color-primary: #e5dcc5;
+    --color-secondary: #f0bb78;
+    --color-tertiary: #a4b465;
+    --color-quaternary: #626f47;
+    --color-error: #a94a4a;
+    --color-warning: #ff9b17;
+    --color-background: #fff9e5;
 
-  /* text colors */
-  --color-text: #212529;
-  --color-text-clickable: #212529;
-  --color-text-hover: #6c757d;
-  --color-text-active: #343a40;
-  --color-text-disabled: #adb5bd;
+    /* text colors */
+    --color-text: #212529;
+    --color-text-clickable: #212529;
+    --color-text-hover: #6c757d;
+    --color-text-active: #343a40;
+    --color-text-disabled: #adb5bd;
 }
 
 ::selection {
-  background: var(--color-tertiary);
+    background: var(--color-tertiary);
+}
+
+body {
+    --color-text: var(--color-text);
+    --color-background: var(--color-background);
+}
+
+.description-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  width: 100%;
+    font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+    width: 100%;
 
-  color-scheme: light dark;
-  color: var(--color-text);
-  background-color: var(--color-background);
+    color-scheme: light dark;
+    color: var(--color-text);
+    background-color: var(--color-background);
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+.radio-custom {
+    @apply appearance-none w-5 h-5 border-2 border-quaternary rounded-full bg-black/10
+    checked:bg-primary checked:border-primary checked:ring-2 checked:ring-primary transition;
+    vertical-align: middle;
+    margin-right: 0.75rem;
+}
+
+.radio-label {
+    @apply flex items-center cursor-pointer text-xl font-semibold mb-1;
+}
+.radio-custom:checked + span {
+    @apply text-quaternary font-bold;
 }
 
 input:-webkit-autofill,
@@ -45,61 +74,127 @@ input[data-autocompleted] {
     background-color: transparent !important;
 }
 
-a {
-  /*font-weight: 500;
-  color: var(--color-text-clickable);
-  text-decoration: inherit;*/
-}
-
-body {
-  /*margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;*/
-}
-
-h1 {
-  /*font-size: 3.2em;
-  line-height: 1.1;*/
-}
-
-button {
-    /*border-radius: 8px;
-    border: 1px solid transparent;
-    padding: 0.6em 1.2em;
-    font-size: 1em;
-    font-weight: 500;
-    font-family: inherit;
-    background-color: var(--color-quaternary);
-    cursor: pointer;
-    transition: border-color 0.25s;*/
-}
-button:hover {
-    /*border-color: #646cff;*/
-}
-button:focus,
-button:focus-visible {
-    /*outline: 4px auto -webkit-focus-ring-color;*/
-}
-
 .btn-nav {
-  @apply flex items-center justify-center w-full py-3 mb-2 lg:text-lg font-semibold rounded-lg bg-quaternary text-white transition-colors duration-200 shadow-md hover:bg-quaternary/80 focus:bg-quaternary/90;
+    @apply flex items-center justify-center w-full py-3 mb-2 lg:text-lg font-semibold rounded-lg bg-quaternary text-white transition-colors duration-200 shadow-md hover:bg-quaternary/80 focus:bg-quaternary/90;
 }
 
 .btn-nav-active {
-  @apply flex items-center justify-center w-full py-3 mb-2 lg:text-lg font-semibold rounded-lg bg-quaternary/70 text-white shadow-md;
+    @apply flex items-center justify-center w-full py-3 mb-2 lg:text-lg font-semibold rounded-lg bg-quaternary/70 text-white shadow-md;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: var(--color-text-hover);
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.btn-nav-side {
+    @apply flex flex-row items-center bg-black/10 p-2 rounded-xl text-text text-xl font-bold shadow-md hover:bg-black/20 transition-colors duration-200;
+}
+
+.btn-nav-active-side {
+    @apply flex flex-row items-center bg-black/30 p-2 rounded-xl text-text text-xl font-bold shadow-md;
+}
+
+/* Style calendar container */
+.react-calendar {
+    font-size: 1.1rem;
+    padding: 20px;
+    background: var(--color-primary);
+}
+
+/* Style selected day */
+.react-calendar__tile--active {
+    background: var(--color-quaternary) !important;
+    color: #fff !important;
+    border-radius: 0.5rem;
+}
+
+/* Style today */
+.react-calendar__tile--now {
+    background: var(--color-secondary) !important;
+    color: white;
+    border-radius: 0.5rem;
+}
+
+@keyframes slideDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px) scaleY(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scaleY(1);
+    }
+}
+
+@keyframes slideInLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOutLeft {
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+}
+.slide-down {
+    animation: slideDown 0.5s ease-out;
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-slideUp {
+    animation: slideUp 0.5s ease-out;
+}
+
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-primary);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-quaternary);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-tertiary);
 }
