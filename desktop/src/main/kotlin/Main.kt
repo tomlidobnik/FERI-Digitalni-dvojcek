@@ -16,13 +16,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.WindowPosition
-import androidx.compose.ui.window.application
-import androidx.compose.ui.window.rememberWindowState
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.window.*
 import data.CreateUser
 import data.PublicUser
 import kotlinx.coroutines.CoroutineScope
@@ -335,8 +332,8 @@ fun AddUserTab() {
 
         if (showValidationDialog) {
             AlertBox(
-                title = "Testing",
-                text = "loremipsummmmmmmmmmmasadsadadad",
+                title = "Unfilled form",
+                text = "You have to complete the whole user creation form.",
                 onDismiss = { showValidationDialog = false }
             )
         }
@@ -346,6 +343,7 @@ fun AddUserTab() {
 @Composable
 fun UsersListTab() {
     val users = remember { mutableStateOf<List<PublicUser>>(emptyList()) }
+    val selectedUser = remember { mutableStateOf<PublicUser?>(null) }
 
     LaunchedEffect(Unit) {
         users.value = getAllUsers() ?: emptyList()
@@ -369,8 +367,9 @@ fun UsersListTab() {
                     .fillMaxWidth()
                     .padding(vertical = 4.dp)
                     .clickable {
-                        // TODO: Open edit screen or set selected user
+                        selectedUser.value = user
                         println("Clicked on ${user.firstname} ${user.lastname}")
+
                     },
                 elevation = 4.dp,
             ) {
@@ -394,6 +393,18 @@ fun UsersListTab() {
                 }
             }
         }
+    }
+    val userToEdit = selectedUser.value
+    if (userToEdit != null) {
+        EditUserModal(
+            user = userToEdit,
+            onDismiss = { selectedUser.value = null },
+            onSave = { updatedUser ->
+                // save logic
+                println("Updated user: $updatedUser")
+                selectedUser.value = null
+            }
+        )
     }
 
 }
@@ -530,3 +541,78 @@ fun AlertBox(
         }
     )
 }
+
+@Composable
+fun EditUserModal(user: PublicUser, onDismiss: () -> Unit, onSave: (CreateUser) -> Unit) {
+    var editedUsername by remember { mutableStateOf(user.username) }
+    var editedFirstname by remember { mutableStateOf(user.firstname) }
+    var editedLastname by remember { mutableStateOf(user.lastname) }
+    var editedEmail by remember { mutableStateOf(user.email) }
+    var editedPassword by remember { mutableStateOf("") }
+
+    Dialog(onDismissRequest = onDismiss) {
+        Surface(shape = RoundedCornerShape(8.dp)) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text("Edit User")
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                OutlinedTextField(
+                    value = editedUsername,
+                    onValueChange = { editedUsername = it },
+                    label = { Text("Username") }
+                )
+
+                OutlinedTextField(
+                    value = editedFirstname,
+                    onValueChange = { editedFirstname = it },
+                    label = { Text("First Name") }
+                )
+
+                OutlinedTextField(
+                    value = editedLastname,
+                    onValueChange = { editedLastname = it },
+                    label = { Text("Last Name") }
+                )
+
+                OutlinedTextField(
+                    value = editedEmail,
+                    onValueChange = { editedEmail = it },
+                    label = { Text("Email") }
+                )
+
+                OutlinedTextField(
+                    value = editedPassword,
+                    onValueChange = { editedPassword = it },
+                    label = { Text("New Password") },
+                    visualTransformation = PasswordVisualTransformation(),
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
+                    TextButton(onClick = onDismiss) {
+                        Text("Cancel")
+                    }
+                    Button(onClick = {
+                        if (editedPassword.isNotBlank()) {
+                            onSave(
+                                CreateUser(
+                                    username = editedUsername,
+                                    firstname = editedFirstname,
+                                    lastname = editedLastname,
+                                    email = editedEmail,
+                                    password = editedPassword
+                                )
+                            )
+                            onDismiss()
+                        }
+                    }) {
+                        Text("Save")
+                    }
+                }
+            }
+        }
+    }
+}
+

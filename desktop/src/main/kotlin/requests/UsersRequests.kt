@@ -76,3 +76,24 @@ fun getAllUsers(): List<PublicUser>? {
         return adapter.fromJson(body)
     }
 }
+
+suspend fun updateUser(user: CreateUser): String = withContext(Dispatchers.IO) {
+    val client = getUnsafeOkHttpClient()
+    val json = Json.encodeToString(user)
+    val mediaType = "application/json".toMediaType()
+    val body = json.toRequestBody(mediaType)
+
+    val request = Request.Builder()
+        .url("https://0.0.0.0:8000/api/user/update")
+        .put(body)
+        .build()
+
+    client.newCall(request).execute().use { response ->
+        if (!response.isSuccessful) {
+            throw Exception("Failed to update user: ${response.code}")
+        }
+        return@withContext response.body?.string() ?: "No response"
+    }
+}
+
+
