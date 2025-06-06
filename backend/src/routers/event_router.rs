@@ -17,4 +17,5 @@ pub fn create_router() -> Router {
         .route("/join_public_event/{id}", post(join_public_event))
         .route("/leave_event/{id}", post(leave_event))
         .route("/remove_user_from_event/{event_id}/{user_id}", delete(remove_user_from_private_event))
+        .route("/get_users/{event_id}/", get(get_user_at_events))
 }

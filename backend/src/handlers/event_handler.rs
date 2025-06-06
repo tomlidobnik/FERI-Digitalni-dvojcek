@@ -478,3 +478,19 @@ pub async fn remove_user_from_private_event(
         Err(EventError::EventNotFound)
     }
 }
+pub async fn get_user_at_events(
+    Path(event_id): Path<i32>,
+) -> Result<Json<Vec<String>>, EventError> {
+    use crate::schema::event_users::dsl as event_users_dsl;
+    use crate::schema::users::dsl as users_dsl;
+    let mut conn = db::connect_db();
+
+    let result = event_users_dsl::event_users
+        .inner_join(users_dsl::users.on(event_users_dsl::user_id.eq(users_dsl::id)))
+        .filter(event_users_dsl::event_id.eq(event_id))
+        .select(users_dsl::username)
+        .load::<String>(&mut conn)
+        .map_err(|_| EventError::InternalServerError)?;
+
+    Ok(Json(result))
+}
