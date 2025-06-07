@@ -175,7 +175,7 @@ function App() {
               delay={0.2}
               containerClassName=""
             >
-              <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 justify-center mt-16 lg:mt-32 items-center w-full transition-all duration-300">
+              <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 justify-center mt-24 lg:mt-32 items-center w-full transition-all duration-300">
                 <TiltedCard
                   imageSrc="https://avatars.githubusercontent.com/u/149946426?v=4"
                   altText=""
@@ -198,7 +198,7 @@ function App() {
                 <SpotlightCard className="w-full text-primary font-semibold text-xl items-center m-auto justify-center" spotlightColor="#626f47">
                   <div className="flex flex-col gap-2">
                     <span className="pb-4 block">
-                      Sem razvijalec spletnih aplikacij, ki se osredotoča na čelni del in oblikovanje uporabniških vmesnikov. Delam z JavaScriptom, Pythonom, PHP-jem, C++ in drugimi programskimi jeziki. Imam tudi izkušnje z zalednim razvojem od integracije API-jev do upravljanja podatkovnih baz in strežniške logike.
+                      Sem razvijalec spletnih aplikacij s poudarkom na čelnem delu in oblikovanju uporabniških vmesnikov. Delam z JavaScriptom, Pythonom, PHP-jem, C++ in drugimi programskimi jeziki. Imam tudi izkušnje z zalednim razvojem od integracije API-jev do upravljanja podatkovnih baz in strežniške logike.
                     </span>
                     <button className="flex">
                       <a className="github-button" href="https://github.com/anejbr" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" aria-label="Follow @anejbr on GitHub">
@@ -223,7 +223,7 @@ function App() {
               threshold={0.2}
               delay={0.2}
             >
-              <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 justify-center mt-16 lg:mt-32 items-center w-full transition-all duration-300">
+              <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 justify-center mt-24 lg:mt-32 items-center w-full transition-all duration-300">
                 <SpotlightCard
                   className="w-full text-primary font-semibold text-xl items-center m-auto justify-center hidden lg:flex"
                   spotlightColor="#626f47"
@@ -293,7 +293,7 @@ function App() {
               threshold={0.2}
               delay={0.2}
             >
-            <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 justify-center mt-16 lg:mt-32 items-center w-full transition-all duration-300">
+            <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 justify-center mt-24 lg:mt-32 items-center w-full transition-all duration-300">
               <TiltedCard
                 imageSrc="https://avatars.githubusercontent.com/u/157404999?v=4"
                 altText=""
@@ -346,7 +346,7 @@ function App() {
               className="text-primary text-xl xs:text-2xl lg:text-4xl font-extrabold ml-auto"
             />
             {}
-            <div className="flex flex-col sm:flex-row gap-6 sm:gap-12 justify-between mt-16 sm:mt-32 w-full h-fit">
+            <div className="flex flex-col sm:flex-row gap-12 justify-between mt-16 sm:mt-32 w-full h-fit">
               <div className="flex flex-col items-center justify-center w-full">
                 <AnimatedContent
                   distance="100vh"
@@ -417,7 +417,7 @@ function App() {
                 delay={0.1}
                 className="text-primary text-6xl lg:text-8xl font-extrabold"
               />
-              <div className="text-primary text-xl md:text-2xl">Uporabnikov</div>
+              <div className="text-primary text-xl md:text-2xl">Uporabniki</div>
             </div>
             <div className="flex flex-col items-center justify-center w-full h-full">
               <CountUp
