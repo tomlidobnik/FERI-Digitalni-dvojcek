@@ -1,10 +1,16 @@
 import { Link } from "react-router-dom";
+import FuzzyText from '../blocks/TextAnimations/FuzzyText/FuzzyText';
 
 function ErrorPage(error) {
     return(
         <div className="flex flex-col items-center justify-center h-screen select-none ">
             <div className="flex items-center flex-col justify-center mb-4 bg-primary p-16 rounded-4xl shadow-2xl">
-                <h1 className="text-6xl sm:text-9xl font-extrabold text-error m-2">Napaka!</h1>
+                <FuzzyText 
+                baseIntensity={0.2} 
+                color={"#A55"}
+                >
+                    Napaka!
+                </FuzzyText>
                 <h2 className="text-2xl sm:text-4xl font-bold text-text">{error["error"].message}</h2>
                 <Link
                     to="/"
