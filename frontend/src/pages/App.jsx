@@ -21,6 +21,7 @@ import SpotlightCard from '../blocks/SpotlightCard';
 import BlurText from "../blocks/BlurText";
 import CountUp from "../blocks/CountUp";
 import CircularGallery from "../blocks/CircularGallery";
+import { useNavigate } from "react-router-dom";
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -29,12 +30,17 @@ function App() {
   const API_URL = import.meta.env.VITE_API_URL;
   const [response, setResponse] = useState([]);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.body.setAttribute("data-path", location.pathname);
   }, [location.pathname]);
 
   useEffect(() => {
+    if (token) {
+      navigate("/home");
+    }
+
     fetch(`https://${API_URL}/api/user/stats`)
       .then(res => res.json())
       .then(data => { setResponse(data); console.log(data); })

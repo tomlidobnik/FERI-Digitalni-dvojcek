@@ -16,7 +16,7 @@ import EventsMap from "./pages/map/EventsMap.jsx";
 import Logout from "./pages/user/Logout.jsx";
 import ListUsers from "./components/Chat/ListUsers.jsx";
 import MainPage from "./pages/MainPage.jsx";
-
+import Cookies from "js-cookie";
 
 // Routers
 const router = createBrowserRouter([
