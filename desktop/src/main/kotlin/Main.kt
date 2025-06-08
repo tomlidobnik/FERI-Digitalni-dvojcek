@@ -32,15 +32,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import kotlinx.coroutines.swing.Swing
 import kotlinx.coroutines.withContext
 import requests.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import java.io.File
 
 
 enum class MenuState {
     USERS_LIST, ABOUT_APP, ADD_USER, ADD_EVENT, EVENTS_LIST, ADD_LOCATION, LOCATIONS_LIST,
-    ADD_LOCATION_OUTLINE, LOCATION_OUTLINES_LIST
+    ADD_LOCATION_OUTLINE, LOCATION_OUTLINES_LIST, SCRAPER, GENERATOR
 }
 
 @Composable
@@ -118,6 +122,9 @@ fun Main(menuState: MutableState<MenuState>, tokenState: MutableState<String?>) 
                 AddLocationOutlineButton(menuState)
                 LocationOutlinesListButton(menuState)
                 DividerLine()
+                ScraperButton(menuState)
+                GeneratorButton(menuState)
+                DividerLine()
                 AboutAppButton(menuState)
             }
         }
@@ -140,6 +147,9 @@ fun Main(menuState: MutableState<MenuState>, tokenState: MutableState<String?>) 
                 MenuState.LOCATIONS_LIST -> LocationsListTab(menuState)
                 MenuState.ADD_LOCATION_OUTLINE -> AddLocationOutlineTab()
                 MenuState.LOCATION_OUTLINES_LIST -> LocationOutlinesListTab()
+                MenuState.SCRAPER -> ScraperTab()
+                MenuState.GENERATOR -> GeneratorTab()
+
             }
         }
     }
@@ -147,6 +157,67 @@ fun Main(menuState: MutableState<MenuState>, tokenState: MutableState<String?>) 
 
 
 // BUTTONS
+@Composable
+fun ScraperButton(menuState: MutableState<MenuState>) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp)
+            .background(Color.LightGray, RoundedCornerShape(4.dp))
+            .clickable { menuState.value = MenuState.SCRAPER },
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Row(
+            modifier = Modifier.padding(start = 8.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Share,
+                contentDescription = "Share",
+                tint = Color.Black
+            )
+            Spacer(modifier = Modifier.width(20.dp))
+            Text(
+                text = "Scraper",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+
+        }
+    }
+}
+
+@Composable
+fun GeneratorButton(menuState: MutableState<MenuState>) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp)
+            .background(Color.LightGray, RoundedCornerShape(4.dp))
+            .clickable { menuState.value = MenuState.GENERATOR },
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Row(
+            modifier = Modifier.padding(start = 8.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Build,
+                contentDescription = "Wrench",
+                tint = Color.Black
+            )
+            Spacer(modifier = Modifier.width(20.dp))
+            Text(
+                text = "Generator",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+
+        }
+    }
+}
+
+
 @Composable
 fun AddUserButton(menuState: MutableState<MenuState>) {
     Box(
@@ -412,6 +483,138 @@ fun LocationsListButton(menuState: MutableState<MenuState>) {
 
 
 // TABS
+@Composable
+fun ScraperTab() {
+    val locations = remember { mutableStateOf<List<Location>>(emptyList()) }
+    val showAlert = remember { mutableStateOf(false) }
+    val showAlertDB = remember { mutableStateOf(false) }
+    val isLoading = remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            "Scraper Results",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        Button(
+            onClick = {
+                coroutineScope.launch {
+                    isLoading.value = true
+                    try {
+                        val mapped = withContext(Dispatchers.IO) {
+                            scrapeMariborIgrisce()
+                            val jsonString = File("locations2.json").readText()
+                            val mapLocations = Json.decodeFromString<List<MapLocation>>(jsonString)
+                            mapLocations.map {
+                                Location(
+                                    info = it.name ?: "Unknown",
+                                    latitude = it.lat?.toDoubleOrNull() ?: 0.0,
+                                    longitude = it.lon?.toDoubleOrNull() ?: 0.0,
+                                    location_outline_fk = null
+                                )
+                            }
+                        }
+                        locations.value = mapped
+                        showAlert.value = true
+                    } catch (e: Exception) {
+                        println("Failed to scrape locations: ${e.message}")
+                    } finally {
+                        isLoading.value = false
+                    }
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Run Scraper")
+        }
+        Button(
+            onClick = {
+                coroutineScope.launch {
+                    isLoading.value = true
+                    try {
+                        for (location in locations.value) {
+                            try {
+                                val result = createLocation(location)
+                                println("Uploaded: ${location.info} -> $result")
+                            } catch (e: Exception) {
+                                println("Failed to upload ${location.info}: ${e.message}")
+                            }
+                        }
+                        showAlertDB.value = true
+                    } finally {
+                        isLoading.value = false
+                    }
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
+            enabled = locations.value.isNotEmpty() && !isLoading.value
+        ) {
+            Text("Upload to Database")
+        }
+
+
+        if (isLoading.value) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        LazyColumn(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(locations.value) { location ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    elevation = 4.dp
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text("Name: ${location.info}", fontWeight = FontWeight.Bold)
+                        Text("Latitude: ${location.latitude}")
+                        Text("Longitude: ${location.longitude}")
+                    }
+                }
+            }
+        }
+
+        if (showAlert.value) {
+            AlertBox(
+                title = "Success",
+                text = "Scraping completed successfully!",
+                onDismiss = { showAlert.value = false }
+            )
+        }
+        if (showAlertDB.value) {
+            AlertBox(
+                title = "Success",
+                text = "Database insertion completed successfully!",
+                onDismiss = { showAlertDB.value = false }
+            )
+        }
+    }
+}
+
+@Composable
+fun GeneratorTab() {
+    Text("generator")
+}
+
 @Composable
 fun AddUserTab(menuState: MutableState<MenuState>) {
     Box(

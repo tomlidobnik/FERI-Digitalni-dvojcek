@@ -42,6 +42,8 @@ dependencies {
     implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
     implementation("io.github.serpro69:kotlin-faker:1.6.0")
     implementation("com.github.javafaker:javafaker:1.0.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.7.3")
+
 }
 
 compose.desktop {
