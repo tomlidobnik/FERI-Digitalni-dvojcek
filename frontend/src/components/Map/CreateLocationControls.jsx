@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 const CreateLocationControls = ({
     mode,
     onSetMode,
@@ -6,6 +8,7 @@ const CreateLocationControls = ({
     onUndoLastPoint,
     currentPointCoords,
     areaPointsCount,
+    onSearch,
 }) => {
     const baseButtonClass =
         "text-text-custom font-bold py-2 px-4 rounded-xl shadow transition-all duration-300 ease-in-out bg-tertiary hover:brightness-90";
@@ -29,8 +32,34 @@ const CreateLocationControls = ({
     }
 
     if (mode === "creatingPoint") {
+        const [searchValue, setSearchValue] = useState("");
         return (
             <div className="space-x-2 flex items-center">
+                <form
+                    onSubmit={e => {
+                        e.preventDefault();
+                        if (onSearch && searchValue.trim()) {
+                            onSearch(searchValue);
+                            setSearchValue("");
+                        }
+                    }}
+                    className="flex flex-row items-center gap-2"
+                    style={{ minWidth: 220, maxWidth: 350 }}
+                >
+                    <input
+                        type="text"
+                        className="flex-1 bg-white outline-none text-black text-base px-2 py-1 rounded"
+                        placeholder="Poišči naslov ali lokacijo..."
+                        value={searchValue}
+                        onChange={e => setSearchValue(e.target.value)}
+                    />
+                    <button
+                        type="submit"
+                        className="bg-primary text-black font-bold px-3 py-1 rounded-lg hover:bg-[#e5dcc5] transition"
+                    >
+                        Išči
+                    </button>
+                </form>
                 <button onClick={onSaveLocation} className={baseButtonClass}>
                     Shrani točko
                 </button>
