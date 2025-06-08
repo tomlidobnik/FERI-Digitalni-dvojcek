@@ -11,6 +11,12 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import data.Location
+import util.DatabaseUtil
+import java.sql.SQLException
+import java.sql.Timestamp
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 suspend fun createEvent(event: Event, token: String): String = withContext(Dispatchers.IO) {
     val client = getUnsafeOkHttpClient()
@@ -55,5 +61,57 @@ fun getAllEvents(): List<Event>? {
         return adapter.fromJson(body)
     }
 }
+
+fun updateEvent(event: Event): Boolean {
+    val connection = DatabaseUtil.Connect() ?: return false
+    val sql = """
+        UPDATE events
+        SET title = ?, description = ?, start_date = ?, end_date = ?, location_fk = ?, public = ?, tag = ?
+        WHERE id = ?
+    """.trimIndent()
+
+    fun normalizeDateTime(input: String): String =
+        if (input.length == 16) input + ":00" else input
+
+    return try {
+        val stmt = connection.prepareStatement(sql)
+        stmt.setString(1, event.title)
+        stmt.setString(2, event.description)
+        stmt.setTimestamp(3, Timestamp.valueOf(normalizeDateTime(event.start_date).replace('T', ' ')))
+        stmt.setTimestamp(4, Timestamp.valueOf(normalizeDateTime(event.end_date).replace('T', ' ')))
+        stmt.setInt(5, event.location_fk)
+        stmt.setBoolean(6, event.public)
+        stmt.setString(7, event.tag)
+        stmt.setInt(8, event.id ?: 0)
+
+        val rowsAffected = stmt.executeUpdate()
+        println("Rows affected: $rowsAffected")
+        rowsAffected > 0
+    } catch (e: SQLException) {
+        println("Update failed??: ${e.message}")
+        false
+    } finally {
+        DatabaseUtil.Disconnect()
+    }
+}
+
+fun deleteEvent(eventId: Int): Boolean {
+    val connection = DatabaseUtil.Connect() ?: return false
+
+    val sql = "DELETE FROM events WHERE id = ?"
+
+    return try {
+        val stmt = connection.prepareStatement(sql)
+        stmt.setInt(1, eventId)
+        val rowsAffected = stmt.executeUpdate()
+        rowsAffected > 0
+    } catch (e: SQLException) {
+        println("Delete failed: ${e.message}")
+        false
+    } finally {
+        DatabaseUtil.Disconnect()
+    }
+}
+
 
 

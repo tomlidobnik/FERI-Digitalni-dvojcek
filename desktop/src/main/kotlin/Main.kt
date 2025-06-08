@@ -34,6 +34,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import kotlinx.coroutines.withContext
 import requests.*
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 enum class MenuState {
@@ -132,7 +134,7 @@ fun Main(menuState: MutableState<MenuState>, tokenState: MutableState<String?>) 
                 MenuState.ADD_USER -> AddUserTab(menuState)
                 MenuState.USERS_LIST -> UsersListTab(menuState)
                 MenuState.ADD_EVENT -> AddEventTab(menuState, tokenState)
-                MenuState.EVENTS_LIST -> EventsListTab()
+                MenuState.EVENTS_LIST -> EventsListTab(menuState)
                 MenuState.ABOUT_APP -> AboutAppTab()
                 MenuState.ADD_LOCATION -> AddLocationTab(menuState)
                 MenuState.LOCATIONS_LIST -> LocationsListTab(menuState)
@@ -717,7 +719,7 @@ fun AddEventTab(menuState: MutableState<MenuState>, tokenState: MutableState<Str
 }
 
 @Composable
-fun EventsListTab() {
+fun EventsListTab(menuState: MutableState<MenuState>) {
     val events = remember { mutableStateOf<List<Event>>(emptyList()) }
     val selectedEvent = remember { mutableStateOf<Event?>(null) }
 
@@ -771,8 +773,30 @@ fun EventsListTab() {
         }
     }
     val eventToEdit = selectedEvent.value
+    var showAlert by remember { mutableStateOf(false) }
+    var alertText by remember { mutableStateOf("") }
     if (eventToEdit != null) {
-        // modalno okno za urejanje eventa
+        EditEventModal(
+            event = eventToEdit,
+            onDismiss = { selectedEvent.value = null },
+            onSave = { updatedEvent ->
+                println("Updating event with ID: ${updatedEvent.id}")
+                val success = updateEvent(updatedEvent)
+                alertText = if (success) "Event updated successfully" else "Event update failed"
+                showAlert = true
+                selectedEvent.value = null
+                menuState.value = MenuState.ADD_EVENT
+            },
+            menuState = menuState
+        )
+    }
+
+    if (showAlert) {
+        AlertBox(
+            title = "Update status",
+            text = alertText,
+            onDismiss = { showAlert = false }
+        )
     }
 }
 
@@ -1409,7 +1433,12 @@ fun EditUserModal(
 
 
 @Composable
-fun EditLocationModal(location: Location, onDismiss: () -> Unit, onSave: (Location) -> Unit,menuState: MutableState<MenuState>) {
+fun EditLocationModal(
+    location: Location,
+    onDismiss: () -> Unit,
+    onSave: (Location) -> Unit,
+    menuState: MutableState<MenuState>
+) {
     var editedInfo by remember { mutableStateOf(location.info) }
     var editedLongitude by remember { mutableStateOf(location.longitude.toString()) }
     var editedLatitude by remember { mutableStateOf(location.latitude.toString()) }
@@ -1502,6 +1531,153 @@ fun EditLocationModal(location: Location, onDismiss: () -> Unit, onSave: (Locati
         }
     }
 }
+
+@Composable
+fun EditEventModal(
+    event: Event,
+    onDismiss: () -> Unit,
+    onSave: (Event) -> Unit,
+    menuState: MutableState<MenuState>
+) {
+    var editedTitle by remember { mutableStateOf(event.title) }
+    var editedDescription by remember { mutableStateOf(event.description) }
+    var editedStartDate by remember { mutableStateOf(event.start_date) }
+    var editedEndDate by remember { mutableStateOf(event.end_date) }
+    var editedLocationFK by remember { mutableStateOf(event.location_fk.toString()) }
+    var editedIsPublic by remember { mutableStateOf(event.public) }
+    var editedTag by remember { mutableStateOf(event.tag) }
+    var expanded by remember { mutableStateOf(false) }
+    val tagOptions = listOf("sport", "dogodek", "drugo", "sola", "brez oznake")
+
+    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+
+
+    Dialog(onDismissRequest = onDismiss) {
+        Surface(shape = RoundedCornerShape(8.dp)) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text("Edit Event")
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                OutlinedTextField(
+                    value = editedTitle,
+                    onValueChange = { editedTitle = it },
+                    label = { Text("Title") }
+                )
+
+                OutlinedTextField(
+                    value = editedDescription,
+                    onValueChange = { editedDescription = it },
+                    label = { Text("Description") },
+                )
+
+                OutlinedTextField(
+                    value = editedStartDate,
+                    onValueChange = { editedStartDate = it },
+                    label = { Text("Start Date") },
+                )
+
+                OutlinedTextField(
+                    value = editedEndDate,
+                    onValueChange = { editedEndDate = it },
+                    label = { Text("End Date") },
+                )
+                OutlinedTextField(
+                    value = editedLocationFK,
+                    onValueChange = { editedLocationFK = it },
+                    label = { Text("Location ID") },
+                )
+                Box {
+                    OutlinedTextField(
+                        value = editedTag,
+                        onValueChange = { },
+                        label = { Text("Tag") },
+                        readOnly = true,
+                        trailingIcon = {
+                            Icon(
+                                Icons.Default.ArrowDropDown,
+                                contentDescription = null,
+                                Modifier.clickable { expanded = !expanded }
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        tagOptions.forEach { option ->
+                            DropdownMenuItem(onClick = {
+                                editedTag = option
+                                expanded = false
+                            }) {
+                                Text(option)
+                            }
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(
+                        checked = editedIsPublic,
+                        onCheckedChange = { editedIsPublic = it }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Public Event")
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
+                    TextButton(onClick = onDismiss) {
+                        Text("Cancel")
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Button(onClick = {
+                        try {
+                            val parsedStartDate = LocalDateTime.parse(editedStartDate, dateFormatter)
+                            val parsedEndDate = LocalDateTime.parse(editedEndDate, dateFormatter)
+
+                            onSave(
+                                Event(
+                                    id = event.id,
+                                    title = editedTitle,
+                                    description = editedDescription,
+                                    start_date = parsedStartDate.toString(),
+                                    end_date = parsedEndDate.toString(),
+                                    location_fk = editedLocationFK.toIntOrNull() ?: 0,
+                                    public = editedIsPublic,
+                                    tag = editedTag
+                                )
+                            )
+                            onDismiss()
+                        } catch (e: Exception) {
+                            println("Error parsing dates: ${e.message}")
+                        }
+                    }) {
+                        Text("Save")
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Button(onClick = {
+                        if (event.id != null) {
+                            val success = deleteEvent(event.id)
+                            if (success) {
+                                println("Event deleted successfully")
+                                menuState.value = MenuState.ADD_EVENT
+                                onDismiss()
+                            } else {
+                                println("Failed to delete event")
+                            }
+                        }
+                    }, colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)) {
+                        Text("Delete", color = Color.White)
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 @Composable
 fun OutlinePointsModal(outline: LocationOutline, onDismiss: () -> Unit) {
