@@ -1,8 +1,34 @@
 import { Link } from "react-router-dom";
 import { formatDateTime } from "../../utils/formatDateTime";
 import Tag from "./Tag"
+import { useState, useEffect } from "react";
 
 const EventForList = ({ event }) => {
+    const [attending, setAttending] = useState([]);
+
+            useEffect(() => {
+                try{
+                    async function fetchAttending() {
+                        try {
+                            const res = await fetch(`https://${import.meta.env.VITE_API_URL}/api/event/get_users/${event.id}/`);
+                            if (res.ok) {
+                                const data = await res.json();
+                                setAttending(data);
+                            } else {
+                                setAttending([]);
+                            }
+                        } catch {
+                            setAttending([]);
+                        }
+                    }
+                    if (event?.id) {
+                        fetchAttending();
+                    }
+                }catch (error) {
+                    console.error("Error fetching attending users:", error);
+                    setAttending([]);
+                }
+            }, [event?.id]);
     return (
         <div className="flex flex-row justify-between bg-white/30 rounded-2xl shadow-md p-2 mb-4 items-center">
             <div className="flex flex-col flex-1 min-w-0">
@@ -31,6 +57,13 @@ const EventForList = ({ event }) => {
                             : "Neznana lokacija"}
                     </div>
                 ) : null}
+                {attending?(                
+                    <span className="flex items-center px-2 mt-1 rounded text-sm font-semibold w-fit  bg-blue-300 ">
+                        <img src="../icons/users-alt.svg" className="w-4 h-4 mr-1" alt="location" />
+                        {attending.length}
+                    </span>)
+                    :""
+                }
             </div>
             <div className="flex flex-wrap sm:items-center text-base font-medium ml-2">
                 <Link

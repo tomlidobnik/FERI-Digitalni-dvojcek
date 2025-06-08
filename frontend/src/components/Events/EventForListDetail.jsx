@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import ConfirmPopup from "./ConfirmPopup";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { useSelector } from "react-redux";
 import { setEvent } from "../../state/event/eventSlice";
@@ -11,8 +11,33 @@ import Tag from "./Tag";
 
 const EventForListDetail = ({event, selectMode, location}) => {
     const [showConfirm, setShowConfirm] = useState(false);
+    const [attending, setAttending] = useState([]);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+        useEffect(() => {
+            try{
+                async function fetchAttending() {
+                    try {
+                        const res = await fetch(`https://${import.meta.env.VITE_API_URL}/api/event/get_users/${event.id}/`);
+                        if (res.ok) {
+                            const data = await res.json();
+                            setAttending(data);
+                        } else {
+                            setAttending([]);
+                        }
+                    } catch {
+                        setAttending([]);
+                    }
+                }
+                if (event?.id) {
+                    fetchAttending();
+                }
+            }catch (error) {
+                console.error("Error fetching attending users:", error);
+                setAttending([]);
+            }
+        }, [event?.id]);
 
     const handleDelete = async (id) => {
         try {
@@ -109,7 +134,13 @@ const EventForListDetail = ({event, selectMode, location}) => {
                     {location ? (location.name || location.info || "Neznana lokacija") : "Neznana lokacija"}
                 </div>
             ):""}
-
+            {attending?(                
+                <span className="flex px-2 py-1 gap-2 rounded text-sm font-semibold w-fit  bg-blue-300 ">
+                    <img src="../icons/users-alt.svg" className="w-5 h-5" alt="location" />
+                    {attending.length}
+                </span>)
+                :""
+            }
         </div>
         <div className="flex p-2 pb-0 text-lg description-clamp">
                 {event.description}
