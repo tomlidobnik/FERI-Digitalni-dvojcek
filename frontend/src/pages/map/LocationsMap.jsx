@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import {
     MapContainer,
     TileLayer,
@@ -62,6 +62,35 @@ const Map = () => {
         message: null,
         type: "info",
     });
+    const [showSearch, setShowSearch] = useState(false);
+    const mapRef = useRef();
+
+    const INITIAL_CENTER = [46.554736193959975, 15.645613823633967];
+    const INITIAL_ZOOM = 13;
+
+    const handleSearch = async (searchString) => {
+        if (searchString.trim()) {
+            const address = encodeURIComponent(searchString);
+            const url = `https://geocode.maps.co/search?q=${address}&api_key=68455fff77822794854099cwb2f12cb`;
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                console.log("Geocode response:", data);
+                if (data.length > 0 && data[0].lat && data[0].lon) {
+
+                    const lat = parseFloat(data[0].lat);
+                    const lng = parseFloat(data[0].lon);
+                    handleMapClick({ lat, lng });
+
+                    if (mapRef.current) {
+                        mapRef.current.setView([lat, lng], 16, { animate: true });
+                    }
+                }
+            } catch (err) {
+                console.error("Geocode error:", err);
+            }
+        }
+    };
 
     const fetchLocations = useCallback(async () => {
         try {
@@ -176,6 +205,25 @@ const Map = () => {
         handleUndoLastAreaPoint,
     } = useLocationCreation(setNotification, fetchLocations);
 
+    useEffect(() => {
+        if (mode === "creatingPoint") {
+            setShowSearch(true);
+        }
+    }, [mode]);
+
+    useEffect(() => { // Centriranje mape ob postavitvi točke
+        if (mode === "creatingPoint" && currentPoint && mapRef.current) {
+            mapRef.current.setView([currentPoint.lat, currentPoint.lng], 16, { animate: true });
+        }
+    }, [currentPoint, mode]);
+
+    // Home button handler
+    const handleHome = () => {
+        if (mapRef.current) {
+            mapRef.current.setView(INITIAL_CENTER, INITIAL_ZOOM, { animate: true });
+        }
+    };
+
     return (
         <div className="h-full w-full relative">
             <Notification
@@ -188,7 +236,9 @@ const Map = () => {
                 zoom={13}
                 className={`h-full md:rounded-2xl ${
                     mode !== "view" ? "cursor-cell" : ""
-                }`}>
+                }`}
+                ref={mapRef}
+            >
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution="&copy; OpenStreetMap contributors"
@@ -257,7 +307,17 @@ const Map = () => {
                     onUndoLastPoint={handleUndoLastAreaPoint}
                     currentPointCoords={currentPoint}
                     areaPointsCount={areaPoints.length}
+                    onSearch={handleSearch}
                 />
+            </div>
+            <div className="absolute top-2 left-2 z-[1000] flex mt-20 flex-col space-y-2">
+                <button
+                    onClick={handleHome}
+                    className="bg-primary text-black font-bold px-3 py-1 rounded-lg hover:bg-[#e5dcc5] transition"
+                    title="Pojdi na začetno lokacijo"
+                >
+                    Domov
+                </button>
             </div>
         </div>
     );
