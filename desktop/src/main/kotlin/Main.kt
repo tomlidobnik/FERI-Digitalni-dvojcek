@@ -135,7 +135,7 @@ fun Main(menuState: MutableState<MenuState>, tokenState: MutableState<String?>) 
                 MenuState.EVENTS_LIST -> EventsListTab()
                 MenuState.ABOUT_APP -> AboutAppTab()
                 MenuState.ADD_LOCATION -> AddLocationTab(menuState)
-                MenuState.LOCATIONS_LIST -> LocationsListTab()
+                MenuState.LOCATIONS_LIST -> LocationsListTab(menuState)
                 MenuState.ADD_LOCATION_OUTLINE -> AddLocationOutlineTab()
                 MenuState.LOCATION_OUTLINES_LIST -> LocationOutlinesListTab()
             }
@@ -796,7 +796,7 @@ fun AboutAppTab() {
 }
 
 @Composable
-fun LocationsListTab() {
+fun LocationsListTab(menuState: MutableState<MenuState>) {
     val locations = remember { mutableStateOf<List<Location>>(emptyList()) }
     val selectedLoc = remember { mutableStateOf<Location?>(null) }
 
@@ -852,14 +852,29 @@ fun LocationsListTab() {
     }
 
     val locToEdit = selectedLoc.value
+    var showAlert by remember { mutableStateOf(false) }
+    var alertText by remember { mutableStateOf("") }
     if (locToEdit != null) {
         EditLocationModal(
             location = locToEdit,
             onDismiss = { selectedLoc.value = null },
-            onSave = { updatedLocation ->
-                println("Updated location: $updatedLocation")
+            onSave = { updatedLoc ->
+                println("Updating location with ID: ${updatedLoc.id}")
+                val success = updateLocation(updatedLoc)
+                alertText = if (success) "Location updated successfully" else "Location update failed"
+                showAlert = true
                 selectedLoc.value = null
-            }
+                menuState.value = MenuState.ADD_LOCATION
+            },
+            menuState = menuState
+        )
+    }
+
+    if (showAlert) {
+        AlertBox(
+            title = "Update status",
+            text = alertText,
+            onDismiss = { showAlert = false }
         )
     }
 }
@@ -1394,7 +1409,7 @@ fun EditUserModal(
 
 
 @Composable
-fun EditLocationModal(location: Location, onDismiss: () -> Unit, onSave: (Location) -> Unit) {
+fun EditLocationModal(location: Location, onDismiss: () -> Unit, onSave: (Location) -> Unit,menuState: MutableState<MenuState>) {
     var editedInfo by remember { mutableStateOf(location.info) }
     var editedLongitude by remember { mutableStateOf(location.longitude.toString()) }
     var editedLatitude by remember { mutableStateOf(location.latitude.toString()) }
@@ -1416,19 +1431,22 @@ fun EditLocationModal(location: Location, onDismiss: () -> Unit, onSave: (Locati
                 OutlinedTextField(
                     value = editedLongitude,
                     onValueChange = { editedLongitude = it },
-                    label = { Text("Longitude") }
+                    label = { Text("Longitude") },
+                    enabled = if (location.longitude == null) false else true
                 )
 
                 OutlinedTextField(
                     value = editedLatitude,
                     onValueChange = { editedLatitude = it },
-                    label = { Text("Latitude") }
+                    label = { Text("Latitude") },
+                    enabled = if (location.latitude == null) false else true
                 )
 
                 OutlinedTextField(
                     value = editedLocOutline,
                     onValueChange = { editedLocOutline = it },
-                    label = { Text("Location Outline FK Int") }
+                    label = { Text("Location Outline FK Int") },
+                    enabled = if (location.location_outline_fk == null) false else true
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -1437,23 +1455,48 @@ fun EditLocationModal(location: Location, onDismiss: () -> Unit, onSave: (Locati
                     TextButton(onClick = onDismiss) {
                         Text("Cancel")
                     }
+                    Spacer(modifier = Modifier.width(8.dp))
                     Button(onClick = {
-                        if (editedInfo.isNotBlank() || editedLongitude.isNotBlank() || editedLatitude.isNotBlank() || editedLocOutline.isNotBlank()) {
+                        if (editedInfo.isNotBlank()) {
                             onSave(
-                                Location(
-                                    id = location.id,
-                                    info = editedInfo,
-                                    longitude = editedLongitude.toDoubleOrNull(),
-                                    latitude = editedLatitude.toDoubleOrNull(),
-                                    location_outline_fk = editedLocOutline.toIntOrNull()
-                                )
+                                if (location.location_outline_fk == null) {
+                                    Location(
+                                        id = location.id,
+                                        info = editedInfo,
+                                        longitude = editedLongitude.toDoubleOrNull(),
+                                        latitude = editedLatitude.toDoubleOrNull(),
+                                        location_outline_fk = null
+                                    )
+                                } else {
+                                    Location(
+                                        id = location.id,
+                                        info = editedInfo,
+                                        longitude = editedLongitude.toDoubleOrNull(),
+                                        latitude = editedLatitude.toDoubleOrNull(),
+                                        location_outline_fk = editedLocOutline.toIntOrNull()
+                                    )
+                                }
                             )
                             onDismiss()
                         }
                     }) {
                         Text("Save")
                     }
-
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Button(onClick = {
+                        if (location.id != null) {
+                            val success = deleteLocation(location.id)
+                            if (success) {
+                                println("Location deleted successfully")
+                                menuState.value = MenuState.ADD_LOCATION
+                                onDismiss()
+                            } else {
+                                println("Failed to delete location")
+                            }
+                        }
+                    }, colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)) {
+                        Text("Delete", color = Color.White)
+                    }
                 }
             }
         }

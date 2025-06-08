@@ -11,6 +11,8 @@ import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import util.DatabaseUtil
+import java.sql.SQLException
 
 fun getAllLocations(): List<Location>? {
     val client = getUnsafeOkHttpClient()
@@ -97,5 +99,63 @@ fun getAllLocationOutlines(): List<LocationOutline>? {
         val adapter = moshi.adapter<List<LocationOutline>>(type)
 
         return adapter.fromJson(body)
+    }
+}
+
+fun updateLocation(location: Location): Boolean {
+    val connection = DatabaseUtil.Connect() ?: return false
+    if (connection == null) {
+        println("Failed to connect to DB")
+        return false
+    }
+    val sql = """
+        UPDATE locations
+        SET info = ?, longitude = ?, latitude = ?, location_outline_fk = ?
+        WHERE id = ?
+    """.trimIndent()
+
+    return try {
+        val stmt = connection.prepareStatement(sql)
+        stmt.setString(1, location.info)
+
+        if (location.longitude != null && location.latitude != null) {
+            stmt.setDouble(2, location.longitude)
+            stmt.setDouble(3, location.latitude)
+            stmt.setNull(4, java.sql.Types.INTEGER)
+        } else if (location.location_outline_fk != null) {
+            stmt.setNull(2, java.sql.Types.DOUBLE)
+            stmt.setNull(3, java.sql.Types.DOUBLE)
+            stmt.setInt(4, location.location_outline_fk)
+        } else {
+            throw SQLException("Invalid location data: does not satisfy constraint")
+        }
+        stmt.setInt(5, location.id ?: 0)
+
+        val rowsAffected = stmt.executeUpdate()
+        println("Rows affected: $rowsAffected")
+        rowsAffected > 0
+    } catch (e: SQLException) {
+        println("Update failed??: ${e.message}")
+        false
+    } finally {
+        DatabaseUtil.Disconnect()
+    }
+}
+
+fun deleteLocation(locationId: Int): Boolean {
+    val connection = DatabaseUtil.Connect() ?: return false
+
+    val sql = "DELETE FROM locations WHERE id = ?"
+
+    return try {
+        val stmt = connection.prepareStatement(sql)
+        stmt.setInt(1, locationId)
+        val rowsAffected = stmt.executeUpdate()
+        rowsAffected > 0
+    } catch (e: SQLException) {
+        println("Delete failed: ${e.message}")
+        false
+    } finally {
+        DatabaseUtil.Disconnect()
     }
 }
