@@ -130,7 +130,7 @@ fun Main(menuState: MutableState<MenuState>, tokenState: MutableState<String?>) 
         ) {
             when (menuState.value) {
                 MenuState.ADD_USER -> AddUserTab(menuState)
-                MenuState.USERS_LIST -> UsersListTab()
+                MenuState.USERS_LIST -> UsersListTab(menuState)
                 MenuState.ADD_EVENT -> AddEventTab(menuState, tokenState)
                 MenuState.EVENTS_LIST -> EventsListTab()
                 MenuState.ABOUT_APP -> AboutAppTab()
@@ -489,7 +489,7 @@ fun AddUserTab(menuState: MutableState<MenuState>) {
 }
 
 @Composable
-fun UsersListTab() {
+fun UsersListTab(menuState: MutableState<MenuState>) {
     val users = remember { mutableStateOf<List<PublicUser>>(emptyList()) }
     val selectedUser = remember { mutableStateOf<PublicUser?>(null) }
 
@@ -546,14 +546,29 @@ fun UsersListTab() {
         }
     }
     val userToEdit = selectedUser.value
+    var showAlert by remember { mutableStateOf(false) }
+    var alertText by remember { mutableStateOf("") }
     if (userToEdit != null) {
         EditUserModal(
             user = userToEdit,
             onDismiss = { selectedUser.value = null },
             onSave = { updatedUser ->
-                println("Updated user: $updatedUser")
+                println("Updating user with ID: ${updatedUser.id}")
+                val success = updateUser(updatedUser)
+                alertText = if (success) "User updated successfully" else "User update failed"
+                showAlert = true
                 selectedUser.value = null
-            }
+                menuState.value = MenuState.ADD_USER
+            },
+            menuState = menuState
+        )
+    }
+
+    if (showAlert) {
+        AlertBox(
+            title = "Update status",
+            text = alertText,
+            onDismiss = { showAlert = false }
         )
     }
 }
@@ -757,7 +772,7 @@ fun EventsListTab() {
     }
     val eventToEdit = selectedEvent.value
     if (eventToEdit != null) {
-       // modalno okno za urejanje eventa
+        // modalno okno za urejanje eventa
     }
 }
 
@@ -1290,12 +1305,16 @@ fun AlertBox(
 }
 
 @Composable
-fun EditUserModal(user: PublicUser, onDismiss: () -> Unit, onSave: (CreateUser) -> Unit) {
+fun EditUserModal(
+    user: PublicUser,
+    onDismiss: () -> Unit,
+    onSave: (PublicUser) -> Unit,
+    menuState: MutableState<MenuState>
+) {
     var editedUsername by remember { mutableStateOf(user.username) }
     var editedFirstname by remember { mutableStateOf(user.firstname) }
     var editedLastname by remember { mutableStateOf(user.lastname) }
     var editedEmail by remember { mutableStateOf(user.email) }
-    var editedPassword by remember { mutableStateOf("") }
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(shape = RoundedCornerShape(8.dp)) {
@@ -1328,28 +1347,22 @@ fun EditUserModal(user: PublicUser, onDismiss: () -> Unit, onSave: (CreateUser) 
                     label = { Text("Email") }
                 )
 
-                OutlinedTextField(
-                    value = editedPassword,
-                    onValueChange = { editedPassword = it },
-                    label = { Text("New Password") },
-                    visualTransformation = PasswordVisualTransformation(),
-                )
-
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
                     TextButton(onClick = onDismiss) {
                         Text("Cancel")
                     }
+                    Spacer(modifier = Modifier.width(8.dp))
                     Button(onClick = {
-                        if (editedPassword.isNotBlank()) {
+                        if (editedUsername.isNotBlank() || editedEmail.isNotBlank() || editedFirstname.isNotBlank() || editedLastname.isNotBlank()) {
                             onSave(
-                                CreateUser(
+                                PublicUser(
+                                    id = user.id,
                                     username = editedUsername,
                                     firstname = editedFirstname,
                                     lastname = editedLastname,
                                     email = editedEmail,
-                                    password = editedPassword
                                 )
                             )
                             onDismiss()
@@ -1357,11 +1370,28 @@ fun EditUserModal(user: PublicUser, onDismiss: () -> Unit, onSave: (CreateUser) 
                     }) {
                         Text("Save")
                     }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Button(onClick = {
+                        if (user.id != null) {
+                            val success = deleteUser(user.id)
+                            if (success) {
+                                println("User deleted successfully")
+                                menuState.value = MenuState.ADD_USER
+                                onDismiss()
+                            } else {
+                                println("Failed to delete user")
+                            }
+                        }
+                    }, colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)) {
+                        Text("Delete", color = Color.White)
+                    }
                 }
+
             }
         }
     }
 }
+
 
 @Composable
 fun EditLocationModal(location: Location, onDismiss: () -> Unit, onSave: (Location) -> Unit) {
@@ -1423,6 +1453,7 @@ fun EditLocationModal(location: Location, onDismiss: () -> Unit, onSave: (Locati
                     }) {
                         Text("Save")
                     }
+
                 }
             }
         }
