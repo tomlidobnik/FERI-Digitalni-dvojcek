@@ -417,7 +417,7 @@ function App() {
                 delay={0.1}
                 className="text-primary text-6xl lg:text-8xl font-extrabold"
               />
-              <div className="text-primary text-xl md:text-2xl">Uporabniki</div>
+              <div className="text-primary text-xl md:text-2xl">Uporabnikov</div>
             </div>
             <div className="flex flex-col items-center justify-center w-full h-full">
               <CountUp
