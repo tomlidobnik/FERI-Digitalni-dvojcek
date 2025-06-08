@@ -26,11 +26,13 @@ import data.PublicUser
 import data.Location
 import data.LocationOutline
 import data.Coordinate
+import data.Event
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import kotlinx.coroutines.withContext
 import requests.*
 
 
@@ -39,17 +41,28 @@ enum class MenuState {
     ADD_LOCATION_OUTLINE, LOCATION_OUTLINES_LIST
 }
 
-
 @Composable
 @Preview
 fun App() {
-    val menuState = remember { mutableStateOf(MenuState.ADD_EVENT) }
+    val menuState = remember { mutableStateOf(MenuState.USERS_LIST) }
+    val tokenState = remember { mutableStateOf<String?>(null) }
+
     MaterialTheme {
-        Column(modifier = Modifier.fillMaxHeight(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Main(menuState)
+        Column(
+            modifier = Modifier.fillMaxHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (tokenState.value == null) {
+                LoginScreen(tokenState = tokenState, onLoginSuccess = {
+                    menuState.value = MenuState.USERS_LIST
+                })
+            } else {
+                Main(menuState = menuState, tokenState = tokenState)
+            }
         }
     }
 }
+
 
 fun main() = application {
     Window(
@@ -68,7 +81,7 @@ fun main() = application {
 }
 
 @Composable
-fun Main(menuState: MutableState<MenuState>, modifier: Modifier = Modifier) {
+fun Main(menuState: MutableState<MenuState>, tokenState: MutableState<String?>) {
     Row(
         modifier = Modifier
             .fillMaxHeight()
@@ -118,7 +131,7 @@ fun Main(menuState: MutableState<MenuState>, modifier: Modifier = Modifier) {
             when (menuState.value) {
                 MenuState.ADD_USER -> AddUserTab(menuState)
                 MenuState.USERS_LIST -> UsersListTab()
-                MenuState.ADD_EVENT -> AddEventTab()
+                MenuState.ADD_EVENT -> AddEventTab(menuState, tokenState)
                 MenuState.EVENTS_LIST -> EventsListTab()
                 MenuState.ABOUT_APP -> AboutAppTab()
                 MenuState.ADD_LOCATION -> AddLocationTab(menuState)
@@ -133,7 +146,7 @@ fun Main(menuState: MutableState<MenuState>, modifier: Modifier = Modifier) {
 
 // BUTTONS
 @Composable
-fun AddUserButton(menuState: MutableState<MenuState>, modifier: Modifier = Modifier) {
+fun AddUserButton(menuState: MutableState<MenuState>) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -163,7 +176,7 @@ fun AddUserButton(menuState: MutableState<MenuState>, modifier: Modifier = Modif
 }
 
 @Composable
-fun UsersListButton(menuState: MutableState<MenuState>, modifier: Modifier = Modifier) {
+fun UsersListButton(menuState: MutableState<MenuState>) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -192,7 +205,7 @@ fun UsersListButton(menuState: MutableState<MenuState>, modifier: Modifier = Mod
 }
 
 @Composable
-fun AddEventButton(menuState: MutableState<MenuState>, modifier: Modifier = Modifier) {
+fun AddEventButton(menuState: MutableState<MenuState>) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -222,7 +235,7 @@ fun AddEventButton(menuState: MutableState<MenuState>, modifier: Modifier = Modi
 }
 
 @Composable
-fun EventsListButton(menuState: MutableState<MenuState>, modifier: Modifier = Modifier) {
+fun EventsListButton(menuState: MutableState<MenuState>) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -251,7 +264,7 @@ fun EventsListButton(menuState: MutableState<MenuState>, modifier: Modifier = Mo
 }
 
 @Composable
-fun AboutAppButton(menuState: MutableState<MenuState>, modifier: Modifier = Modifier) {
+fun AboutAppButton(menuState: MutableState<MenuState>) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -280,7 +293,7 @@ fun AboutAppButton(menuState: MutableState<MenuState>, modifier: Modifier = Modi
 }
 
 @Composable
-fun AddLocationButton(menuState: MutableState<MenuState>, modifier: Modifier = Modifier) {
+fun AddLocationButton(menuState: MutableState<MenuState>) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -309,7 +322,7 @@ fun AddLocationButton(menuState: MutableState<MenuState>, modifier: Modifier = M
 }
 
 @Composable
-fun AddLocationOutlineButton(menuState: MutableState<MenuState>, modifier: Modifier = Modifier) {
+fun AddLocationOutlineButton(menuState: MutableState<MenuState>) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -338,7 +351,7 @@ fun AddLocationOutlineButton(menuState: MutableState<MenuState>, modifier: Modif
 }
 
 @Composable
-fun LocationOutlinesListButton(menuState: MutableState<MenuState>, modifier: Modifier = Modifier) {
+fun LocationOutlinesListButton(menuState: MutableState<MenuState>) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -367,7 +380,7 @@ fun LocationOutlinesListButton(menuState: MutableState<MenuState>, modifier: Mod
 }
 
 @Composable
-fun LocationsListButton(menuState: MutableState<MenuState>, modifier: Modifier = Modifier) {
+fun LocationsListButton(menuState: MutableState<MenuState>) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -496,34 +509,37 @@ fun UsersListTab() {
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        users.value.forEach { user ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-                    .clickable {
-                        selectedUser.value = user
-                        println("Clicked on ${user.firstname} ${user.lastname}")
-
-                    },
-                elevation = 4.dp,
-            ) {
-                Row(
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(users.value) { user ->
+                Card(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .fillMaxWidth()
+                        .clickable {
+                            selectedUser.value = user
+                            println("Clicked on ${user.firstname} ${user.lastname}")
+                        },
+                    elevation = 4.dp,
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Filled.Person,
-                            contentDescription = "Person Icon"
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Text("${user.firstname} ${user.lastname}")
-                    }
-                    Box(modifier = Modifier.align(Alignment.CenterVertically)) {
-                        Text(user.username, color = Color.Gray)
+                    Row(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Filled.Person,
+                                contentDescription = "Person Icon"
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text("${user.firstname} ${user.lastname}")
+                        }
+                        Box(modifier = Modifier.align(Alignment.CenterVertically)) {
+                            Text(user.username, color = Color.Gray)
+                        }
                     }
                 }
             }
@@ -535,23 +551,214 @@ fun UsersListTab() {
             user = userToEdit,
             onDismiss = { selectedUser.value = null },
             onSave = { updatedUser ->
-                // save logic
                 println("Updated user: $updatedUser")
                 selectedUser.value = null
             }
         )
     }
-
 }
 
 @Composable
-fun AddEventTab() {
-    Text("Add Event Tab")
+fun AddEventTab(menuState: MutableState<MenuState>, tokenState: MutableState<String?>) {
+    var title by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var startDate by remember { mutableStateOf("") }
+    var endDate by remember { mutableStateOf("") }
+    var locationFk by remember { mutableStateOf("") }
+    var isPublic by remember { mutableStateOf(false) }
+    var showValidationDialog by remember { mutableStateOf(false) }
+
+    val token = tokenState.value
+
+    val tagOptions = listOf("sport", "dogodek", "drugo", "sola", "brez oznake")
+    var expanded by remember { mutableStateOf(false) }
+    var selectedTag by remember { mutableStateOf<String?>(null) }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("Add a new Event", fontWeight = FontWeight.Bold, fontSize = 30.sp)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            TextInputField(
+                value = title,
+                onValueChange = { title = it },
+                label = "Title",
+                icon = Icons.Filled.Title,
+                modifier = Modifier.width(370.dp)
+            )
+            TextInputField(
+                value = description,
+                onValueChange = { description = it },
+                label = "Description",
+                icon = Icons.Filled.Description,
+                modifier = Modifier.width(370.dp)
+            )
+            TextInputField(
+                value = startDate,
+                onValueChange = { startDate = it },
+                label = "Start Date (YYYY-MM-DDTHH:MM:SS)",
+                icon = Icons.Filled.DateRange,
+                modifier = Modifier.width(370.dp)
+            )
+            TextInputField(
+                value = endDate,
+                onValueChange = { endDate = it },
+                label = "End Date (YYYY-MM-DDTHH:MM:SS)",
+                icon = Icons.Filled.DateRange,
+                modifier = Modifier.width(370.dp)
+            )
+            TextInputField(
+                value = locationFk,
+                onValueChange = { locationFk = it },
+                label = "Location ID",
+                icon = Icons.Filled.Place,
+                modifier = Modifier.width(370.dp)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Box(modifier = Modifier.width(370.dp)) {
+                OutlinedTextField(
+                    value = selectedTag ?: "Select a tag",
+                    onValueChange = { },
+                    label = { Text("Tag") },
+                    readOnly = true,
+                    trailingIcon = {
+                        Icon(
+                            Icons.Default.ArrowDropDown,
+                            contentDescription = null,
+                            Modifier.clickable { expanded = !expanded }
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier.width(370.dp)
+                ) {
+                    tagOptions.forEach { option ->
+                        DropdownMenuItem(onClick = {
+                            selectedTag = if (option == "brez oznake") null else option
+                            expanded = false
+                        }) {
+                            Text(option)
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(checked = isPublic, onCheckedChange = { isPublic = it })
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Public Event")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(onClick = {
+                if (title.isBlank() || description.isBlank() || startDate.isBlank() || endDate.isBlank()
+                    || locationFk.isBlank()
+                ) {
+                    showValidationDialog = true
+                } else {
+                    val event = Event(
+                        title = title,
+                        description = description,
+                        start_date = startDate,
+                        end_date = endDate,
+                        location_fk = locationFk.toIntOrNull() ?: -1,
+                        public = isPublic,
+                        tag = selectedTag ?: "brez oznake"
+                    )
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val response = createEvent(event, token ?: "")
+                            println("Event created successfully: $response")
+                        } catch (e: Exception) {
+                            println("Failed to create event: ${e.message}")
+                        }
+                    }
+                    menuState.value = MenuState.EVENTS_LIST
+                }
+            }) {
+                Text("Add Event")
+            }
+        }
+
+        if (showValidationDialog) {
+            AlertBox(
+                title = "Unfilled form",
+                text = "You have to complete the whole event creation form.",
+                onDismiss = { showValidationDialog = false }
+            )
+        }
+    }
 }
 
 @Composable
 fun EventsListTab() {
-    Text("Events List Tab")
+    val events = remember { mutableStateOf<List<Event>>(emptyList()) }
+    val selectedEvent = remember { mutableStateOf<Event?>(null) }
+
+    LaunchedEffect(Unit) {
+        events.value = getAllEvents() ?: emptyList()
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            "All Events",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(events.value) { event ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            selectedEvent.value = event
+                            println("Clicked on ${event.title}")
+                        },
+                    elevation = 4.dp,
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Filled.Event,
+                                contentDescription = "Event Icon"
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text(event.title)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    val eventToEdit = selectedEvent.value
+    if (eventToEdit != null) {
+       // modalno okno za urejanje eventa
+    }
 }
 
 @Composable
@@ -594,48 +801,52 @@ fun LocationsListTab() {
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        locations.value.forEach { location ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-                    .clickable {
-                        selectedLoc.value = location
-                        println("Clicked on ${location.info}")
-                    },
-                elevation = 4.dp,
-            ) {
-                Row(
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(locations.value) { location ->
+                Card(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                        .clickable {
+                            selectedLoc.value = location
+                            println("Clicked on ${location.info}")
+                        },
+                    elevation = 4.dp,
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = if (location.location_outline_fk != null) Icons.Outlined.CheckBoxOutlineBlank else Icons.Filled.LocationOn,
-                            contentDescription = "Location Icon"
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Text(location.info)
+                    Row(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = if (location.location_outline_fk != null) Icons.Outlined.CheckBoxOutlineBlank else Icons.Filled.LocationOn,
+                                contentDescription = "Location Icon"
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text(location.info)
+                        }
                     }
                 }
             }
         }
     }
+
     val locToEdit = selectedLoc.value
     if (locToEdit != null) {
         EditLocationModal(
             location = locToEdit,
             onDismiss = { selectedLoc.value = null },
             onSave = { updatedLocation ->
-                // save logic
-                println("Updated user: $updatedLocation")
+                println("Updated location: $updatedLocation")
                 selectedLoc.value = null
             }
         )
     }
-
 }
 
 @Composable
@@ -830,7 +1041,7 @@ fun AddLocationOutlineTab() {
                 onValueChange = { latitude = it },
                 label = { Text("Latitude") },
 
-            )
+                )
 
             Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = {
@@ -894,7 +1105,6 @@ fun AddLocationOutlineTab() {
 
 }
 
-
 @Composable
 fun LocationOutlinesListTab() {
     val locOutlines = remember { mutableStateOf<List<LocationOutline>>(emptyList()) }
@@ -916,30 +1126,34 @@ fun LocationOutlinesListTab() {
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        locOutlines.value.forEach { outline ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-                    .clickable {
-                        selectedLoc.value = outline
-                        println("Clicked on ${outline.id}")
-                    },
-                elevation = 4.dp,
-            ) {
-                Row(
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(locOutlines.value) { outline ->
+                Card(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .fillMaxWidth()
+                        .clickable {
+                            selectedLoc.value = outline
+                            println("Clicked on ${outline.id}")
+                        },
+                    elevation = 4.dp,
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Outlined.CheckBoxOutlineBlank,
-                            contentDescription = "Outline Icon"
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Text("Outline ID: ${outline.id}")
+                    Row(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Outlined.CheckBoxOutlineBlank,
+                                contentDescription = "Outline Icon"
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text("Outline ID: ${outline.id}")
+                        }
                     }
                 }
             }
@@ -1002,11 +1216,11 @@ fun TextInputField(
                 contentDescription = "$label Icon"
             )
         },
-        modifier = Modifier
-            .width(300.dp)
+        modifier = modifier
             .height(70.dp)
     )
 }
+
 
 @Composable
 fun PasswordInputField(
@@ -1041,7 +1255,6 @@ fun PasswordInputField(
         },
         visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
         modifier = Modifier
-            .width(300.dp)
             .height(70.dp)
     )
 }
@@ -1230,6 +1443,57 @@ fun OutlinePointsModal(outline: LocationOutline, onDismiss: () -> Unit) {
                 Button(onClick = onDismiss) {
                     Text("Close")
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun LoginScreen(tokenState: MutableState<String?>, onLoginSuccess: () -> Unit) {
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "Login",
+                fontWeight = FontWeight.Bold,
+                fontSize = 30.sp
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            TextInputField(
+                value = username,
+                onValueChange = { username = it },
+                label = "Username",
+                icon = Icons.Filled.AccountCircle
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            PasswordInputField(
+                value = password,
+                onValueChange = { password = it }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = {
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        val token = loginUser(username, password)
+                        tokenState.value = token
+                        withContext(Dispatchers.Main) {
+                            onLoginSuccess()
+                        }
+                    } catch (e: Exception) {
+                        error = e.message
+                    }
+                }
+            }) {
+                Text("Login")
+            }
+            error?.let {
+                Text("Error: $it", color = Color.Red)
             }
         }
     }
