@@ -13,6 +13,8 @@ import com.squareup.moshi.Types
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import data.CreateUser
 import data.PublicUser
+import util.DatabaseUtil
+import java.sql.SQLException
 
 fun getUnsafeOkHttpClient(): OkHttpClient {
     val trustAllCerts = arrayOf<javax.net.ssl.TrustManager>(
@@ -77,22 +79,53 @@ fun getAllUsers(): List<PublicUser>? {
     }
 }
 
-suspend fun updateUser(user: CreateUser): String = withContext(Dispatchers.IO) {
-    val client = getUnsafeOkHttpClient()
-    val json = Json.encodeToString(user)
-    val mediaType = "application/json".toMediaType()
-    val body = json.toRequestBody(mediaType)
+fun updateUser(user: PublicUser): Boolean {
+    val connection = DatabaseUtil.Connect() ?: return false
+    if (connection == null) {
+        println("Failed to connect to DB")
+        return false
+    }
+    val sql = """
+        UPDATE users
+        SET username = ?, firstname = ?, lastname = ?, email = ?
+        WHERE id = ?
+    """.trimIndent()
 
-    val request = Request.Builder()
-        .url("https://0.0.0.0:8000/api/user/update")
-        .put(body)
-        .build()
+    return try {
+        val stmt = connection.prepareStatement(sql)
+        stmt.setString(1, user.username)
+        stmt.setString(2, user.firstname)
+        stmt.setString(3, user.lastname)
+        stmt.setString(4, user.email)
+        stmt.setInt(5, user.id ?: 0)
 
-    client.newCall(request).execute().use { response ->
-        if (!response.isSuccessful) {
-            throw Exception("Failed to update user: ${response.code}")
-        }
-        return@withContext response.body?.string() ?: "No response"
+        val rowsAffected = stmt.executeUpdate()
+        println("Rows affected: $rowsAffected")
+        rowsAffected > 0
+    } catch (e: SQLException) {
+        println("Update failed??: ${e.message}")
+        false
+    } finally {
+        DatabaseUtil.Disconnect()
+    }
+}
+
+fun deleteUser(userId: Int): Boolean {
+    val connection = DatabaseUtil.Connect() ?: return false
+
+    val sql = "DELETE FROM users WHERE id = ?"
+
+    return try {
+        val stmt = connection.prepareStatement(sql)
+        stmt.setInt(1, userId)
+
+        val rowsAffected = stmt.executeUpdate()
+        rowsAffected > 0
+    } catch (e: SQLException) {
+        println("Delete failed: ${e.message}")
+        false
+    } finally {
+        DatabaseUtil.Disconnect()
     }
 }
 

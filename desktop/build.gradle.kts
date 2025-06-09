@@ -23,6 +23,8 @@ dependencies {
     // (in a separate module for demo project and in testMain).
     // With compose.desktop.common you will also lose @Preview functionality
     implementation(compose.desktop.currentOs)
+    implementation(compose.foundation)
+    implementation(compose.material)
     implementation("org.jetbrains.compose.desktop:desktop:$composeVersion")
     implementation("org.jetbrains.compose.material:material-icons-extended:$composeVersion")
     testImplementation(kotlin("test"))
@@ -36,10 +38,12 @@ dependencies {
     implementation("it.skrape:skrapeit:1.2.2")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    implementation("com.squareup.moshi:moshi:1.15.1") // For JSON parsing (optional)
+    implementation("com.squareup.moshi:moshi:1.15.1")
     implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
     implementation("io.github.serpro69:kotlin-faker:1.6.0")
     implementation("com.github.javafaker:javafaker:1.0.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.7.3")
+
 }
 
 compose.desktop {
