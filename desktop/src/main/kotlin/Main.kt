@@ -148,7 +148,7 @@ fun Main(menuState: MutableState<MenuState>, tokenState: MutableState<String?>) 
                 MenuState.ADD_LOCATION_OUTLINE -> AddLocationOutlineTab()
                 MenuState.LOCATION_OUTLINES_LIST -> LocationOutlinesListTab()
                 MenuState.SCRAPER -> ScraperTab()
-                MenuState.GENERATOR -> GeneratorTab()
+                MenuState.GENERATOR -> GeneratorTab(tokenState)
 
             }
         }
@@ -611,8 +611,175 @@ fun ScraperTab() {
 }
 
 @Composable
-fun GeneratorTab() {
-    Text("generator")
+fun GeneratorTab(tokenState: MutableState<String?>) {
+    val selectedTab = remember { mutableStateOf(0) }
+    val tabs = listOf("Generate Users", "Generate Events", "Generate Locations")
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        TabRow(
+            selectedTabIndex = selectedTab.value,
+            backgroundColor = Color.LightGray,
+            contentColor = Color.Black
+        ) {
+            tabs.forEachIndexed { index, title ->
+                Tab(
+                    selected = selectedTab.value == index,
+                    onClick = { selectedTab.value = index },
+                    text = { Text(title, fontWeight = FontWeight.Bold) }
+                )
+            }
+        }
+
+        when (selectedTab.value) {
+            0 -> GenerateUsersTab()
+            1 -> GenerateEventsTab(tokenState)
+            2 -> GenerateLocationsTab()
+        }
+    }
+}
+
+@Composable
+fun GenerateUsersTab() {
+    var amount by remember { mutableStateOf("") }
+    val generatedUsers = remember { mutableStateOf<List<CreateUser>>(emptyList()) }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("Generate Users", fontWeight = FontWeight.Bold, fontSize = 24.sp)
+            Spacer(modifier = Modifier.height(16.dp))
+            TextInputField(
+                value = amount,
+                onValueChange = { amount = it },
+                label = "Number of Users",
+                icon = Icons.Filled.People
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = {
+                val userGenerator = generateData.userGenerate()
+                val count = amount.toIntOrNull() ?: 0
+                generatedUsers.value = userGenerator.generateUser(count)
+                generatedUsers.value.forEach { user ->
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val response = createUser(user)
+                            println("User created successfully: $response")
+                        } catch (e: Exception) {
+                            println("Failed to create user: ${e.message}")
+                        }
+                    }
+                }
+            }) {
+                Text("Generate")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                items(generatedUsers.value) { user ->
+                    Text("Username: ${user.username}, Email: ${user.email}")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun GenerateEventsTab(tokenState: MutableState<String?>) {
+    var amount by remember { mutableStateOf("") }
+    val generatedEvents = remember { mutableStateOf<List<Event>>(emptyList()) }
+    val token = tokenState.value
+    val locations = remember { mutableStateOf<List<Location>>(emptyList()) }
+
+    LaunchedEffect(Unit) {
+        locations.value = getAllLocations() ?: emptyList()
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("Generate Events", fontWeight = FontWeight.Bold, fontSize = 24.sp)
+            Spacer(modifier = Modifier.height(16.dp))
+            TextInputField(
+                value = amount,
+                onValueChange = { amount = it },
+                label = "Number of Events",
+                icon = Icons.Filled.Event
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = {
+                val eventGenerator = generateData.eventsGenerate()
+                val count = amount.toIntOrNull() ?: 0
+                generatedEvents.value = eventGenerator.generateEvent(count, locations.value, LocalDateTime.now(), LocalDateTime.now().plusDays(30) )
+                generatedEvents.value.forEach { event ->
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val response = createEvent(event, token ?: "")
+                            println("Event created successfully: $response")
+                        } catch (e: Exception) {
+                            println("Failed to create event: ${e.message}")
+                        }
+                    }
+                }
+            }) {
+                Text("Generate")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                items(generatedEvents.value) { event ->
+                    Text("Title: ${event.title}")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun GenerateLocationsTab() {
+    var amount by remember { mutableStateOf("") }
+    val generatedLocations = remember { mutableStateOf<List<Location>>(emptyList()) }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("Generate Locations", fontWeight = FontWeight.Bold, fontSize = 24.sp)
+            Spacer(modifier = Modifier.height(16.dp))
+            TextInputField(
+                value = amount,
+                onValueChange = { amount = it },
+                label = "Number of Locations",
+                icon = Icons.Filled.LocationOn
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = {
+                val locationGenerator = generateData.locationsGenerate()
+                val count = amount.toIntOrNull() ?: 0
+                generatedLocations.value = locationGenerator.generateLocations(count,10.0, 30.0)
+                generatedLocations.value.forEach { location ->
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val response = createLocation(location)
+                            println("Location created successfully: $response")
+                        } catch (e: Exception) {
+                            println("Failed to create location: ${e.message}")
+                        }
+                    }
+                }
+            }) {
+                Text("Generate")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                items(generatedLocations.value) { location ->
+                    Text("Info: ${location.info}, Lat: ${location.latitude}, Lon: ${location.longitude}")
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -1180,9 +1347,9 @@ fun PointForm(onBack: () -> Unit, menuState: MutableState<MenuState>) {
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
                             val response = createLocation(location)
-                            println("User created successfully: $response")
+                            println("Point created successfully: $response")
                         } catch (e: Exception) {
-                            println("Failed to create location: ${e.message}")
+                            println("Failed to create point: ${e.message}")
                         }
                     }
                     menuState.value = MenuState.LOCATIONS_LIST
