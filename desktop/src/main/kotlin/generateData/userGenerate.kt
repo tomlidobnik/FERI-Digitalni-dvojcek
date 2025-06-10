@@ -1,15 +1,14 @@
 package generateData
 
 import io.github.serpro69.kfaker.Faker
-import model.*
+import data.CreateUser
 
 class userGenerate {
     private val faker = Faker()
 
-    fun generateUser(Amount: Int): List<User> {
+    fun generateUser(Amount: Int): List<CreateUser> {
         return List(Amount) {
-            User(
-                id = it + 1,
+            CreateUser(
                 username = faker.name.name(),
                 firstname = faker.name.firstName(),
                 lastname = faker.name.lastName(),

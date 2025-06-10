@@ -5,6 +5,7 @@ use crate::models::{
     AuthenticatedUser, User
 };
 use crate::schema::users::dsl::*;
+use crate::schema::events::dsl as events_dsl;
 use axum::{Json, extract::Path, http::StatusCode};
 use bcrypt::{DEFAULT_COST, hash, verify};
 use diesel::prelude::*;
@@ -55,7 +56,14 @@ pub struct UpdateUserRequest {
     pub firstname: String,
     pub lastname: String,
     pub email: String,
-    pub password: String,
+}
+
+#[derive(Serialize)]
+pub struct StatsResponse {
+    pub total_events: i64,
+    pub active_events: i64,
+    pub upcoming_events: i64,
+    pub total_users: i64,
 }
 
 async fn get_user_id(user: AuthenticatedUser) -> Result<i32, StatusCode> {
@@ -266,11 +274,46 @@ pub async fn update_user(
             firstname.eq(&payload.firstname),
             lastname.eq(&payload.lastname),
             email.eq(&payload.email),
-            password.eq(&payload.password),
         ))
         .execute(&mut conn)
     {
         Ok(_) => Ok(StatusCode::OK),
         Err(_) => Err(UserError::UserNotFound),
     }
+}
+
+pub async fn get_stats() -> Result<Json<StatsResponse>, UserError> {
+    use chrono::Local;
+    let mut conn = db::connect_db();
+    let now = Local::now().naive_local();
+
+    let total_events = events_dsl::events
+        .count()
+        .get_result::<i64>(&mut conn)
+        .unwrap_or(0);
+
+    let upcoming_events = events_dsl::events
+        .filter(events_dsl::start_date.gt(now))
+        .count()
+        .get_result::<i64>(&mut conn)
+        .unwrap_or(0);
+
+    let active_events = events_dsl::events
+        .filter(events_dsl::start_date.le(now))
+        .filter(events_dsl::end_date.ge(now))
+        .count()
+        .get_result::<i64>(&mut conn)
+        .unwrap_or(0);
+
+    let total_users = users
+        .count()
+        .get_result::<i64>(&mut conn)
+        .unwrap_or(0);
+
+    Ok(Json(StatsResponse {
+        total_events,
+        active_events,
+        total_users,
+        upcoming_events,
+    }))
 }

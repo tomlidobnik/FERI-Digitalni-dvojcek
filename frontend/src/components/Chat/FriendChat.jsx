@@ -4,17 +4,33 @@ import ChatMessages from "./ChatMessages";
 import ChatInput from "./ChatInput";
 import Cookies from "js-cookie";
 
-const ChatBox = () => {
-    const [username, setUsername] = useState("");
+const ChatBox = ({ friendId, friendName, onClose }) => {
+    const [currentUsername, setCurrentUsername] = useState("");
     const [message, setMessage] = useState("");
     const [isConnected, setIsConnected] = useState(false);
     const [messages, setMessages] = useState([]);
-    const [friends, setFriends] = useState([]);
-    const [selectedFriendId, setSelectedFriendId] = useState("");
+    const [showContent, setShowContent] = useState(false);
     const socketRef = useRef(null);
     const messagesContainerRef = useRef(null);
 
     const API_URL = import.meta.env.VITE_API_URL;
+
+    useEffect(() => {
+        const timer = setTimeout(() => setShowContent(true), 50);
+        return () => clearTimeout(timer);
+    }, []);
+
+    useEffect(() => {
+        const token = Cookies.get("token");
+        if (token) {
+            try {
+                const decoded = jwtDecode(token);
+                setCurrentUsername(decoded.sub || decoded.username || "");
+            } catch (err) {
+                setCurrentUsername("");
+            }
+        }
+    }, []);
 
     useEffect(() => {
         if (messagesContainerRef.current) {
@@ -24,80 +40,80 @@ const ChatBox = () => {
     }, [messages]);
 
     useEffect(() => {
-        const token = Cookies.get("token");
-        fetch(`https://${API_URL}/api/user/friends/list_ids`, {
-            headers: {
-                Authorization: token ? `Bearer ${token}` : "",
-            },
-        })
-            .then((res) => {
-                if (!res.ok) throw new Error("Unauthorized");
-                return res.json();
-            })
-            .then((data) => {
-                setFriends(data);
-                if (data.length > 0) setSelectedFriendId(data[0]);
-            })
-            .catch((err) => {
-                setFriends([]);
-                setSelectedFriendId("");
-                console.error(err);
-            });
-    }, [API_URL]);
-
-    useEffect(() => {
-        if (!selectedFriendId) return;
-
-        if (socketRef.current) {
-            socketRef.current.close();
-            setIsConnected(false);
+        if (!friendId) {
+            if (socketRef.current) {
+                socketRef.current.close();
+                socketRef.current = null;
+                setIsConnected(false);
+            }
+            return;
         }
+
         const token = Cookies.get("token");
-        let usernameFromToken = "";
+        let usernameForSocketUrl = "";
         if (token) {
             try {
                 const decoded = jwtDecode(token);
-                usernameFromToken = decoded.sub || decoded.username || "";
-            } catch (err) {
-                console.error("Failed to decode token", err);
-            }
+                usernameForSocketUrl = decoded.sub || decoded.username || "";
+            } catch (err) {}
         }
-        const socket = new WebSocket(
-            `wss://${API_URL}/ws/friend/${selectedFriendId}?token=${token}&username=${encodeURIComponent(
-                usernameFromToken
+
+        const newSocket = new WebSocket(
+            `wss://${API_URL}/ws/friend/${friendId}?token=${token}&username=${encodeURIComponent(
+                usernameForSocketUrl
             )}`
         );
-        socketRef.current = socket;
+        socketRef.current = newSocket;
 
-        socket.onopen = () => {
+        newSocket.onopen = () => {
             setIsConnected(true);
-            fetch(
-                `https://${API_URL}/api/chat/friend_history/${selectedFriendId}`,
-                {
-                    headers: {
-                        Authorization: token ? `Bearer ${token}` : "",
-                    },
-                }
-            )
+            fetch(`https://${API_URL}/api/chat/friend_history/${friendId}`, {
+                headers: {
+                    Authorization: token ? `Bearer ${token}` : "",
+                },
+            })
                 .then((res) => res.json())
                 .then((data) => {
                     setMessages(data);
-                });
+                })
+                .catch((err) => {});
         };
-        socket.onmessage = (event) => {
-            const received = JSON.parse(event.data);
-            setMessages((prev) => [...prev, received]);
-        };
-        socket.onerror = (err) => console.error("WebSocket error:", err);
-        socket.onclose = () => setIsConnected(false);
 
-        return () => {
-            if (socketRef.current) {
-                socketRef.current.close();
+        newSocket.onmessage = (event) => {
+            try {
+                const received = JSON.parse(event.data);
+                setMessages((prev) => [...prev, received]);
+            } catch (e) {}
+        };
+
+        newSocket.onerror = (err) => {};
+
+        newSocket.onclose = (event) => {
+            if (socketRef.current === newSocket) {
                 setIsConnected(false);
+                socketRef.current = null;
             }
         };
-    }, [selectedFriendId, API_URL]);
+
+        return () => {
+            if (
+                newSocket.readyState === WebSocket.OPEN ||
+                newSocket.readyState === WebSocket.CONNECTING
+            ) {
+                newSocket.close();
+            }
+            if (socketRef.current === newSocket) {
+                socketRef.current = null;
+            }
+        };
+    }, [friendId, API_URL]);
+
+    const handleActualClose = () => {
+        setShowContent(false);
+        setTimeout(() => {
+            onClose();
+        }, 500);
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -108,12 +124,10 @@ const ChatBox = () => {
                 try {
                     const decoded = jwtDecode(token);
                     usernameFromToken = decoded.sub || decoded.username || "";
-                } catch (err) {
-                    console.error("Failed to decode token", err);
-                }
+                } catch (err) {}
             }
             const now = new Date();
-            const dateString = now.toISOString().replace("T", " ").slice(0, 19); // "YYYY-MM-DD HH:MM:SS"
+            const dateString = now.toISOString().replace("T", " ").slice(0, 19);
             const msg = {
                 username: usernameFromToken,
                 message,
@@ -128,25 +142,30 @@ const ChatBox = () => {
     };
 
     return (
-        <div className="min-h-screen p-6 text-text">
-            <div className="flex items-center gap-3 mb-4">
-                <select
-                    className="px-2 py-1 border rounded"
-                    value={selectedFriendId}
-                    onChange={(e) => setSelectedFriendId(e.target.value)}
-                    disabled={false}>
-                    {friends.map((friendId) => (
-                        <option key={friendId} value={friendId}>
-                            Friend ID: {friendId}
-                        </option>
-                    ))}
-                </select>
+        <div
+            className={`fixed bottom-4 right-4 w-96 h-[500px] bg-primary shadow-2xl rounded-lg p-4 flex flex-col text-text-custom border-black/20 border-4 transform transition-all duration-500 ease-out ${
+                showContent
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-10"
+            }`}>
+            <div className="flex justify-between items-center mb-2">
+                <h3 className="text-lg font-semibold text-quaternary">
+                    {friendName || `prijateljem (ID: ${friendId})`}
+                </h3>
+                <button
+                    onClick={handleActualClose}
+                    className="text-text-custom hover:text-text-hover rounded-full p-1 transition-colors text-2xl"
+                    aria-label="Zapri klepet">
+                    &times;
+                </button>
             </div>
             <ChatMessages
                 messages={messages}
                 containerRef={messagesContainerRef}
+                currentUsername={currentUsername}
             />
             <ChatInput
+                css="bg-transparent"
                 message={message}
                 setMessage={setMessage}
                 handleSubmit={handleSubmit}

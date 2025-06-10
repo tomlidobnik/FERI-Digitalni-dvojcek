@@ -6,10 +6,10 @@ fun main() = application {
         val connection = DatabaseUtil.Connect()
         if (connection != null) {
             val stmt = connection.createStatement()
-            // Prodobivanje podatkov iz tabele messages
-            val rs = stmt.executeQuery("SELECT * FROM messages")
+
+            val rs = stmt.executeQuery("SELECT * FROM users")
             while (rs.next()) {
-                println(rs.getString("message"))
+                println(rs.getString("username"))
             }
         }
         DatabaseUtil.Disconnect()

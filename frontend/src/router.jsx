@@ -16,7 +16,7 @@ import EventsMap from "./pages/map/EventsMap.jsx";
 import Logout from "./pages/user/Logout.jsx";
 import ListUsers from "./components/Chat/ListUsers.jsx";
 import MainPage from "./pages/MainPage.jsx";
-
+import Cookies from "js-cookie";
 
 // Routers
 const router = createBrowserRouter([
@@ -69,7 +69,7 @@ const router = createBrowserRouter([
         path: "/friends",
         element: (
             <ErrorBoundary FallbackComponent={ErrorPage}>
-                <ListUsers />
+                <MainPage />
             </ErrorBoundary>
         ),
     },
@@ -115,6 +115,30 @@ const router = createBrowserRouter([
     },
         {
         path: "/event/edit",
+        element: (
+            <ErrorBoundary FallbackComponent={ErrorPage}>
+                <MainPage />
+            </ErrorBoundary>
+        ),
+    },
+    {
+        path: "/event/:id",
+        element: (
+            <ErrorBoundary FallbackComponent={ErrorPage}>
+                <MainPage />
+            </ErrorBoundary>
+        ),
+    },
+    {
+        path: "/profile",
+        element: (
+            <ErrorBoundary FallbackComponent={ErrorPage}>
+                <MainPage />
+            </ErrorBoundary>
+        ),
+    },
+    {
+        path: "/profile/:id",
         element: (
             <ErrorBoundary FallbackComponent={ErrorPage}>
                 <MainPage />

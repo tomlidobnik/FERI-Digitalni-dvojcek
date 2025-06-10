@@ -12,6 +12,10 @@ pub fn create_router() -> Router {
         .route("/available", get(get_available_events))
         .route("/make_public/{id}", put(make_event_public))
         .route("/make_private/{id}", put(make_event_private))
-        .route("/allow_user/{id}", post(add_event_allowed_user))
+        .route("/add_user_to_event/{id}", post(add_user_to_private_event))
         .route("/my", get(get_user_events))
+        .route("/join_public_event/{id}", post(join_public_event))
+        .route("/leave_event/{id}", post(leave_event))
+        .route("/remove_user_from_event/{event_id}/{user_id}", delete(remove_user_from_private_event))
+        .route("/get_users/{event_id}/", get(get_user_at_events))
 }

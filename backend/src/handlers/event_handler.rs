@@ -1,6 +1,6 @@
 use crate::config::db;
 use crate::error::event_error::EventError;
-use crate::models::{AuthenticatedUser, Event, LocationOutline};
+use crate::models::{AuthenticatedUser, Event, LocationOutline, EventUser};
 use crate::schema::events::dsl::{events, title, description};
 use crate::schema::events::{id as event_id_col, start_date, end_date, location_fk, public};
 use crate::schema::users::dsl::*;
@@ -21,6 +21,7 @@ pub struct NewEvent {
     pub end_date: NaiveDateTime,
     pub location_fk: Option<i32>,
     pub public: bool,
+    pub tag: Option<String>,
 }
 #[derive(Deserialize)]
 pub struct CreateEventRequest {
@@ -30,6 +31,7 @@ pub struct CreateEventRequest {
     pub end_date: NaiveDateTime,
     pub location_fk: Option<i32>,
     pub public: bool,
+    pub tag: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -41,6 +43,7 @@ pub struct UpdateEventRequest {
     pub end_date: NaiveDateTime,
     pub location_fk: Option<i32>,
     pub public: bool,
+    pub tag: Option<String>,
 }
 
 #[derive(Queryable)]
@@ -75,6 +78,7 @@ pub struct EventWithLocation {
     pub end_date: chrono::NaiveDateTime,
     pub public: bool,
     pub location: Option<LocationWithOutline>,
+    pub tag: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -98,8 +102,8 @@ pub async fn create_event(
     Json(payload): Json<CreateEventRequest>,
 ) -> Result<StatusCode, EventError> {
     info!(
-        "Called create_event by user: {} with title: {}, start_date: {}, end_date: {:?}, location_fk: {:?}",
-        user.0.sub, payload.title, payload.start_date, payload.end_date, payload.location_fk
+        "Called create_event by user: {} with title: {}, start_date: {}, end_date: {:?}, location_fk: {:?}, tag: {:?}",
+        user.0.sub, payload.title, payload.start_date, payload.end_date, payload.location_fk, payload.tag
     );
 
     let mut conn = db::connect_db();
@@ -113,6 +117,7 @@ pub async fn create_event(
         location_fk: payload.location_fk,
         user_fk: Some(user_id),
         public: payload.public,
+        tag: payload.tag,
     };
 
     match diesel::insert_into(events)
@@ -193,8 +198,8 @@ pub async fn update_event(
     Json(payload): Json<UpdateEventRequest>,
 ) -> Result<StatusCode, EventError> {
     info!(
-        "Called update_event by user: {} for event id: {} with title: {}",
-        user.0.sub, payload.id, payload.title
+        "Called update_event by user: {} for event id: {} with title: {} and tag: {:?}",
+        user.0.sub, payload.id, payload.title, payload.tag
     );
     let mut conn = db::connect_db();
     match diesel::update(events.filter(event_id_col.eq(&payload.id)))
@@ -205,6 +210,7 @@ pub async fn update_event(
             end_date.eq(&payload.end_date),
             location_fk.eq(&payload.location_fk),
             public.eq(&payload.public),
+            crate::schema::events::tag.eq(&payload.tag),
         ))
         .execute(&mut conn)
     {
@@ -234,6 +240,7 @@ pub async fn get_available_events() -> Result<Json<Vec<EventWithLocation>>, Even
             start_date,
             end_date,
             public,
+            tag,
             (
                 location_id.nullable(),
                 loc_info.nullable(),
@@ -254,6 +261,7 @@ pub async fn get_available_events() -> Result<Json<Vec<EventWithLocation>>, Even
             chrono::NaiveDateTime,
             chrono::NaiveDateTime,
             bool,
+            Option<String>,
             (
                 Option<i32>,
                 Option<String>,
@@ -268,7 +276,7 @@ pub async fn get_available_events() -> Result<Json<Vec<EventWithLocation>>, Even
         Ok(rows) => {
             let events_with_location = rows
                 .into_iter()
-                .map(|(other_event_id, other_user_fk, other_title, other_description, other_start_date, other_end_date, other_public, (loc_id, info, other_longitude, other_latitude, _other_location_outline_fk, (outline_id_opt, points_opt)))| {
+                .map(|(other_event_id, other_user_fk, other_title, other_description, other_start_date, other_end_date, other_public, other_tag, (loc_id, info, other_longitude, other_latitude, _other_location_outline_fk, (outline_id_opt, points_opt)))| {
                     EventWithLocation {
                         id: other_event_id,
                         user_fk:other_user_fk,
@@ -277,6 +285,7 @@ pub async fn get_available_events() -> Result<Json<Vec<EventWithLocation>>, Even
                         start_date:other_start_date,
                         end_date:other_end_date,
                         public:other_public,
+                        tag: other_tag,
                         location: loc_id.map(|lid| LocationWithOutline {
                             id: lid,
                             info,
@@ -346,44 +355,142 @@ pub async fn make_event_private(
     }
 }
 
-pub async fn add_event_allowed_user(
+pub async fn join_public_event(
+    user: AuthenticatedUser,
+    Path(event_id): Path<i32>,
+) -> Result<StatusCode, EventError> {
+    let mut conn = db::connect_db();
+    let event = events
+        .filter(event_id_col.eq(event_id))
+        .first::<Event>(&mut conn)
+        .map_err(|_| EventError::EventNotFound)?;
+    if !event.public {
+        return Err(EventError::Unauthorized);
+    }
+    let user_id = get_user_id(user).await.map_err(|_| EventError::Unauthorized)?;
+    let exists = crate::schema::event_users::table
+        .filter(crate::schema::event_users::event_id.eq(event_id))
+        .filter(crate::schema::event_users::user_id.eq(user_id))
+        .first::<EventUser>(&mut conn)
+        .optional()
+        .map_err(|_| EventError::InternalServerError)?;
+    if exists.is_some() {
+        return Ok(StatusCode::OK);
+    }
+    let new_event_user = EventUser { event_id, user_id };
+    diesel::insert_into(crate::schema::event_users::table)
+        .values(&new_event_user)
+        .execute(&mut conn)
+        .map_err(|_| EventError::InternalServerError)?;
+    Ok(StatusCode::CREATED)
+}
+
+
+pub async fn add_user_to_private_event(
     user: AuthenticatedUser,
     Path(event_id): Path<i32>,
     Json(payload): Json<AddEventAllowedUserRequest>,
 ) -> Result<StatusCode, EventError> {
     let mut conn = db::connect_db();
-
     let event = events
         .filter(event_id_col.eq(event_id))
         .first::<Event>(&mut conn)
         .map_err(|_| EventError::EventNotFound)?;
-
+    if event.public {
+        return Err(EventError::Unauthorized);
+    }
     let user_id = get_user_id(user).await.map_err(|_| EventError::Unauthorized)?;
     if event.user_fk != Some(user_id) {
         return Err(EventError::Unauthorized);
     }
-
     let user_exists = users
         .filter(crate::schema::users::id.eq(payload.user_id))
         .select(crate::schema::users::id)
         .first::<i32>(&mut conn)
         .optional()
         .map_err(|_| EventError::InternalServerError)?;
-
     if user_exists.is_none() {
         return Err(EventError::InternalServerError);
     }
-
-    let new_allowed = NewEventAllowedUser {
-        event_id,
-        user_id: payload.user_id,
-    };
-
-    match diesel::insert_into(event_allowed_users::table)
-        .values(&new_allowed)
-        .execute(&mut conn)
-    {
-        Ok(_) => Ok(StatusCode::CREATED),
-        Err(_) => Err(EventError::InternalServerError),
+    let exists = crate::schema::event_users::table
+        .filter(crate::schema::event_users::event_id.eq(event_id))
+        .filter(crate::schema::event_users::user_id.eq(payload.user_id))
+        .first::<EventUser>(&mut conn)
+        .optional()
+        .map_err(|_| EventError::InternalServerError)?;
+    if exists.is_some() {
+        return Ok(StatusCode::OK);
     }
+    let new_event_user = EventUser { event_id, user_id: payload.user_id };
+    diesel::insert_into(crate::schema::event_users::table)
+        .values(&new_event_user)
+        .execute(&mut conn)
+        .map_err(|_| EventError::InternalServerError)?;
+    Ok(StatusCode::CREATED)
+}
+
+pub async fn leave_event(
+    user: AuthenticatedUser,
+    Path(event_id): Path<i32>,
+) -> Result<StatusCode, EventError> {
+    let mut conn = db::connect_db();
+    let user_id = get_user_id(user).await.map_err(|_| EventError::Unauthorized)?;
+    let deleted = diesel::delete(
+        crate::schema::event_users::table
+            .filter(crate::schema::event_users::event_id.eq(event_id))
+            .filter(crate::schema::event_users::user_id.eq(user_id))
+    )
+    .execute(&mut conn)
+    .map_err(|_| EventError::InternalServerError)?;
+    if deleted > 0 {
+        Ok(StatusCode::NO_CONTENT)
+    } else {
+        Err(EventError::EventNotFound)
+    }
+}
+
+pub async fn remove_user_from_private_event(
+    user: AuthenticatedUser,
+    Path((event_id, user_id_to_remove)): Path<(i32, i32)>,
+) -> Result<StatusCode, EventError> {
+    let mut conn = db::connect_db();
+    let event = events
+        .filter(event_id_col.eq(event_id))
+        .first::<Event>(&mut conn)
+        .map_err(|_| EventError::EventNotFound)?;
+    if event.public {
+        return Err(EventError::Unauthorized);
+    }
+    let user_id = get_user_id(user).await.map_err(|_| EventError::Unauthorized)?;
+    if event.user_fk != Some(user_id) {
+        return Err(EventError::Unauthorized);
+    }
+    let deleted = diesel::delete(
+        crate::schema::event_users::table
+            .filter(crate::schema::event_users::event_id.eq(event_id))
+            .filter(crate::schema::event_users::user_id.eq(user_id_to_remove))
+    )
+    .execute(&mut conn)
+    .map_err(|_| EventError::InternalServerError)?;
+    if deleted > 0 {
+        Ok(StatusCode::NO_CONTENT)
+    } else {
+        Err(EventError::EventNotFound)
+    }
+}
+pub async fn get_user_at_events(
+    Path(event_id): Path<i32>,
+) -> Result<Json<Vec<String>>, EventError> {
+    use crate::schema::event_users::dsl as event_users_dsl;
+    use crate::schema::users::dsl as users_dsl;
+    let mut conn = db::connect_db();
+
+    let result = event_users_dsl::event_users
+        .inner_join(users_dsl::users.on(event_users_dsl::user_id.eq(users_dsl::id)))
+        .filter(event_users_dsl::event_id.eq(event_id))
+        .select(users_dsl::username)
+        .load::<String>(&mut conn)
+        .map_err(|_| EventError::InternalServerError)?;
+
+    Ok(Json(result))
 }

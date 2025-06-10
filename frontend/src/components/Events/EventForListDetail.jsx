@@ -1,27 +1,43 @@
 import { Link } from "react-router-dom";
 import ConfirmPopup from "./ConfirmPopup";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { useSelector } from "react-redux";
 import { setEvent } from "../../state/event/eventSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { formatDateTime } from "../../utils/formatDateTime";
+import Tag from "./Tag";
 
-const formatDateTime = (dateString) => {
-    const currentDate = new Date();
-    const date = new Date(dateString);
-    if (currentDate.getDay() === date.getDay() &&
-        currentDate.getMonth() === date.getMonth() &&
-        currentDate.getFullYear() === date.getFullYear()) {
-        return `Danes ob ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
-    };
-    return `${date.getDate()}. ${date.getMonth() + 1}. ${date.getFullYear()} ob ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
-};
-
-const EventForListDetail = ({event, selectMode}) => {
+const EventForListDetail = ({event, selectMode, location}) => {
     const [showConfirm, setShowConfirm] = useState(false);
+    const [attending, setAttending] = useState([]);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+        useEffect(() => {
+            try{
+                async function fetchAttending() {
+                    try {
+                        const res = await fetch(`https://${import.meta.env.VITE_API_URL}/api/event/get_users/${event.id}/`);
+                        if (res.ok) {
+                            const data = await res.json();
+                            setAttending(data);
+                        } else {
+                            setAttending([]);
+                        }
+                    } catch {
+                        setAttending([]);
+                    }
+                }
+                if (event?.id) {
+                    fetchAttending();
+                }
+            }catch (error) {
+                console.error("Error fetching attending users:", error);
+                setAttending([]);
+            }
+        }, [event?.id]);
 
     const handleDelete = async (id) => {
         try {
@@ -87,7 +103,7 @@ const EventForListDetail = ({event, selectMode}) => {
                     </>
                 ): null}
                 <Link
-                    to="/event"
+                    to={`/event/${event.id}`}
                     className="flex-shrink-0 text-right bg-black/10 rounded-2xl p-2 md:p-4 md:px-6 xl:px-8 flex items-center justify-center hover:bg-quaternary/70 hover:text-white transition group"
                 >
                     <img
@@ -107,6 +123,24 @@ const EventForListDetail = ({event, selectMode}) => {
                 <img src="icons/hourglass-end.svg" className="w-5 h-5 mr-2" alt="location" />
                 {formatDateTime(event.end_date)}
             </div>
+                {event.tag ? (                    
+                    <div className="flex sm:items-center w-fit text-sm">
+                        <Tag tag={event.tag} specialCssText={"px-2 py-1"} specialCssImage={"w-5 h-5 mr-2"}/>
+                    </div>): null
+                }
+            {location ? (
+                <div className="flex px-2 py-1 bg-tertiary/30 rounded text-sm font-semibold w-fit">
+                    <img src="icons/location-marker.svg" className="w-5 h-5 mr-2" alt="location" />
+                    {location ? (location.name || location.info || "Neznana lokacija") : "Neznana lokacija"}
+                </div>
+            ):""}
+            {attending?(                
+                <span className="flex px-2 py-1 gap-2 rounded text-sm font-semibold w-fit  bg-blue-300 ">
+                    <img src="../icons/users-alt.svg" className="w-5 h-5" alt="location" />
+                    {attending.length}
+                </span>)
+                :""
+            }
         </div>
         <div className="flex p-2 pb-0 text-lg description-clamp">
                 {event.description}

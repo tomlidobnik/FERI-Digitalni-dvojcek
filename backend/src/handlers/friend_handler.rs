@@ -17,6 +17,8 @@ pub struct FriendRequest {
 #[derive(serde::Serialize)]
 pub struct FriendStatusResponse {
     pub status: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub friendship_id: Option<i32>,
 }
 
 async fn get_user_id(user: String) -> Result<i32, StatusCode> {
@@ -161,16 +163,17 @@ pub async fn friend_status(
         .optional()
         .map_err(|_| FriendError::InternalServerError)?;
 
-    let status_str = match existing_friendship {
-        Some(f) if f.status == 0 => "Friends",
-        Some(f) if f.status == this_user_id => "Request Sent",
-        Some(f) if f.status == friend_user_id => "Accept Friend Request",
-        None => "Not Friends",
-        Some(_) => "Request Pending",
+    let (status_str, f_id) = match existing_friendship {
+        Some(f) if f.status == 0 => ("Friends", Some(f.id)),
+        Some(f) if f.status == this_user_id => ("Request Sent", Some(f.id)),
+        Some(f) if f.status == friend_user_id => ("Accept Friend Request", Some(f.id)),
+        None => ("Not Friends", None),
+        Some(f) => ("Request Pending", Some(f.id)),
     };
 
     Ok(Json(FriendStatusResponse {
         status: status_str.to_string(),
+        friendship_id: f_id,
     }))
 }
 

@@ -1,5 +1,6 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
+val composeVersion = "1.5.10"
 plugins {
     kotlin("jvm")
     id("org.jetbrains.compose")
@@ -22,6 +23,10 @@ dependencies {
     // (in a separate module for demo project and in testMain).
     // With compose.desktop.common you will also lose @Preview functionality
     implementation(compose.desktop.currentOs)
+    implementation(compose.foundation)
+    implementation(compose.material)
+    implementation("org.jetbrains.compose.desktop:desktop:$composeVersion")
+    implementation("org.jetbrains.compose.material:material-icons-extended:$composeVersion")
     testImplementation(kotlin("test"))
     implementation(kotlin("stdlib"))
     implementation("mysql:mysql-connector-java:8.0.28")
@@ -31,8 +36,13 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-dao:0.49.0")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.49.0")
     implementation("it.skrape:skrapeit:1.2.2")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("com.squareup.moshi:moshi:1.15.1")
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
     implementation("io.github.serpro69:kotlin-faker:1.6.0")
     implementation("com.github.javafaker:javafaker:1.0.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.7.3")
 
 }
 

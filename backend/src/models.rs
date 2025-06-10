@@ -38,6 +38,7 @@ pub struct Event {
     pub end_date: NaiveDateTime,
     pub location_fk: Option<i32>,
     pub public: bool,
+    pub tag: Option<String>,
 }
 
 #[derive(Queryable, Selectable, Serialize)]
@@ -73,4 +74,11 @@ pub struct ChatMessage {
     pub message: String,
     pub created_at: NaiveDateTime,
     pub event_fk: i32,
+}
+
+#[derive(Queryable, Insertable, Serialize)]
+#[diesel(table_name = crate::schema::event_users)]
+pub struct EventUser {
+    pub event_id: i32,
+    pub user_id: i32,
 }
