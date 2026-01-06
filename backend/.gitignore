@@ -1,3 +1,16 @@
-Cargo.lock
-target/
-diesel.toml
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+*.zip
+
+human-dataset/
+lightning_logs/
+checkpoints/
