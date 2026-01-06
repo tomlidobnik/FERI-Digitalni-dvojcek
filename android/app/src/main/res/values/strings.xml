@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">copycats</string>
+    <string name="app_title">Copycats</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="title_settings">Settings</string>
+    <string name="confirm_button">Confirm</string>
+
+    <!-- Settings -->
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_notifications_desc">Enable push notifications</string>
+    <string name="settings_dark_mode">Dark Mode</string>
+    <string name="settings_dark_mode_desc">Switch between light and dark theme</string>
+    <string name="settings_update_frequency">Update Frequency</string>
+    <string name="settings_update_frequency_desc">Adjust data update frequency (5-60 minutes, in 5 min increments)</string>
+    <string name="settings_update_frequency_value">Updates every %d minutes</string>
 </resources>
