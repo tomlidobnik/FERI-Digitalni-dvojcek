@@ -16,6 +16,7 @@ Senzorji ki jih bomo potrebovali: Lokacija (preverjanje ali je uporabnik na dogo
 ### Tom Li Dobnik
 
 ### Alen Kolmanič
+- **feat: Dodajanje ikon (vector asset):** Dodal mute, unmute, full volume in logotip mačke kot vektorsko grafiko.
 
 ## Zaslonske slike
 
