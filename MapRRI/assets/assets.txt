@@ -1,0 +1,2 @@
+libgdx.png
+maribor_center.geojson
