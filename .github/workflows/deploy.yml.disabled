@@ -7,6 +7,7 @@ on:
 
 jobs:
   deploy:
+    if: false
     runs-on: self-hosted
 
     steps:
@@ -32,7 +33,7 @@ jobs:
         uses: joelwmale/webhook-action@master
         with:
           url: ${{ secrets.WEBHOOK_URL }}
-          headers: > 
+          headers: >
             {
               "repository": "joelwmale/webhook-action",
               "X-Hub-Signature-256": "${{ secrets.WEBHOOK_SECRET }}"
