@@ -27,6 +27,8 @@ public class VectorMap extends ApplicationAdapter {
     @Override
     public void render() {
         handleInput();
+        map.clampScale();
+        map.clampOffset();
 
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);

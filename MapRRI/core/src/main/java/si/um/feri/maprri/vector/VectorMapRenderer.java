@@ -20,6 +20,9 @@ public class VectorMapRenderer {
     private float minX = Float.MAX_VALUE, maxX = -Float.MAX_VALUE;
     private float minY = Float.MAX_VALUE, maxY = -Float.MAX_VALUE;
 
+    public float minScale;
+    public float maxScale;
+
     public final ShapeRenderer shapeRenderer;
     private final List<float[]> roads = new ArrayList<>();
     private final List<float[]> buildings = new ArrayList<>();
@@ -81,6 +84,19 @@ public class VectorMapRenderer {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        float mapWidth  = maxX - minX;
+        float mapHeight = maxY - minY;
+
+        // min zoom
+        float scaleX = viewport.getWorldWidth() / mapWidth;
+        float scaleY = viewport.getWorldHeight() / mapHeight;
+        minScale = Math.min(scaleX, scaleY);
+
+        // max zoom
+        maxScale = minScale * 20f;
+
+        scale = minScale * 1.2f; // starting zoom
+
     }
 
     private float[] parseCoordinates(JSONArray coords) {
@@ -150,6 +166,18 @@ public class VectorMapRenderer {
             float y2 = (verts[i + 3] - offsetY) * scale;
             shapeRenderer.line(x1, y1, x2, y2);
         }
+    }
+
+    public void clampOffset() {
+        float halfW = viewport.getWorldWidth() / 2f / scale;
+        float halfH = viewport.getWorldHeight() / 2f / scale;
+
+        offsetX = Math.max(minX + halfW, Math.min(maxX - halfW, offsetX));
+        offsetY = Math.max(minY + halfH, Math.min(maxY - halfH, offsetY));
+    }
+
+    public void clampScale() {
+        scale = Math.max(minScale, Math.min(maxScale, scale));
     }
 
     public void dispose() {
