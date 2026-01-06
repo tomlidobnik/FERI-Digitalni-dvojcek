@@ -14,3 +14,10 @@ wheels/
 human-dataset/
 lightning_logs/
 checkpoints/
+
+Cargo.lock
+
+debug/
+
+.rustc_info.json
+CACHEDIR.TAG
