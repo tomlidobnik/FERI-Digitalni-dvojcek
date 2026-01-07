@@ -31,7 +31,7 @@ app.add_middleware(
 model = None
 device = None
 
-CHECKPOINT_PATH = "checkpoints/human-detection-epoch=01-val_loss=0.59.ckpt"
+CHECKPOINT_PATH = "checkpoints/human-detection-epoch=05-val_loss=0.63.ckpt"
 CONFIDENCE_THRESHOLD = 0.5
 
 
