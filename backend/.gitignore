@@ -22,3 +22,5 @@ debug/
 .rustc_info.json
 CACHEDIR.TAG
 old/
+
+uv.lock
