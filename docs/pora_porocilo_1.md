@@ -7,19 +7,22 @@ Senzorji ki jih bomo potrebovali: Lokacija (preverjanje ali je uporabnik na dogo
 ### Anej Bregant
 
 - **feat: inicializacija projekta:**
-    Začetni commit in inicializacija projekta, kjer sem ustvaril Empty Views Activity.
+  Začetni commit in inicializacija projekta, kjer sem ustvaril Empty Views Activity.
 - **feat: tema aplikacije & font:**
-    S pomočjo Material Theme Builder sem izdelal svojo temo in jo integriral v projekt. Za pisavo smo uporabili Oswald.
+  S pomočjo Material Theme Builder sem izdelal svojo temo in jo integriral v projekt. Za pisavo smo uporabili Oswald.
 - **feat: stran za nastavitve & layout aplikacije & osnovne ikone**
-    Naredil sem stran za nastavitve (push notifications, light/dark mode, interval pošiljanja podatkov), prav tako sem aplikacijo zasnoval na fragmentih. Vključil sem potrebne .xml datoteke ikone.
+  Naredil sem stran za nastavitve (push notifications, light/dark mode, interval pošiljanja podatkov), prav tako sem aplikacijo zasnoval na fragmentih. Vključil sem potrebne .xml datoteke ikone.
 
 ### Tom Li Dobnik
 
+- **feat: backend storitev:** dodan endpoint za razpoznavanje ljudi
+
 ### Alen Kolmanič
+
 - **feat: Dodajanje ikon (vector asset):** Dodal mute, unmute, full volume in logotip mačke kot vektorsko grafiko.
 
 ## Zaslonske slike
 
-| Homepage | Settings Light | Settings Dark |
-|:--------:|:--------------:|:-------------:|
+|            Homepage             |               Settings Light               |              Settings Dark               |
+| :-----------------------------: | :----------------------------------------: | :--------------------------------------: |
 | ![homepage](pora_home_page.png) | ![settings_light](pora_settings_light.png) | ![settings_dark](pora_settings_dark.png) |
