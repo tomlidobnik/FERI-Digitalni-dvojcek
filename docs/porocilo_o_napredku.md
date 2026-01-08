@@ -15,11 +15,14 @@ V sklopu projekta bomo naredili platformo, za ustvarjanje in odkrivanje javnih i
 
 ## 2. Implementirane funkcionalnosti
 
-- [PORA] Anej Bregant | Inicializacija android aplikacije, stran za nastavitve (nastavljenje frekvence pošiljanja podatkov)
+- [PORA] Anej Bregant | Inicializacija android aplikacije, stran za nastavitve (nastavljenje frekvence pošiljanja podatkov) [commit1](https://github.com/tomlidobnik/FERI-Digitalni-dvojcek/commit/4f9a54663520ec760c30873b25c1289aee94689f) [commit2](https://github.com/tomlidobnik/FERI-Digitalni-dvojcek/commit/2f6ef38b5042762494dcd7105c8e2b062e8f4503p) [commit3](https://github.com/tomlidobnik/FERI-Digitalni-dvojcek/commit/3057347188d9d19428751b80016ac33c26b666be)
 
 | Homepage | Settings Light | Settings Dark |
 |:--------:|:--------------:|:-------------:|
 | ![homepage](pora_home_page.png) | ![settings_light](pora_settings_light.png) | ![settings_dark](pora_settings_dark.png) |
+
+- [RRI] Anej Bregant | Priprava assets (zvečni učinki, ikone, slike,...)
+    [commit](https://github.com/tomlidobnik/FERI-Digitalni-dvojcek/commit/b733dc3577ce81c6559eeb9dda0821080c6ba004)
 
 - [URVRV] Tom Li Dobnik |
 
