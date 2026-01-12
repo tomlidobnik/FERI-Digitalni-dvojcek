@@ -51,10 +51,8 @@ class SettingsPageFragment : Fragment() {
     }
 
     private fun loadSettings() {
-
         val notificationsEnabled = sharedPreferences.getBoolean(KEY_NOTIFICATIONS, true)
         switchNotifications.isChecked = notificationsEnabled
-
 
         val darkModeEnabled = sharedPreferences.getBoolean(KEY_DARK_MODE, false)
         switchDarkMode.isChecked = darkModeEnabled
