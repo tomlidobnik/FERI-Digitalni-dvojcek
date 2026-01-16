@@ -24,3 +24,4 @@ CACHEDIR.TAG
 old/
 
 uv.lock
+.env

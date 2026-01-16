@@ -1,5 +1,6 @@
 import base64
 import io
+import os
 from typing import Dict, List
 
 import matplotlib.patches as patches
@@ -12,28 +13,46 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from PIL import Image, ImageDraw, ImageFont
+from dotenv import load_dotenv
 
 from model import LitObjectDetector
+from database import init_db
+from routers import user_router, friend_router, location_router, location_outline_router, event_router, chat_router
+
+load_dotenv()
+
+init_db()
+
+API_TITLE = os.getenv("API_TITLE", "Digital Twin API")
+API_DESCRIPTION = os.getenv("API_DESCRIPTION", "Digital Twin API with Human Detection and Event Management")
+API_VERSION = os.getenv("API_VERSION", "1.0.0")
+CORS_ORIGINS = os.getenv("CORS_ORIGINS", "*").split(",")
+CHECKPOINT_PATH = os.getenv("CHECKPOINT_PATH", "checkpoints/human-detection-epoch=05-val_loss=0.63.ckpt")
+CONFIDENCE_THRESHOLD = float(os.getenv("CONFIDENCE_THRESHOLD", "0.88"))
 
 app = FastAPI(
-    title="Human Detection API",
-    description="Upload an image to detect humans with masks and bounding boxes",
-    version="1.0.0",
+    title=API_TITLE,
+    description=API_DESCRIPTION,
+    version=API_VERSION,
 )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+app.include_router(user_router.router)
+app.include_router(friend_router.router)
+app.include_router(location_router.router)
+app.include_router(location_outline_router.router)
+app.include_router(event_router.router)
+app.include_router(chat_router.router)
+
 model = None
 device = None
-
-CHECKPOINT_PATH = "checkpoints/human-detection-epoch=05-val_loss=0.63.ckpt"
-CONFIDENCE_THRESHOLD = 0.88
 
 
 def load_model():
