@@ -46,6 +46,8 @@ dependencies {
     implementation(libs.androidx.fragment)
     implementation("org.osmdroid:osmdroid-android:6.1.18")
     implementation("com.github.MKergall:osmbonuspack:6.9.0")
+    implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
+    implementation(libs.androidx.remote.creation.core)
 
     // CameraX dependencies
     val cameraxVersion = "1.3.1"

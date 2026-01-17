@@ -1,14 +1,14 @@
 import base64
 import io
 import os
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import uvicorn
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
@@ -95,8 +95,12 @@ async def health_check():
 
 @app.post("/detect")
 async def detect_humans(
-    file: UploadFile = File(...), confidence: float = CONFIDENCE_THRESHOLD
+    file: UploadFile = File(...), 
+    confidence: float = Form(CONFIDENCE_THRESHOLD),
+    event_id: Optional[int] = Form(None)
 ):
+    print(f"Processing detection for event_id: {event_id}")
+    
     if model is None:
         raise HTTPException(status_code=503, detail="Model not loaded")
 

@@ -48,12 +48,6 @@ class MainPageFragment : Fragment() {
                 .commit()
         }
 
-        view.findViewById<ImageButton>(R.id.camera_button).setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainerView, CameraFragment())
-                .addToBackStack(null)
-                .commit()
-        }
     }
 
     companion object {

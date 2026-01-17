@@ -22,6 +22,7 @@ import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
+import android.util.Log
 
 
 private lateinit var directionIcon: Drawable
@@ -29,6 +30,9 @@ class MapFragment : Fragment() {
 
     private lateinit var mapView: MapView
     private lateinit var locationOverlay: MyLocationNewOverlay
+
+    // Cache marker icons to avoid repeated decoding
+    private val markerIconCache = mutableMapOf<String, Drawable>()
 
     private val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -68,7 +72,21 @@ class MapFragment : Fragment() {
         mapView.setMultiTouchControls(true)
         mapView.controller.setZoom(15.0)
 
-        val startPoint = GeoPoint(46.5547, 15.6459)
+
+        // Reduce tile loading for better performance
+        mapView.setTilesScaledToDpi(true)
+        mapView.isTilesScaledToDpi = true
+
+        // Check if specific coordinates were passed
+        val startPoint = if (arguments?.containsKey(ARG_LATITUDE) == true &&
+                             arguments?.containsKey(ARG_LONGITUDE) == true) {
+            val lat = arguments?.getDouble(ARG_LATITUDE) ?: 46.5547
+            val lon = arguments?.getDouble(ARG_LONGITUDE) ?: 15.6459
+            GeoPoint(lat, lon)
+        } else {
+            // Use cached location if available, otherwise use default
+            MyApplication.lastKnownUserLocation ?: GeoPoint(46.5547, 15.6459)
+        }
         mapView.controller.setCenter(startPoint)
 
         val compassOverlay = CompassOverlay(
@@ -105,7 +123,73 @@ class MapFragment : Fragment() {
         mapView.minZoomLevel = 4.0
         mapView.maxZoomLevel = 20.0
 
+        // Add event markers to the map
+        addEventMarkers()
+
         checkLocationPermission()
+    }
+
+    private fun addEventMarkers() {
+        Log.d("MapFragment", "Adding ${MyApplication.events.size} event markers to map")
+
+        // Pre-load and cache marker icons once
+        if (markerIconCache.isEmpty()) {
+            try {
+                markerIconCache["education"] = ContextCompat.getDrawable(requireContext(), R.drawable.baseline_school_24)!!
+                markerIconCache["fun"] = ContextCompat.getDrawable(requireContext(), R.drawable.baseline_celebration_24)!!
+                markerIconCache["sports"] = ContextCompat.getDrawable(requireContext(), R.drawable.baseline_sports_basketball_24)!!
+                markerIconCache["default"] = ContextCompat.getDrawable(requireContext(), R.drawable.baseline_event_24)!!
+            } catch (e: Exception) {
+                Log.e("MapFragment", "Error loading marker icons", e)
+            }
+        }
+
+        MyApplication.events.forEach { event ->
+            // Find the location for this event
+            val location = MyApplication.locations.find { it.id == event.location_fk }
+
+            if (location != null) {
+                val marker = Marker(mapView)
+                marker.position = GeoPoint(location.latitude, location.longitude)
+                marker.title = event.title
+                marker.snippet = """
+                    ${event.description}
+                    
+                    Start: ${event.start_date}
+                    End: ${event.end_date}
+                    Tag: ${event.tag ?: "None"}
+                """.trimIndent()
+
+                // Use cached marker icon based on tag
+                val iconKey = event.tag?.lowercase() ?: "default"
+                val markerIcon = markerIconCache[iconKey] ?: markerIconCache["default"]
+
+                markerIcon?.let {
+                    marker.icon = it
+                }
+
+                // Set marker anchor to center bottom
+                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+
+                // Add click listener to open event detail fragment
+                marker.setOnMarkerClickListener { clickedMarker, _ ->
+                    // Navigate to event detail fragment using activity's fragment manager
+                    val eventDetailFragment = EventDetailFragment.newInstance(event.id)
+                    requireActivity().supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainerView, eventDetailFragment)
+                        .addToBackStack(null)
+                        .commit()
+                    true
+                }
+
+                mapView.overlays.add(marker)
+                Log.d("MapFragment", "Added marker for event: ${event.title} at (${location.latitude}, ${location.longitude})")
+            } else {
+                Log.w("MapFragment", "No location found for event #${event.id}: ${event.title} (location_fk: ${event.location_fk})")
+            }
+        }
+
+        mapView.invalidate()
     }
 
 
@@ -151,6 +235,7 @@ class MapFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        markerIconCache.clear()
         mapView.onDetach()
     }
 
@@ -167,7 +252,19 @@ class MapFragment : Fragment() {
     }
 
     companion object {
+        private const val ARG_LATITUDE = "latitude"
+        private const val ARG_LONGITUDE = "longitude"
+
         @JvmStatic
         fun newInstance() = MapFragment()
+
+        @JvmStatic
+        fun newInstanceWithLocation(latitude: Double, longitude: Double) =
+            MapFragment().apply {
+                arguments = Bundle().apply {
+                    putDouble(ARG_LATITUDE, latitude)
+                    putDouble(ARG_LONGITUDE, longitude)
+                }
+            }
     }
 }

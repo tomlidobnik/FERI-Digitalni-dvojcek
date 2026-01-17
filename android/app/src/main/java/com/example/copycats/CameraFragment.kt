@@ -29,7 +29,6 @@ import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -46,8 +45,17 @@ class CameraFragment : Fragment() {
     private var cameraProvider: ProcessCameraProvider? = null
     private lateinit var cameraExecutor: ExecutorService
     private var capturedImageFile: File? = null
+    private var eventId: Int? = null
 
-    private val API_BASE_URL = "http://10.0.2.2:8000"
+    private val API_BASE_URL = MyApplication.dotenv["API_BASE_URL"]
+
+    // Cache OkHttpClient to avoid recreating it on every request
+    private val httpClient = OkHttpClient.Builder()
+        .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+        .writeTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+        .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+        .retryOnConnectionFailure(true)
+        .build()
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -57,6 +65,14 @@ class CameraFragment : Fragment() {
         } else {
             Toast.makeText(requireContext(), "Camera permission is required", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            eventId = it.getInt(ARG_EVENT_ID, -1).takeIf { id -> id != -1 }
+        }
+        Log.d(TAG, "CameraFragment created with event ID: $eventId")
     }
 
     override fun onCreateView(
@@ -78,11 +94,11 @@ class CameraFragment : Fragment() {
 
         cameraExecutor = Executors.newSingleThreadExecutor()
 
+        // Disable take photo button until camera is ready
+        buttonTakePhoto.isEnabled = false
+
         view.findViewById<ImageButton>(R.id.back_button).setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainerView, MainPageFragment())
-                .addToBackStack(null)
-                .commit()
+            requireActivity().supportFragmentManager.popBackStack()
         }
 
         buttonTakePhoto.setOnClickListener {
@@ -97,10 +113,13 @@ class CameraFragment : Fragment() {
             sendImageToApi()
         }
 
-        if (allPermissionsGranted()) {
-            startCamera()
-        } else {
-            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+        // Start camera initialization asynchronously after view is laid out
+        view.post {
+            if (allPermissionsGranted()) {
+                startCamera()
+            } else {
+                requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+            }
         }
     }
 
@@ -112,30 +131,43 @@ class CameraFragment : Fragment() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
         cameraProviderFuture.addListener({
-            cameraProvider = cameraProviderFuture.get()
-
-            val preview = Preview.Builder()
-                .build()
-                .also {
-                    it.setSurfaceProvider(cameraPreview.surfaceProvider)
-                }
-
-            imageCapture = ImageCapture.Builder()
-                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
-                .build()
-
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
             try {
+                cameraProvider = cameraProviderFuture.get()
+
+                // Optimize preview for better performance with explicit resolution
+                val preview = Preview.Builder()
+                    .setTargetRotation(cameraPreview.display.rotation)
+                    .setTargetResolution(android.util.Size(1280, 720)) // Limit preview resolution
+                    .build()
+                    .also {
+                        it.setSurfaceProvider(cameraPreview.surfaceProvider)
+                    }
+
+                // Optimize image capture settings with specific resolution
+                imageCapture = ImageCapture.Builder()
+                    .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                    .setTargetRotation(cameraPreview.display.rotation)
+                    .setTargetResolution(android.util.Size(1920, 1080)) // Balanced capture resolution
+                    .build()
+
+                val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
                 cameraProvider?.unbindAll()
 
                 cameraProvider?.bindToLifecycle(
                     viewLifecycleOwner, cameraSelector, preview, imageCapture
                 )
 
+                // Enable take photo button once camera is ready
+                buttonTakePhoto.isEnabled = true
+                Log.d(TAG, "Camera initialized")
+
             } catch (exc: Exception) {
-                Log.e(TAG, "Use case binding failed", exc)
-                Toast.makeText(requireContext(), "Camera initialization failed", Toast.LENGTH_SHORT).show()
+                Log.e(TAG, "Camera binding failed", exc)
+                requireActivity().runOnUiThread {
+                    Toast.makeText(requireContext(), "Camera initialization failed", Toast.LENGTH_SHORT).show()
+                }
+                buttonTakePhoto.isEnabled = false
             }
 
         }, ContextCompat.getMainExecutor(requireContext()))
@@ -143,6 +175,9 @@ class CameraFragment : Fragment() {
 
     private fun takePhoto() {
         val imageCapture = imageCapture ?: return
+
+        // Disable button immediately to prevent multiple clicks
+        buttonTakePhoto.isEnabled = false
 
         val photoFile = File(
             requireContext().cacheDir,
@@ -153,15 +188,19 @@ class CameraFragment : Fragment() {
 
         imageCapture.takePicture(
             outputOptions,
-            ContextCompat.getMainExecutor(requireContext()),
+            cameraExecutor, // Use background executor to avoid blocking main thread
             object : ImageCapture.OnImageSavedCallback {
                 override fun onError(exc: ImageCaptureException) {
                     Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
-                    Toast.makeText(requireContext(), "Photo capture failed", Toast.LENGTH_SHORT).show()
+                    requireActivity().runOnUiThread {
+                        Toast.makeText(requireContext(), "Photo capture failed", Toast.LENGTH_SHORT).show()
+                        buttonTakePhoto.isEnabled = true
+                    }
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     capturedImageFile = photoFile
+                    Log.d(TAG, "Photo saved: ${photoFile.absolutePath}")
                     displayCapturedImage(photoFile)
                 }
             }
@@ -169,38 +208,93 @@ class CameraFragment : Fragment() {
     }
 
     private fun displayCapturedImage(imageFile: File) {
-        try {
-            val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
+        buttonTakePhoto.isEnabled = false
 
-            val rotatedBitmap = rotateBitmap(bitmap)
+        CoroutineScope(Dispatchers.Default).launch {
+            var bitmap: Bitmap? = null
+            var rotatedBitmap: Bitmap? = null
 
-            capturedImageView.setImageBitmap(rotatedBitmap)
+            try {
+                // Get dimensions
+                val options = BitmapFactory.Options().apply {
+                    inJustDecodeBounds = true
+                }
+                BitmapFactory.decodeFile(imageFile.absolutePath, options)
 
-            cameraPreview.visibility = View.GONE
-            capturedImageView.visibility = View.VISIBLE
-            buttonTakePhoto.visibility = View.GONE
-            buttonRetake.visibility = View.VISIBLE
-            buttonSendApi.visibility = View.VISIBLE
+                // Calculate sample size and decode with optimal settings
+                options.inSampleSize = calculateInSampleSize(options, 720, 1280)
+                options.inJustDecodeBounds = false
+                options.inPreferredConfig = Bitmap.Config.RGB_565
 
-        } catch (e: Exception) {
-            Log.e(TAG, "Error displaying image", e)
-            Toast.makeText(requireContext(), "Error displaying image", Toast.LENGTH_SHORT).show()
+                bitmap = BitmapFactory.decodeFile(imageFile.absolutePath, options)
+                    ?: throw Exception("Failed to decode bitmap")
+
+                // Rotate and recycle original in one pass
+                rotatedBitmap = rotateBitmap(bitmap)
+                if (bitmap !== rotatedBitmap) bitmap.recycle()
+
+                withContext(Dispatchers.Main) {
+                    if (isAdded) { // Check if fragment is still attached
+                        capturedImageView.setImageBitmap(rotatedBitmap)
+                        cameraPreview.visibility = View.GONE
+                        capturedImageView.visibility = View.VISIBLE
+                        buttonTakePhoto.visibility = View.GONE
+                        buttonRetake.visibility = View.VISIBLE
+                        buttonSendApi.visibility = View.VISIBLE
+                    } else {
+                        rotatedBitmap?.recycle()
+                    }
+                }
+
+            } catch (e: Exception) {
+                Log.e(TAG, "Image error: ${e.message}")
+                bitmap?.recycle()
+                rotatedBitmap?.recycle()
+
+                withContext(Dispatchers.Main) {
+                    if (isAdded) {
+                        Toast.makeText(requireContext(), "Error displaying image", Toast.LENGTH_SHORT).show()
+                        buttonTakePhoto.isEnabled = true
+                    }
+                }
+            }
         }
     }
 
+    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+        val height = options.outHeight
+        val width = options.outWidth
+        var inSampleSize = 1
+
+        if (height > reqHeight || width > reqWidth) {
+            val halfHeight = height / 2
+            val halfWidth = width / 2
+
+            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2
+            }
+        }
+
+        return inSampleSize
+    }
+
     private fun rotateBitmap(bitmap: Bitmap): Bitmap {
-        val matrix = Matrix()
-        matrix.postRotate(90f)
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+        val matrix = Matrix().apply { postRotate(90f) }
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, false)
     }
 
     private fun retakePhoto() {
+        // Clean up captured image
         capturedImageFile?.delete()
         capturedImageFile = null
+
+        // Clear the ImageView and recycle bitmap to free memory
+        capturedImageView.setImageBitmap(null)
 
         cameraPreview.visibility = View.VISIBLE
         capturedImageView.visibility = View.GONE
         buttonTakePhoto.visibility = View.VISIBLE
+        buttonTakePhoto.isEnabled = true
         buttonRetake.visibility = View.GONE
         buttonSendApi.visibility = View.GONE
 
@@ -237,95 +331,83 @@ class CameraFragment : Fragment() {
                 Log.d(TAG, "Starting API request to $API_BASE_URL/detect")
 
                 val imageBytes = imageFile.readBytes()
-                Log.d(TAG, "Image bytes read: ${imageBytes.size} bytes")
 
-                val requestBody = MultipartBody.Builder()
+                // Build multipart form data matching backend Form parameters
+                val multipartBuilder = MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
                     .addFormDataPart(
                         "file",
                         imageFile.name,
                         imageBytes.toRequestBody("image/jpeg".toMediaType())
                     )
-                    .addFormDataPart("confidence", "0.5") // Default confidence threshold
-                    .build()
+                    .addFormDataPart("confidence", "0.5")
+
+                // Add event_id as Form parameter if available
+                eventId?.let {
+                    multipartBuilder.addFormDataPart("event_id", it.toString())
+                }
 
                 val request = Request.Builder()
                     .url("$API_BASE_URL/detect")
-                    .post(requestBody)
+                    .post(multipartBuilder.build())
                     .build()
 
-                /*val request = Request.Builder()
-                    .url("$API_BASE_URL/")
-                    .get()
-                    .build()*/
+                Log.d(TAG, "Making API call...")
+                val response = httpClient.newCall(request).execute() // Reuse cached client!
+                Log.d(TAG, "Response: ${response.code}")
 
-                val client = OkHttpClient.Builder()
-                    .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
-                    .writeTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
-                    .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
-                    .retryOnConnectionFailure(true)
-                    .build()
+                withContext(Dispatchers.Main) {
+                    progressBar.visibility = View.GONE
+                    buttonSendApi.isEnabled = true
 
-                client.newCall(request).enqueue(object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
-                        activity?.runOnUiThread {
-                            progressBar.visibility = View.GONE
-                            buttonSendApi.isEnabled = true
-                            Toast.makeText(requireContext(), "Request Failed: ${e.message}", Toast.LENGTH_LONG).show()
-                            Log.e(TAG, "OkHttp Failure", e)
-                        }
-                    }
-
-                    override fun onResponse(call: Call, response: Response) {
+                    if (response.isSuccessful) {
                         val responseBody = response.body?.string()
+                        Log.d(TAG, "API Response: $responseBody")
 
-                        activity?.runOnUiThread {
-                            progressBar.visibility = View.GONE
-                            buttonSendApi.isEnabled = true
-
-                            if (response.isSuccessful) {
-                                Log.d(TAG, "API Response: $responseBody")
-                                val numPeople = parseNumPeopleFromResponse(responseBody)
-                                val message = if (numPeople >= 0) {
-                                    "Detection complete! People detected: $numPeople"
-                                } else {
-                                    "Detection complete!"
-                                }
-                                Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
-
-                                view?.postDelayed({
-                                    parentFragmentManager.beginTransaction()
-                                        .replace(R.id.fragmentContainerView, MainPageFragment())
-                                        .commit()
-                                }, 2000)
-
-                            } else {
-                                Log.e(TAG, "API Error: ${response.code} - $responseBody")
-                                Toast.makeText(requireContext(), "API Error: ${response.code}", Toast.LENGTH_LONG).show()
-                            }
+                        val numPeople = parseNumPeopleFromResponse(responseBody)
+                        val message = if (numPeople >= 0) {
+                            "Detection complete!\nPeople detected: $numPeople"
+                        } else {
+                            "Detection complete!"
                         }
+
+                        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+
+                        view?.postDelayed({
+                            parentFragmentManager.beginTransaction()
+                                .replace(R.id.fragmentContainerView, MainPageFragment())
+                                .commit()
+                        }, 2000)
+
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "API Error: ${response.code}",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
-                })
+                }
+
             } catch (e: Exception) {
-                Log.e(TAG, "Network error: ${e.javaClass.simpleName} - ${e.message}", e)
-                e.printStackTrace()
+                Log.e(TAG, "Network error: ${e.message}")
                 withContext(Dispatchers.Main) {
                     progressBar.visibility = View.GONE
                     buttonSendApi.isEnabled = true
                     val errorMessage = when {
-                        e.message?.contains("Failed to connect") == true -> "Cannot connect to server. Is the API running?"
-                        e.message?.contains("timeout") == true -> "Connection timeout. Please try again."
-                        e.message == null -> "Network error occurred. Please check your connection and try again."
+                        e.message?.contains("Failed to connect") == true -> "Cannot connect to server"
+                        e.message?.contains("timeout") == true -> "Connection timeout. Try again."
                         else -> "Network error: ${e.message}"
                     }
-                    Toast.makeText(
-                        requireContext(),
-                        errorMessage,
-                        Toast.LENGTH_LONG
-                    ).show()
+                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // Clear the ImageView to free bitmap memory
+        capturedImageView.setImageBitmap(null)
     }
 
     override fun onDestroy() {
@@ -334,8 +416,33 @@ class CameraFragment : Fragment() {
         capturedImageFile?.delete()
     }
 
+    override fun onPause() {
+        super.onPause()
+        // Unbind camera to free resources when fragment is paused
+        cameraProvider?.unbindAll()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Only restart camera if it was paused and preview is still visible
+        if (cameraPreview.visibility == View.VISIBLE && cameraProvider == null && allPermissionsGranted()) {
+            view?.post {
+                startCamera()
+            }
+        }
+    }
+
     companion object {
         private const val TAG = "CameraFragment"
+        private const val ARG_EVENT_ID = "event_id"
+
+        @JvmStatic
+        fun newInstance(eventId: Int? = null) =
+            CameraFragment().apply {
+                arguments = Bundle().apply {
+                    eventId?.let { putInt(ARG_EVENT_ID, it) }
+                }
+            }
     }
 }
 
