@@ -29,6 +29,7 @@ class MyApplication : Application(), Application.ActivityLifecycleCallbacks {
         var lastKnownUserLocation: GeoPoint? = null
         val locations = mutableListOf<Location>()
         val events = mutableListOf<Event>()
+        lateinit var mqttManager: MqttManager
     }
 
     override fun onCreate(){
@@ -37,6 +38,10 @@ class MyApplication : Application(), Application.ActivityLifecycleCallbacks {
 
         dotenv = mutableMapOf()
         dotenv.put("API_BASE_URL", "http://10.0.2.2:8000")
+        dotenv.put("MQTT_BROKER_URL", "tcp://10.0.2.2:1883")
+
+        // Initialize notification channel
+        NotificationHelper.createNotificationChannel(this)
 
         val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
 
@@ -50,6 +55,17 @@ class MyApplication : Application(), Application.ActivityLifecycleCallbacks {
         }
 
         initializeLocationTracking()
+
+        // Initialize and connect MQTT
+        mqttManager = MqttManager(this)
+        mqttManager.connect(
+            onSuccess = {
+                Log.d("MQTT", "Connected to MQTT broker on startup")
+            },
+            onFailure = { error ->
+                Log.e("MQTT", "Failed to connect to MQTT broker: $error")
+            }
+        )
 
         // Fetch locations from API
         CoroutineScope(Dispatchers.Main).launch {

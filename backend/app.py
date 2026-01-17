@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 
 from model import LitObjectDetector
 from database import init_db
-from routers import user_router, friend_router, location_router, location_outline_router, event_router, chat_router
+from routers import user_router, friend_router, location_router, location_outline_router, event_router, chat_router, sensor_data_router
 
 load_dotenv()
 
@@ -50,6 +50,7 @@ app.include_router(location_router.router)
 app.include_router(location_outline_router.router)
 app.include_router(event_router.router)
 app.include_router(chat_router.router)
+app.include_router(sensor_data_router.router)
 
 model = None
 device = None

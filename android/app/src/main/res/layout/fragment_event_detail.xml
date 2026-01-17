@@ -76,9 +76,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Description"
+                    android:textColor="?attr/colorPrimary"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="?attr/colorPrimary" />
+                    android:textStyle="bold" />
 
                 <!-- Event Description -->
                 <TextView
@@ -86,9 +86,29 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:textSize="16sp"
                     android:textColor="?attr/colorOnSurface"
+                    android:textSize="16sp"
                     tools:text="Auto-generated seed event." />
+
+                <!-- Attendee Count Label -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Attendees"
+                    android:textColor="?attr/colorPrimary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <!-- Event Attendee Count -->
+                <TextView
+                    android:id="@+id/event_attendee_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="16sp"
+                    tools:text="0 people attending" />
 
                 <!-- Divider -->
                 <View
@@ -103,9 +123,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Start Date"
+                    android:textColor="?attr/colorPrimary"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="?attr/colorPrimary" />
+                    android:textStyle="bold" />
 
                 <!-- Event Start Date -->
                 <TextView
@@ -113,8 +133,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:textSize="16sp"
                     android:textColor="?attr/colorOnSurface"
+                    android:textSize="16sp"
                     tools:text="2026-01-27 04:09:16" />
 
                 <!-- End Date Label -->
@@ -123,9 +143,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="End Date"
+                    android:textColor="?attr/colorPrimary"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="?attr/colorPrimary" />
+                    android:textStyle="bold" />
 
                 <!-- Event End Date -->
                 <TextView
@@ -133,8 +153,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:textSize="16sp"
                     android:textColor="?attr/colorOnSurface"
+                    android:textSize="16sp"
                     tools:text="2026-01-27 06:09:16" />
 
                 <!-- Divider -->
@@ -150,9 +170,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Tag"
+                    android:textColor="?attr/colorPrimary"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="?attr/colorPrimary" />
+                    android:textStyle="bold" />
 
                 <!-- Event Tag -->
                 <TextView
@@ -160,8 +180,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:textSize="16sp"
                     android:textColor="?attr/colorOnSurface"
+                    android:textSize="16sp"
                     tools:text="education" />
 
                 <!-- User Label -->
@@ -170,9 +190,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="User ID"
+                    android:textColor="?attr/colorPrimary"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="?attr/colorPrimary" />
+                    android:textStyle="bold" />
 
                 <!-- Event User FK -->
                 <TextView
@@ -180,8 +200,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:textSize="16sp"
                     android:textColor="?attr/colorOnSurface"
+                    android:textSize="16sp"
                     tools:text="1" />
 
                 <!-- Public/Private Label -->
@@ -190,9 +210,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="Visibility"
+                    android:textColor="?attr/colorPrimary"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="?attr/colorPrimary" />
+                    android:textStyle="bold" />
 
                 <!-- Event Public Status -->
                 <TextView
@@ -200,8 +220,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:textSize="16sp"
                     android:textColor="?attr/colorOnSurface"
+                    android:textSize="16sp"
                     tools:text="Public" />
 
                 <!-- Location Label -->
@@ -210,9 +230,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="Location"
+                    android:textColor="?attr/colorPrimary"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="?attr/colorPrimary" />
+                    android:textStyle="bold" />
 
                 <!-- Event Location Info -->
                 <TextView
@@ -220,8 +240,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:textSize="16sp"
                     android:textColor="?attr/colorOnSurface"
+                    android:textSize="16sp"
                     tools:text="Seed Location 2" />
 
                 <!-- Event Location Coordinates -->
@@ -230,8 +250,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:textSize="14sp"
                     android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="14sp"
                     tools:text="(46.5810, 15.6222)" />
 
             </LinearLayout>
@@ -262,6 +282,156 @@
             app:iconGravity="textStart"
             style="@style/Widget.Material3.Button.TonalButton"
             app:layout_constraintTop_toBottomOf="@id/show_on_map_button" />
+
+        <!-- MQTT Controls Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/mqtt_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:layout_constraintTop_toBottomOf="@id/take_photo_button">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Sensor Controls Title -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sensor Data (MQTT)"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorPrimary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Real-time sensor monitoring via MQTT"
+                    android:textSize="12sp"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="?attr/colorOutline" />
+
+                <!-- Sound Level Section -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sound Level (Microphone)"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorPrimary" />
+
+                <!-- Sound Level Toggle -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Monitor Sound Level"
+                        android:textSize="14sp"
+                        android:textColor="?attr/colorOnSurface" />
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/loudspeaker_toggle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <!-- Sound Level Value -->
+                <TextView
+                    android:id="@+id/loudspeaker_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="-- dB"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorSecondary" />
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="?attr/colorOutline" />
+
+                <!-- Temperature Section -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Temperature (Sensor)"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorPrimary" />
+
+                <!-- Temperature Toggle -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Monitor Temperature"
+                        android:textSize="14sp"
+                        android:textColor="?attr/colorOnSurface" />
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/temperature_toggle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <!-- Temperature Value -->
+                <TextView
+                    android:id="@+id/temperature_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="-- °C"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorSecondary" />
+
+                <!-- Auto Send Status -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Data is sent automatically via MQTT based on your update frequency setting"
+                    android:textSize="12sp"
+                    android:textStyle="italic"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:gravity="center" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

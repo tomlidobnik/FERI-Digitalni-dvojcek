@@ -17,4 +17,5 @@
     <string name="settings_update_frequency">Update Frequency</string>
     <string name="settings_update_frequency_desc">Adjust data update frequency (5-60 minutes, in 5 min increments)</string>
     <string name="settings_update_frequency_value">Updates every %d minutes</string>
+    <string name="attendee_count">%d people detected</string>
 </resources>

@@ -146,6 +146,20 @@ def init_db():
     """
     )
 
+    # Event sensor data table
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS event_sensor_data (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            event_fk INTEGER NOT NULL,
+            sensor_type TEXT NOT NULL,
+            value TEXT NOT NULL,
+            timestamp TEXT NOT NULL,
+            FOREIGN KEY (event_fk) REFERENCES events(id)
+        )
+    """
+    )
+
     conn.commit()
     conn.close()
 
