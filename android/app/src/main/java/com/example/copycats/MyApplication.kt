@@ -30,6 +30,7 @@ class MyApplication : Application(), Application.ActivityLifecycleCallbacks {
         val locations = mutableListOf<Location>()
         val events = mutableListOf<Event>()
         lateinit var mqttManager: MqttManager
+        val eventSensorData = mutableMapOf<Int, EventSensorData>()
     }
 
     override fun onCreate(){
@@ -59,18 +60,17 @@ class MyApplication : Application(), Application.ActivityLifecycleCallbacks {
 
         initializeLocationTracking()
 
-        // Initialize and connect MQTT
         mqttManager = MqttManager(this)
         mqttManager.connect(
             onSuccess = {
                 Log.d("MQTT", "Connected to MQTT broker on startup")
+                setupGlobalMqttListener()
             },
             onFailure = { error ->
                 Log.e("MQTT", "Failed to connect to MQTT broker: $error")
             }
         )
 
-        // Fetch locations from API
         CoroutineScope(Dispatchers.Main).launch {
             fetchLocations()
             Log.d("Locations", "Total locations fetched: ${locations.size}")
@@ -79,13 +79,23 @@ class MyApplication : Application(), Application.ActivityLifecycleCallbacks {
             }
         }
 
-        // Fetch events from API
         CoroutineScope(Dispatchers.Main).launch {
             fetchEvents()
             Log.d("Events", "Total events fetched: ${events.size}")
             events.forEach { event ->
                 Log.d("Events", "Event #${event.id}: ${event.title} (${event.start_date} - ${event.end_date}) [tag: ${event.tag ?: "none"}, location_fk: ${event.location_fk ?: "none"}]")
             }
+        }
+    }
+
+    private fun setupGlobalMqttListener() {
+        Log.d("MQTT", "Setting up global MQTT listener for background data reception")
+
+        MqttDataListener.addDataListener { eventId, sensorData ->
+            Log.d("MQTT", "Global listener: Received sensor data for event $eventId - temp=${sensorData.temperature}, sound=${sensorData.soundLevel}")
+
+            eventSensorData[eventId] = sensorData.copy()
+            Log.d("MQTT", "Global storage updated for event $eventId. Total events with data: ${eventSensorData.size}")
         }
     }
 

@@ -1,11 +1,13 @@
 package com.example.copycats
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.TextView
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -34,7 +36,6 @@ class MainPageFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_main_page, container, false)
     }
 
@@ -53,6 +54,16 @@ class MainPageFragment : Fragment() {
                 .replace(R.id.fragmentContainerView, SimulationFragment.newInstance())
                 .addToBackStack(null)
                 .commit()
+        }
+
+        // nastavljanje teksta na osnovu stanja simulacije
+        val sharedPreferences = requireContext().getSharedPreferences("SimulationPrefs", Context.MODE_PRIVATE)
+
+        val isRunning = sharedPreferences.getBoolean("is_running", false)
+        if(isRunning){
+            view.findViewById<TextView>(R.id.simulationTextView).visibility = View.VISIBLE
+        } else {
+            view.findViewById<TextView>(R.id.simulationTextView).visibility = View.GONE
         }
     }
 

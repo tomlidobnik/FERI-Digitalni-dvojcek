@@ -66,10 +66,8 @@ class EventDetailFragment : Fragment(), SensorEventListener {
             eventId = it.getInt(ARG_EVENT_ID, -1)
         }
 
-        // Initialize sensor manager
         sensorManager = requireContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
-        // Get ambient temperature sensor
         temperatureSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE)
 
         if (temperatureSensor != null) {
@@ -94,25 +92,20 @@ class EventDetailFragment : Fragment(), SensorEventListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Find the event by ID
         val event = MyApplication.events.find { it.id == eventId }
 
         if (event != null) {
             displayEventDetails(view, event)
             setupSensorControls(view, event)
         } else {
-            // Event not found, go back
             requireActivity().supportFragmentManager.popBackStack()
         }
 
-        // Back button
         view.findViewById<ImageButton>(R.id.back_button).setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
 
-        // Camera button
         view.findViewById<MaterialButton>(R.id.take_photo_button).setOnClickListener {
-            // Navigate to camera fragment with event ID
             val cameraFragment = CameraFragment.newInstance(eventId)
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainerView, cameraFragment)
@@ -122,28 +115,23 @@ class EventDetailFragment : Fragment(), SensorEventListener {
     }
 
     private fun displayEventDetails(view: View, event: Event) {
-        // Set event title
         view.findViewById<TextView>(R.id.event_title).text = event.title
 
-        // Set event icon based on tag
         val eventIcon = view.findViewById<ImageView>(R.id.event_icon)
         val iconDrawable = when (event.tag?.lowercase()) {
-            "education" -> R.drawable.baseline_school_24
-            "fun" -> R.drawable.cat
-            "sports" -> R.drawable.location_current
-            else -> R.drawable.baseline_event_24
+            "education" -> R.drawable.education
+            "fun" -> R.drawable.`fun`
+            "sports" -> R.drawable.sports
+            else -> R.drawable.cat
         }
         eventIcon.setImageDrawable(ContextCompat.getDrawable(requireContext(), iconDrawable))
 
-        // Display number of people attending
         val numPeople = event.num_people ?: 0
         view.findViewById<TextView>(R.id.event_attendee_count).text =
             getString(R.string.attendee_count, numPeople)
 
-        // Set event description
         view.findViewById<TextView>(R.id.event_description).text = event.description
 
-        // Format and set dates
         val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         val outputFormat = SimpleDateFormat("MMM dd, yyyy 'at' HH:mm", Locale.getDefault())
 
@@ -166,23 +154,18 @@ class EventDetailFragment : Fragment(), SensorEventListener {
         view.findViewById<TextView>(R.id.event_tag).text =
             event.tag?.replaceFirstChar { it.uppercase() } ?: "None"
 
-        // Set user FK
         view.findViewById<TextView>(R.id.event_user_fk).text = event.user_fk.toString()
 
-        // Set public status
         view.findViewById<TextView>(R.id.event_public).text =
             if (event.public) "Public" else "Private"
 
-        // Set location info
         val location = MyApplication.locations.find { it.id == event.location_fk }
         if (location != null) {
             view.findViewById<TextView>(R.id.event_location_info).text = location.info
             view.findViewById<TextView>(R.id.event_location_coords).text =
                 String.format(Locale.US, "(%.4f, %.4f)", location.latitude, location.longitude)
 
-            // Show on map button
             view.findViewById<MaterialButton>(R.id.show_on_map_button).setOnClickListener {
-                // Navigate back to main page (which contains the map)
                 requireActivity().supportFragmentManager.popBackStack()
             }
         } else {
@@ -198,20 +181,16 @@ class EventDetailFragment : Fragment(), SensorEventListener {
         val temperatureToggle = view.findViewById<SwitchMaterial>(R.id.temperature_toggle)
         val temperatureValue = view.findViewById<TextView>(R.id.temperature_value)
 
-        // Load saved toggle states
         val prefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val savedLoudspeakerEnabled = prefs.getBoolean(KEY_LOUDSPEAKER_ENABLED + eventId, false)
         val savedTemperatureEnabled = prefs.getBoolean(KEY_TEMPERATURE_ENABLED + eventId, false)
 
-        // Restore toggle states
         loudspeakerToggle.isChecked = savedLoudspeakerEnabled
         temperatureToggle.isChecked = savedTemperatureEnabled
 
-        // Loudspeaker (Sound Level) Toggle
         loudspeakerToggle.setOnCheckedChangeListener { _, isChecked ->
             loudspeakerEnabled = isChecked
 
-            // Save state
             prefs.edit().putBoolean(KEY_LOUDSPEAKER_ENABLED + eventId, isChecked).apply()
 
             if (isChecked) {
@@ -222,20 +201,16 @@ class EventDetailFragment : Fragment(), SensorEventListener {
             updateMqttSendingStatus(event)
         }
 
-        // Temperature Toggle
         temperatureToggle.setOnCheckedChangeListener { _, isChecked ->
             temperatureEnabled = isChecked
 
-            // Save state
             prefs.edit().putBoolean(KEY_TEMPERATURE_ENABLED + eventId, isChecked).apply()
 
             if (isChecked) {
                 if (useMockTemperature) {
-                    // Start mock temperature updates
                     startMockTemperatureUpdates()
                     Toast.makeText(requireContext(), "Using simulated temperature (emulator mode)", Toast.LENGTH_SHORT).show()
                 } else if (temperatureSensor != null) {
-                    // Use real temperature sensor
                     sensorManager?.registerListener(this, temperatureSensor, SensorManager.SENSOR_DELAY_NORMAL)
                 } else {
                     Toast.makeText(requireContext(), "No temperature sensor available", Toast.LENGTH_SHORT).show()
@@ -250,7 +225,6 @@ class EventDetailFragment : Fragment(), SensorEventListener {
             updateMqttSendingStatus(event)
         }
 
-        // Trigger initial state to start sensors if they were previously enabled
         if (savedLoudspeakerEnabled) {
             loudspeakerEnabled = true
             checkMicrophonePermission()
@@ -460,7 +434,6 @@ class EventDetailFragment : Fragment(), SensorEventListener {
         event?.let {
             if (it.sensor.type == Sensor.TYPE_AMBIENT_TEMPERATURE) {
                 val temp = it.values[0]
-                // Validate temperature reading (should be between -100°C and 100°C for realistic values)
                 if (temp > -100f && temp < 100f) {
                     currentTemperature = temp
                     hasValidTemperature = true
@@ -474,7 +447,6 @@ class EventDetailFragment : Fragment(), SensorEventListener {
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        // Not needed
     }
 
     override fun onPause() {
@@ -504,7 +476,6 @@ class EventDetailFragment : Fragment(), SensorEventListener {
         isMockTemperatureRunning = false
         stopSoundLevelMonitoring()
 
-        // Stop periodic MQTT sending
         mqttSendRunnable?.let { mqttSendHandler.removeCallbacks(it) }
         mqttSendRunnable = null
     }

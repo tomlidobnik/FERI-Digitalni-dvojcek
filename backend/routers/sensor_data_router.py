@@ -28,8 +28,7 @@ async def get_event_sensor_data(
     if not event:
         conn.close()
         raise HTTPException(status_code=404, detail="Event not found")
-    
-    # Build query based on sensor_type filter
+
     if sensor_type:
         query = """
             SELECT id, event_fk, sensor_type, value, timestamp
@@ -75,7 +74,6 @@ async def get_latest_sensor_readings(
         conn.close()
         raise HTTPException(status_code=404, detail="Event not found")
     
-    # Get latest reading for each sensor type
     cursor.execute(
         """
         SELECT esd.sensor_type, esd.value, esd.timestamp
@@ -95,7 +93,6 @@ async def get_latest_sensor_readings(
     rows = cursor.fetchall()
     conn.close()
     
-    # Convert to dictionary format
     latest_readings = {row["sensor_type"]: {
         "value": row["value"],
         "timestamp": row["timestamp"]
@@ -117,7 +114,6 @@ async def get_sensor_stats(
     conn = get_db_connection()
     cursor = conn.cursor()
     
-    # Check if event exists
     cursor.execute("SELECT id FROM events WHERE id = ?", (event_id,))
     event = cursor.fetchone()
     
@@ -125,10 +121,8 @@ async def get_sensor_stats(
         conn.close()
         raise HTTPException(status_code=404, detail="Event not found")
     
-    # Calculate time threshold
     threshold_time = (datetime.now() - timedelta(hours=hours)).isoformat()
     
-    # Get all readings for the sensor type within the time period
     cursor.execute(
         """
         SELECT value, timestamp
@@ -151,7 +145,6 @@ async def get_sensor_stats(
             "data": []
         }
     
-    # Try to calculate numeric statistics
     try:
         values = [float(row["value"]) for row in rows]
         stats = {

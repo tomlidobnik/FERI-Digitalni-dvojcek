@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -49,7 +48,6 @@ class CameraFragment : Fragment() {
 
     private val API_BASE_URL = MyApplication.dotenv["API_BASE_URL"]
 
-    // Cache OkHttpClient to avoid recreating it on every request
     private val httpClient = OkHttpClient.Builder()
         .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
         .writeTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
@@ -94,7 +92,6 @@ class CameraFragment : Fragment() {
 
         cameraExecutor = Executors.newSingleThreadExecutor()
 
-        // Disable take photo button until camera is ready
         buttonTakePhoto.isEnabled = false
 
         view.findViewById<ImageButton>(R.id.back_button).setOnClickListener {
@@ -113,7 +110,6 @@ class CameraFragment : Fragment() {
             sendImageToApi()
         }
 
-        // Start camera initialization asynchronously after view is laid out
         view.post {
             if (allPermissionsGranted()) {
                 startCamera()
@@ -134,20 +130,17 @@ class CameraFragment : Fragment() {
             try {
                 cameraProvider = cameraProviderFuture.get()
 
-                // Optimize preview for better performance with explicit resolution
                 val preview = Preview.Builder()
                     .setTargetRotation(cameraPreview.display.rotation)
-                    .setTargetResolution(android.util.Size(1280, 720)) // Limit preview resolution
+
                     .build()
                     .also {
                         it.setSurfaceProvider(cameraPreview.surfaceProvider)
                     }
 
-                // Optimize image capture settings with specific resolution
                 imageCapture = ImageCapture.Builder()
                     .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                     .setTargetRotation(cameraPreview.display.rotation)
-                    .setTargetResolution(android.util.Size(1920, 1080)) // Balanced capture resolution
                     .build()
 
                 val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
@@ -158,7 +151,6 @@ class CameraFragment : Fragment() {
                     viewLifecycleOwner, cameraSelector, preview, imageCapture
                 )
 
-                // Enable take photo button once camera is ready
                 buttonTakePhoto.isEnabled = true
                 Log.d(TAG, "Camera initialized")
 
@@ -176,7 +168,6 @@ class CameraFragment : Fragment() {
     private fun takePhoto() {
         val imageCapture = imageCapture ?: return
 
-        // Disable button immediately to prevent multiple clicks
         buttonTakePhoto.isEnabled = false
 
         val photoFile = File(
@@ -188,7 +179,7 @@ class CameraFragment : Fragment() {
 
         imageCapture.takePicture(
             outputOptions,
-            cameraExecutor, // Use background executor to avoid blocking main thread
+            cameraExecutor,
             object : ImageCapture.OnImageSavedCallback {
                 override fun onError(exc: ImageCaptureException) {
                     Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
@@ -215,27 +206,43 @@ class CameraFragment : Fragment() {
             var rotatedBitmap: Bitmap? = null
 
             try {
-                // Get dimensions
                 val options = BitmapFactory.Options().apply {
                     inJustDecodeBounds = true
                 }
                 BitmapFactory.decodeFile(imageFile.absolutePath, options)
 
-                // Calculate sample size and decode with optimal settings
-                options.inSampleSize = calculateInSampleSize(options, 720, 1280)
+                options.inSampleSize = calculateInSampleSize(options, 1080, 1920)
                 options.inJustDecodeBounds = false
                 options.inPreferredConfig = Bitmap.Config.RGB_565
 
                 bitmap = BitmapFactory.decodeFile(imageFile.absolutePath, options)
                     ?: throw Exception("Failed to decode bitmap")
 
-                // Rotate and recycle original in one pass
-                rotatedBitmap = rotateBitmap(bitmap)
-                if (bitmap !== rotatedBitmap) bitmap.recycle()
+                val exif = androidx.exifinterface.media.ExifInterface(imageFile.absolutePath)
+                val orientation = exif.getAttributeInt(
+                    androidx.exifinterface.media.ExifInterface.TAG_ORIENTATION,
+                    androidx.exifinterface.media.ExifInterface.ORIENTATION_NORMAL
+                )
+
+                val matrix = android.graphics.Matrix()
+                when (orientation) {
+                    androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+                    androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+                    androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+                }
+
+                rotatedBitmap = if (orientation != androidx.exifinterface.media.ExifInterface.ORIENTATION_NORMAL) {
+                    Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true).also {
+                        bitmap.recycle()
+                    }
+                } else {
+                    bitmap
+                }
 
                 withContext(Dispatchers.Main) {
-                    if (isAdded) { // Check if fragment is still attached
+                    if (isAdded) {
                         capturedImageView.setImageBitmap(rotatedBitmap)
+                        capturedImageView.scaleType = ImageView.ScaleType.FIT_CENTER
                         cameraPreview.visibility = View.GONE
                         capturedImageView.visibility = View.VISIBLE
                         buttonTakePhoto.visibility = View.GONE
@@ -278,17 +285,11 @@ class CameraFragment : Fragment() {
         return inSampleSize
     }
 
-    private fun rotateBitmap(bitmap: Bitmap): Bitmap {
-        val matrix = Matrix().apply { postRotate(90f) }
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, false)
-    }
 
     private fun retakePhoto() {
-        // Clean up captured image
         capturedImageFile?.delete()
         capturedImageFile = null
 
-        // Clear the ImageView and recycle bitmap to free memory
         capturedImageView.setImageBitmap(null)
 
         cameraPreview.visibility = View.VISIBLE
@@ -307,7 +308,6 @@ class CameraFragment : Fragment() {
         if (responseBody == null) return -1
 
         try {
-            // Simple JSON parsing to extract num_people
             val numPeopleRegex = """"num_people"\s*:\s*(\d+)""".toRegex()
             val matchResult = numPeopleRegex.find(responseBody)
             return matchResult?.groupValues?.get(1)?.toIntOrNull() ?: -1
@@ -332,7 +332,6 @@ class CameraFragment : Fragment() {
 
                 val imageBytes = imageFile.readBytes()
 
-                // Build multipart form data matching backend Form parameters
                 val multipartBuilder = MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
                     .addFormDataPart(
@@ -342,7 +341,6 @@ class CameraFragment : Fragment() {
                     )
                     .addFormDataPart("confidence", "0.5")
 
-                // Add event_id as Form parameter if available
                 eventId?.let {
                     multipartBuilder.addFormDataPart("event_id", it.toString())
                 }
@@ -353,15 +351,19 @@ class CameraFragment : Fragment() {
                     .build()
 
                 Log.d(TAG, "Making API call...")
-                val response = httpClient.newCall(request).execute() // Reuse cached client!
+                val response = httpClient.newCall(request).execute()
                 Log.d(TAG, "Response: ${response.code}")
+
+                // Read response body BEFORE switching to Main thread
+                val responseBody = response.body?.string()
+                val isSuccessful = response.isSuccessful
+                val responseCode = response.code
 
                 withContext(Dispatchers.Main) {
                     progressBar.visibility = View.GONE
                     buttonSendApi.isEnabled = true
 
-                    if (response.isSuccessful) {
-                        val responseBody = response.body?.string()
+                    if (isSuccessful) {
                         Log.d(TAG, "API Response: $responseBody")
 
                         val numPeople = parseNumPeopleFromResponse(responseBody)
@@ -382,7 +384,7 @@ class CameraFragment : Fragment() {
                     } else {
                         Toast.makeText(
                             requireContext(),
-                            "API Error: ${response.code}",
+                            "API Error: $responseCode",
                             Toast.LENGTH_LONG
                         ).show()
                     }
@@ -406,7 +408,6 @@ class CameraFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // Clear the ImageView to free bitmap memory
         capturedImageView.setImageBitmap(null)
     }
 
@@ -418,13 +419,11 @@ class CameraFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        // Unbind camera to free resources when fragment is paused
         cameraProvider?.unbindAll()
     }
 
     override fun onResume() {
         super.onResume()
-        // Only restart camera if it was paused and preview is still visible
         if (cameraPreview.visibility == View.VISIBLE && cameraProvider == null && allPermissionsGranted()) {
             view?.post {
                 startCamera()

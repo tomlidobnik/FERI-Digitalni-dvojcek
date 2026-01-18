@@ -13,7 +13,15 @@ data class EventSensorData(
     var temperature: Float? = null,
     var soundLevel: Double? = null,
     var lastUpdated: Long = 0
-)
+) {
+    fun copy(): EventSensorData {
+        return EventSensorData(
+            temperature = this.temperature,
+            soundLevel = this.soundLevel,
+            lastUpdated = this.lastUpdated
+        )
+    }
+}
 
 object MqttDataListener : MqttCallback {
     private val TAG = "MqttDataListener"
@@ -26,15 +34,12 @@ object MqttDataListener : MqttCallback {
             appContext = context
             mqttClient.setCallback(this)
 
-            // Subscribe to all event temperature topics
             mqttClient.subscribe("event/+/temperature", 1)
             Log.d(TAG, "Subscribed to event/+/temperature")
 
-            // Subscribe to all event sound_level topics
             mqttClient.subscribe("event/+/sound_level", 1)
             Log.d(TAG, "Subscribed to event/+/sound_level")
 
-            // Subscribe to announcement topics
             mqttClient.subscribe("announcement/global", 1)
             Log.d(TAG, "Subscribed to announcement/global")
 
@@ -48,10 +53,12 @@ object MqttDataListener : MqttCallback {
 
     fun addDataListener(listener: (Int, EventSensorData) -> Unit) {
         listeners.add(listener)
+        Log.d(TAG, "Listener added - Total listeners: ${listeners.size}")
     }
 
     fun removeDataListener(listener: (Int, EventSensorData) -> Unit) {
         listeners.remove(listener)
+        Log.d(TAG, "Listener removed - Total listeners: ${listeners.size}")
     }
 
     fun getSensorData(eventId: Int): EventSensorData? {
@@ -65,25 +72,25 @@ object MqttDataListener : MqttCallback {
     override fun messageArrived(topic: String, message: MqttMessage) {
         try {
             val payload = String(message.payload)
-            Log.d(TAG, "Message received - Topic: $topic, Payload: $payload")
-            val parts = topic.split("/")
-            Log.d(TAG, "Parts: $parts")
+            Log.d(TAG, "==========================================")
+            Log.d(TAG, "MQTT MESSAGE ARRIVED!")
+            Log.d(TAG, "Topic: $topic")
+            Log.d(TAG, "Payload: $payload")
+            Log.d(TAG, "==========================================")
 
-            // Parse topic to extract event ID and data type
-            // Format: event/{eventId}/temperature or event/{eventId}/sound_level or event/{eventId}/announcement
+            val parts = topic.split("/")
+            Log.d(TAG, "Topic parts: $parts")
 
             if (parts[0] == "announcement") {
                 Log.d(TAG, "Announcement received: $payload")
 
-                // Try to parse as JSON to extract message field
                 val displayMessage = try {
                     val json = JSONObject(payload)
-                    json.optString("message", payload) // Use "message" field if exists, otherwise use raw payload
+                    json.optString("message", payload)
                 } catch (e: Exception) {
-                    payload // If not JSON, use raw payload
+                    payload
                 }
 
-                // Show Toast on main thread
                 appContext?.let { context ->
                     Handler(Looper.getMainLooper()).post {
                         Toast.makeText(context, displayMessage, Toast.LENGTH_LONG).show()
@@ -108,24 +115,28 @@ object MqttDataListener : MqttCallback {
                         data.temperature = payload.toFloatOrNull()
                         data.lastUpdated = System.currentTimeMillis()
                         Log.d(TAG, "Updated temperature for event $eventId: ${data.temperature}°C")
+                        Log.d(TAG, "Notifying ${listeners.size} listener(s) about temperature update")
 
-                        // Notify all listeners
-                        listeners.forEach { it(eventId, data) }
+                        listeners.forEach {
+                            Log.d(TAG, "Calling listener for event $eventId")
+                            it(eventId, data)
+                        }
                     }
                     "sound_level" -> {
                         val data = eventSensorData.getOrPut(eventId) { EventSensorData() }
                         data.soundLevel = payload.toDoubleOrNull()
                         data.lastUpdated = System.currentTimeMillis()
                         Log.d(TAG, "Updated sound level for event $eventId: ${data.soundLevel} dB")
+                        Log.d(TAG, "Notifying ${listeners.size} listener(s) about sound level update")
 
-                        // Notify all listeners
-                        listeners.forEach { it(eventId, data) }
+                        listeners.forEach {
+                            Log.d(TAG, "Calling listener for event $eventId")
+                            it(eventId, data)
+                        }
                     }
                     "announcement" -> {
-                        // Event-specific announcement
                         Log.d(TAG, "Event announcement received: $payload")
 
-                        // Try to parse as JSON to extract message field
                         val displayMessage = try {
                             val json = JSONObject(payload)
                             json.optString("message", payload)
@@ -137,7 +148,6 @@ object MqttDataListener : MqttCallback {
                             val event = MyApplication.events.find { it.id == eventId }
                             val eventTitle = event?.title ?: "Event #$eventId"
 
-                            // Show Toast on main thread
                             Handler(Looper.getMainLooper()).post {
                                 Toast.makeText(context, displayMessage, Toast.LENGTH_LONG).show()
                             }
@@ -158,6 +168,5 @@ object MqttDataListener : MqttCallback {
     }
 
     override fun deliveryComplete(token: IMqttDeliveryToken?) {
-        // Not needed for subscription
     }
 }

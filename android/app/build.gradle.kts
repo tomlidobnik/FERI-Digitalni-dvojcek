@@ -56,6 +56,9 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
     implementation("androidx.camera:camera-view:$cameraxVersion")
 
+    // ExifInterface for handling image orientation
+    implementation("androidx.exifinterface:exifinterface:1.3.7")
+
     // OkHttp for network requests
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
