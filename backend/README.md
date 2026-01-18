@@ -16,7 +16,7 @@ Seed sample events:
 python3 backend/scripts/seed_events.py --count 25 --public-ratio 0.6 --with-locations --seed 42
 ```
 
-
+Za zagon mqtt brokerja in listenerja (za shranjevanje mqtt dogodkov v podatkovno bazo in pošiljanje ekstremnih dogodkov)
+```
  docker-compose up mosquitto mqtt-listener
-
- docker-compose up mosquitto
+```

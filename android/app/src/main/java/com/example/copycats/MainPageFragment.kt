@@ -48,6 +48,12 @@ class MainPageFragment : Fragment() {
                 .commit()
         }
 
+        view.findViewById<ImageButton>(R.id.simulation_button).setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainerView, SimulationFragment.newInstance())
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     companion object {

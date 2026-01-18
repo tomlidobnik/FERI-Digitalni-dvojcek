@@ -43,6 +43,9 @@ class MyApplication : Application(), Application.ActivityLifecycleCallbacks {
         // Initialize notification channel
         NotificationHelper.createNotificationChannel(this)
 
+        // Load simulation state
+        SimulationFragment.loadSimulationState(this)
+
         val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
 
         if (!sharedPreferences.contains("uuid")) {
@@ -111,6 +114,10 @@ class MyApplication : Application(), Application.ActivityLifecycleCallbacks {
     }
 
     override fun onActivityStopped(activity: Activity) {
+        getSharedPreferences("SimulationPrefs", Context.MODE_PRIVATE).edit().apply {
+            putBoolean("is_running", false)
+            apply()
+        }
     }
 
     private fun initializeLocationTracking() {

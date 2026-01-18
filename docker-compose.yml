@@ -82,6 +82,7 @@ services:
     environment:
       MQTT_BROKER_HOST: mosquitto
       MQTT_BROKER_PORT: 1883
+      PYTHONUNBUFFERED: 1
     volumes:
       - ./backend:/usr/src/backend
     depends_on:

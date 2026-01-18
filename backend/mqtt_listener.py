@@ -104,16 +104,25 @@ def on_message(client, userdata, msg):
             try:
                 sound_value = float(payload)
                 if sound_value > 100:
+                    # Get event title from database
+                    conn = get_db_connection()
+                    cursor = conn.cursor()
+                    cursor.execute("SELECT title FROM events WHERE id = ?", (event_id,))
+                    event_row = cursor.fetchone()
+                    event_title = event_row["title"] if event_row else f"Event {event_id}"
+                    conn.close()
+                    
                     alert_message = json.dumps({
                         "event_id": event_id,
+                        "event_title": event_title,
                         "alert_type": "loud_noise",
                         "sound_level": sound_value,
                         "timestamp": datetime.now().isoformat(),
-                        "message": f"Loud noise detected at event {event_id}: {sound_value} dB"
+                        "message": f"Loud noise detected at {event_title}: {sound_value} dB"
                     })
                     
                     result = client.publish("announcement/global", alert_message, qos=1)
-                    print(f"🚨 ALERT: Loud noise ({sound_value} dB) at event {event_id} - Published to announcement/global")
+                    print(f"🚨 ALERT: Loud noise ({sound_value} dB) at {event_title} - Published to announcement/global")
             except (ValueError, TypeError) as e:
                 print(f"⚠ Could not parse sound level value: {payload}")
         
@@ -145,6 +154,7 @@ def main():
     
     # Create MQTT client
     client = mqtt.Client(
+        callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
         client_id="event_sensor_listener",
         protocol=mqtt.MQTTv5
     )

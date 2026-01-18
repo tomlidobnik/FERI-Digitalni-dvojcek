@@ -1,8 +1,12 @@
 package com.example.copycats
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import android.widget.Toast
 import org.eclipse.paho.client.mqttv3.*
+import org.json.JSONObject
 import java.util.concurrent.ConcurrentHashMap
 
 data class EventSensorData(
@@ -62,23 +66,38 @@ object MqttDataListener : MqttCallback {
         try {
             val payload = String(message.payload)
             Log.d(TAG, "Message received - Topic: $topic, Payload: $payload")
+            val parts = topic.split("/")
+            Log.d(TAG, "Parts: $parts")
 
-            // Handle announcement messages
-            if (topic == "announcement/global") {
-                // Global announcement for all users
+            // Parse topic to extract event ID and data type
+            // Format: event/{eventId}/temperature or event/{eventId}/sound_level or event/{eventId}/announcement
+
+            if (parts[0] == "announcement") {
+                Log.d(TAG, "Announcement received: $payload")
+
+                // Try to parse as JSON to extract message field
+                val displayMessage = try {
+                    val json = JSONObject(payload)
+                    json.optString("message", payload) // Use "message" field if exists, otherwise use raw payload
+                } catch (e: Exception) {
+                    payload // If not JSON, use raw payload
+                }
+
+                // Show Toast on main thread
                 appContext?.let { context ->
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(context, displayMessage, Toast.LENGTH_LONG).show()
+                    }
+
                     NotificationHelper.showAnnouncementNotification(
                         context,
                         "📢 Global Announcement",
-                        payload
+                        displayMessage
                     )
                 }
                 return
             }
 
-            // Parse topic to extract event ID and data type
-            // Format: event/{eventId}/temperature or event/{eventId}/sound_level or event/{eventId}/announcement
-            val parts = topic.split("/")
             if (parts.size >= 3 && parts[0] == "event") {
                 val eventId = parts[1].toIntOrNull() ?: return
                 val dataType = parts[2]
@@ -104,14 +123,29 @@ object MqttDataListener : MqttCallback {
                     }
                     "announcement" -> {
                         // Event-specific announcement
+                        Log.d(TAG, "Event announcement received: $payload")
+
+                        // Try to parse as JSON to extract message field
+                        val displayMessage = try {
+                            val json = JSONObject(payload)
+                            json.optString("message", payload)
+                        } catch (e: Exception) {
+                            payload
+                        }
+
                         appContext?.let { context ->
                             val event = MyApplication.events.find { it.id == eventId }
                             val eventTitle = event?.title ?: "Event #$eventId"
 
+                            // Show Toast on main thread
+                            Handler(Looper.getMainLooper()).post {
+                                Toast.makeText(context, displayMessage, Toast.LENGTH_LONG).show()
+                            }
+
                             NotificationHelper.showAnnouncementNotification(
                                 context,
                                 "📢 $eventTitle",
-                                payload,
+                                displayMessage,
                                 eventId
                             )
                         }
