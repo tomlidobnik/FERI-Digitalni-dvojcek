@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.graphics.Texture;
@@ -28,6 +29,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 public class VectorMapRenderer {
 
@@ -65,6 +69,10 @@ public class VectorMapRenderer {
 
     public float scale = 0.5f;
     public float offsetX = 0f, offsetY = 0f;
+
+    private final Color activeColorA = new Color(0.2f, 0.6f, 1f, 1f);
+    private final Color activeColorB = new Color(0.2f, 0f, 0.6f, 1f);
+    private final Color tempColor = new Color();
 
     public VectorMapRenderer(OrthographicCamera camera, float screenWidth, float screenHeight) {
         this.camera = camera;
@@ -189,7 +197,7 @@ public class VectorMapRenderer {
         batch.begin();
 
         eventHitboxes.clear();
-        float size = 48f;
+        float baseSize = 48f;
 
         for (EventDto e : events) {
             if (e.location_fk == null) continue;
@@ -200,9 +208,38 @@ public class VectorMapRenderer {
             float x = (p.x - offsetX) * scale;
             float y = (p.y - offsetY) * scale;
 
-            batch.draw(markerTexture, x - size / 2f, y, size, size);
-            eventHitboxes.put(e, new Rectangle(x - size / 2f, y, size, size));
+            boolean active = isEventActive(e);
+
+            float size = baseSize;
+            Color drawColor = Color.WHITE;
+
+            if (active) {
+                float pulse = (float) (Math.sin(TimeUtils.nanoTime() / 1_000_000_000.0 * 3f) * 0.15f + 1f);
+                size *= pulse;
+
+                float lerp = (float) (Math.sin(TimeUtils.nanoTime() / 1_000_000_000.0 * 2f) * 0.5f + 0.5f);
+                tempColor.set(activeColorA).lerp(activeColorB, lerp);
+                drawColor = tempColor;
+            }
+
+            batch.setColor(drawColor);
+            batch.draw(markerTexture,
+                    x - size / 2f,
+                    y,
+                    size,
+                    size
+            );
+
+            batch.setColor(Color.WHITE);
+
+            eventHitboxes.put(e, new Rectangle(
+                    x - size / 2f,
+                    y,
+                    size,
+                    size
+            ));
         }
+
 
         batch.end();
 
@@ -279,6 +316,15 @@ public class VectorMapRenderer {
 
         eventWindow.add(content).expand().fill();
         stage.addActor(eventWindow);
+    }
+
+    private boolean isEventActive(EventDto e) {
+        LocalDateTime now = LocalDateTime.now();
+
+        LocalDateTime start = LocalDateTime.parse(e.start_date);
+        LocalDateTime end   = LocalDateTime.parse(e.end_date);
+
+        return !now.isBefore(start) && !now.isAfter(end);
     }
 
 
