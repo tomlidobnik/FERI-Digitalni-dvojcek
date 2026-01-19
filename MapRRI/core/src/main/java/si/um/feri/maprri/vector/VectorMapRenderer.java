@@ -10,6 +10,8 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Matrix4;
+
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -34,6 +36,13 @@ import java.time.format.DateTimeFormatter;
 
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 public class VectorMapRenderer {
+    private float time = 0f;
+    private float eventWindowAlpha = 0f;
+    private boolean eventWindowVisible = false;
+    private float targetZoom = 1f;
+    private EventDto hoveredEvent = null;
+    private float targetScale = 1f;
+
 
     private SpriteBatch batch;
     private Texture markerTexture;
@@ -54,6 +63,7 @@ public class VectorMapRenderer {
     public float maxScale;
 
     public final ShapeRenderer shapeRenderer;
+
 
     private final List<float[]> roads = new ArrayList<>();
     private final List<float[]> buildings = new ArrayList<>();
@@ -187,6 +197,8 @@ public class VectorMapRenderer {
     }
 
     public void render() {
+        float delta = Gdx.graphics.getDeltaTime();
+        time += delta;
 
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -204,10 +216,10 @@ public class VectorMapRenderer {
 
         eventHitboxes.clear();
         float baseSize = 48f;
-
         for (EventDto e : events) {
             if (!shouldRenderEvent(e)) continue;
             if (e.location_fk == null) continue;
+
             LocationDto loc = locationById.get(e.location_fk);
             if (loc == null) continue;
 
@@ -215,44 +227,74 @@ public class VectorMapRenderer {
             float x = (p.x - offsetX) * scale;
             float y = (p.y - offsetY) * scale;
 
+            float size = baseSize;
             boolean active = isEventActive(e);
 
-            float size = baseSize;
             Color drawColor = Color.WHITE;
-
             if (active) {
                 float pulse = (float) (Math.sin(TimeUtils.nanoTime() / 1_000_000_000.0 * 3f) * 0.15f + 1f);
                 size *= pulse;
-
                 float lerp = (float) (Math.sin(TimeUtils.nanoTime() / 1_000_000_000.0 * 2f) * 0.5f + 0.5f);
                 tempColor.set(activeColorA).lerp(activeColorB, lerp);
                 drawColor = tempColor;
             }
 
-            batch.setColor(drawColor);
-            batch.draw(markerTexture,
-                    x - size / 2f,
-                    y,
-                    size,
-                    size
-            );
-
-            batch.setColor(Color.WHITE);
-
-            eventHitboxes.put(e, new Rectangle(
-                    x - size / 2f,
-                    y,
-                    size,
-                    size
-            ));
+            eventHitboxes.put(e, new Rectangle(x - size / 2f, y, size, size));
         }
 
+        Vector2 mouseWorld = viewport.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+        hoveredEvent = null;
+        for (Map.Entry<EventDto, Rectangle> entry : eventHitboxes.entrySet()) {
+            if (entry.getValue().contains(mouseWorld)) {
+                hoveredEvent = entry.getKey();
+                break;
+            }
+        }
+
+        for (EventDto e : events) {
+            if (!shouldRenderEvent(e)) continue;
+            if (e.location_fk == null) continue;
+
+            LocationDto loc = locationById.get(e.location_fk);
+            if (loc == null) continue;
+
+            Vector2 p = lonLatToMeters(loc.longitude, loc.latitude);
+            float x = (p.x - offsetX) * scale;
+            float y = (p.y - offsetY) * scale;
+
+            float size = baseSize;
+            boolean active = isEventActive(e);
+            Color drawColor = Color.WHITE;
+
+            if (active) {
+                float pulse = (float) (Math.sin(TimeUtils.nanoTime() / 1_000_000_000.0 * 3f) * 0.15f + 1f);
+                size *= pulse;
+                float lerp = (float) (Math.sin(TimeUtils.nanoTime() / 1_000_000_000.0 * 2f) * 0.5f + 0.5f);
+                tempColor.set(activeColorA).lerp(activeColorB, lerp);
+                drawColor = tempColor;
+            }
+
+            if (e == hoveredEvent) {
+                size *= 1.3f;
+                drawColor = Color.YELLOW;
+            }
+
+            batch.setColor(drawColor);
+            batch.draw(markerTexture, x - size / 2f, y, size, size);
+            batch.setColor(Color.WHITE);
+        }
 
         batch.end();
 
-        stage.act(Gdx.graphics.getDeltaTime());
+        stage.act(delta);
+        if (eventWindowVisible) {
+            eventWindowAlpha = Math.min(1f, eventWindowAlpha + delta * 3f);
+            eventWindow.getColor().a = eventWindowAlpha;
+        }
         stage.draw();
     }
+
+
 
     private boolean shouldRenderEvent(EventDto e) {
         if (activeTagFilter.equals("ALL")) return true;
@@ -284,16 +326,25 @@ public class VectorMapRenderer {
     }
 
     public void handleClick(float screenX, float screenY) {
+        if (hoveredEvent != null) {
+            selectedEvent = hoveredEvent;
+            showEvent(selectedEvent);
+        }
+    }
+
+    public void handleHover(float screenX, float screenY) {
         Vector2 world = viewport.unproject(new Vector2(screenX, screenY));
+
+        hoveredEvent = null;
 
         for (Map.Entry<EventDto, Rectangle> entry : eventHitboxes.entrySet()) {
             if (entry.getValue().contains(world)) {
-                selectedEvent = entry.getKey();
-                showEvent(selectedEvent);
-                return;
+                hoveredEvent = entry.getKey();
+                break;
             }
         }
     }
+
     private void showEvent(EventDto e) {
         titleLabel.setText("Title: " + e.title);
         descLabel.setText("Description: " + e.description);
@@ -302,6 +353,8 @@ public class VectorMapRenderer {
 
         eventWindow.pack();
         eventWindow.setVisible(true);
+        eventWindowAlpha = 0f;
+        eventWindowVisible = true;
     }
 
 
