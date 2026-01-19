@@ -1,14 +1,14 @@
 import base64
 import io
 import os
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import uvicorn
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 
 from model import LitObjectDetector
 from database import init_db
-from routers import user_router, friend_router, location_router, location_outline_router, event_router, chat_router
+from routers import user_router, friend_router, location_router, location_outline_router, event_router, chat_router, sensor_data_router
 
 load_dotenv()
 
@@ -50,6 +50,7 @@ app.include_router(location_router.router)
 app.include_router(location_outline_router.router)
 app.include_router(event_router.router)
 app.include_router(chat_router.router)
+app.include_router(sensor_data_router.router)
 
 model = None
 device = None
@@ -95,8 +96,12 @@ async def health_check():
 
 @app.post("/detect")
 async def detect_humans(
-    file: UploadFile = File(...), confidence: float = CONFIDENCE_THRESHOLD
+    file: UploadFile = File(...), 
+    confidence: float = Form(CONFIDENCE_THRESHOLD),
+    event_id: Optional[int] = Form(None)
 ):
+    print(f"Processing detection for event_id: {event_id}")
+    
     if model is None:
         raise HTTPException(status_code=503, detail="Model not loaded")
 
