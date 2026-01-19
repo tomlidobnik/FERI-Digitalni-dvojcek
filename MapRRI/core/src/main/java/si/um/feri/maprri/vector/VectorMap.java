@@ -43,6 +43,10 @@ public class VectorMap extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         map.render();
+        if (Gdx.input.justTouched()) {
+            map.handleClick(Gdx.input.getX(), Gdx.input.getY());
+        }
+
     }
 
     private void handleInput() {

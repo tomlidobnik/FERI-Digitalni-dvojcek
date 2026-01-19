@@ -16,15 +16,33 @@ import org.json.JSONObject;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.List;
 
 import si.um.feri.maprri.api.EventDto;
 import si.um.feri.maprri.api.LocationDto;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 public class VectorMapRenderer {
 
     private SpriteBatch batch;
     private Texture markerTexture;
+    private BitmapFont font;
 
+    private Stage stage;
+    private Skin skin;
+    private Window eventWindow;
+
+    private Label titleLabel;
+    private Label descLabel;
+    private Label timeLabel;
+    private Label tagLabel;
     private float minX = Float.MAX_VALUE, maxX = -Float.MAX_VALUE;
     private float minY = Float.MAX_VALUE, maxY = -Float.MAX_VALUE;
 
@@ -39,6 +57,9 @@ public class VectorMapRenderer {
     private final Map<Integer, LocationDto> locationById = new HashMap<>();
     private final List<EventDto> events = new ArrayList<>();
 
+    private final Map<EventDto, Rectangle> eventHitboxes = new HashMap<>();
+    private EventDto selectedEvent = null;
+
     public OrthographicCamera camera;
     public Viewport viewport;
 
@@ -50,11 +71,21 @@ public class VectorMapRenderer {
         shapeRenderer = new ShapeRenderer();
         batch = new SpriteBatch();
         markerTexture = new Texture(Gdx.files.internal("images/marker.png"));
+        font = new BitmapFont();
+        font.setColor(Color.WHITE);
+
 
         viewport = new FitViewport(screenWidth, screenHeight, camera);
         viewport.apply();
 
         loadGeoJSON("maribor_center.geojson");
+        stage = new Stage(new ScreenViewport());
+        Gdx.input.setInputProcessor(stage);
+
+        skin = new Skin(Gdx.files.internal("uiskin.json"));
+
+        createEventWindow();
+
     }
 
     public void setLocations(List<LocationDto> locations) {
@@ -142,46 +173,43 @@ public class VectorMapRenderer {
     }
 
     public void render() {
+
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
 
-        // Buildings
         shapeRenderer.setColor(Color.RED);
         for (float[] verts : buildings) draw(verts);
 
-        // Roads
         shapeRenderer.setColor(Color.DARK_GRAY);
         for (float[] verts : roads) draw(verts);
 
-        // Events
         shapeRenderer.end();
+
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
+        eventHitboxes.clear();
+        float size = 48f;
+
         for (EventDto e : events) {
             if (e.location_fk == null) continue;
-
             LocationDto loc = locationById.get(e.location_fk);
             if (loc == null) continue;
 
             Vector2 p = lonLatToMeters(loc.longitude, loc.latitude);
-
             float x = (p.x - offsetX) * scale;
             float y = (p.y - offsetY) * scale;
 
-            float size = 48f; // marker size
-            batch.draw(
-                    markerTexture,
-                    x - size / 2f,
-                    y,
-                    size,
-                    size
-            );
+            batch.draw(markerTexture, x - size / 2f, y, size, size);
+            eventHitboxes.put(e, new Rectangle(x - size / 2f, y, size, size));
         }
 
         batch.end();
 
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
     }
+
 
     private void draw(float[] verts) {
         for (int i = 0; i < verts.length - 2; i += 2) {
@@ -206,9 +234,59 @@ public class VectorMapRenderer {
         scale = Math.max(minScale, Math.min(maxScale, scale));
     }
 
+    public void handleClick(float screenX, float screenY) {
+        Vector2 world = viewport.unproject(new Vector2(screenX, screenY));
+
+        for (Map.Entry<EventDto, Rectangle> entry : eventHitboxes.entrySet()) {
+            if (entry.getValue().contains(world)) {
+                selectedEvent = entry.getKey();
+                showEvent(selectedEvent);
+                return;
+            }
+        }
+    }
+    private void showEvent(EventDto e) {
+        titleLabel.setText("Title: " + e.title);
+        descLabel.setText("Description: " + e.description);
+        timeLabel.setText("From: " + e.start_date + "  To: " + e.end_date);
+        tagLabel.setText("Tag: " + (e.tag != null ? e.tag : "-"));
+
+        eventWindow.pack();
+        eventWindow.setVisible(true);
+    }
+
+
+    private void createEventWindow() {
+        eventWindow = new Window("Event", skin);
+        eventWindow.setSize(420, 200);
+        eventWindow.setPosition(20, 20);
+        eventWindow.setVisible(false);
+        eventWindow.setMovable(true);
+
+        titleLabel = new Label("", skin);
+        descLabel = new Label("", skin);
+        timeLabel = new Label("", skin);
+        tagLabel = new Label("", skin);
+
+        descLabel.setWrap(true);
+
+        Table content = new Table(skin);
+        content.left().top();
+        content.add(titleLabel).left().row();
+        content.add(descLabel).width(380).left().padTop(5).row();
+        content.add(timeLabel).left().padTop(5).row();
+        content.add(tagLabel).left().padTop(5).row();
+
+        eventWindow.add(content).expand().fill();
+        stage.addActor(eventWindow);
+    }
+
+
     public void dispose() {
         shapeRenderer.dispose();
         batch.dispose();
         markerTexture.dispose();
+        font.dispose();
+
     }
 }
