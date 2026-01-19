@@ -1,0 +1,1517 @@
+1768671903: mosquitto version 2.0.22 starting
+1768671903: Config loaded from /mosquitto/config/mosquitto.conf.
+1768671903: Opening ipv4 listen socket on port 1883.
+1768671903: Opening ipv6 listen socket on port 1883.
+1768671903: Opening websockets listen socket on port 9001.
+1768671903: mosquitto version 2.0.22 running
+1768672101: New connection from 192.168.65.1:36645 on port 1883.
+1768672101: New client connected from 192.168.65.1:36645 as Android_1768672101204 (p2, c1, k60).
+1768672101: No will message specified.
+1768672101: Sending CONNACK to Android_1768672101204 (0, 0)
+1768672161: Received PINGREQ from Android_1768672101204
+1768672161: Sending PINGRESP to Android_1768672101204
+1768672198: Client Android_1768672101204 closed its connection.
+1768672238: New connection from 192.168.65.1:61515 on port 1883.
+1768672239: New client connected from 192.168.65.1:61515 as Android_1768672235344 (p2, c1, k60).
+1768672239: No will message specified.
+1768672239: Sending CONNACK to Android_1768672235344 (0, 0)
+1768672299: Received PINGREQ from Android_1768672235344
+1768672299: Sending PINGRESP to Android_1768672235344
+1768672336: Client Android_1768672235344 closed its connection.
+1768672338: New connection from 192.168.65.1:48272 on port 1883.
+1768672338: New client connected from 192.168.65.1:48272 as Android_1768672334894 (p2, c1, k60).
+1768672338: No will message specified.
+1768672338: Sending CONNACK to Android_1768672334894 (0, 0)
+1768672365: Received PUBLISH from Android_1768672334894 (d0, q1, r0, m1, 'event/1/sound_level', ... (17 bytes))
+1768672365: Sending PUBACK to Android_1768672334894 (m1, rc0)
+1768672365: Received PUBLISH from Android_1768672334894 (d0, q1, r0, m2, 'event/1/temperature', ... (7 bytes))
+1768672365: Sending PUBACK to Android_1768672334894 (m2, rc0)
+1768672371: Received PUBLISH from Android_1768672334894 (d0, q1, r0, m3, 'event/1/temperature', ... (7 bytes))
+1768672371: Sending PUBACK to Android_1768672334894 (m3, rc0)
+1768672371: Received PUBLISH from Android_1768672334894 (d0, q1, r0, m4, 'event/1/sound_level', ... (17 bytes))
+1768672371: Sending PUBACK to Android_1768672334894 (m4, rc0)
+1768672431: Received PINGREQ from Android_1768672334894
+1768672431: Sending PINGRESP to Android_1768672334894
+1768672491: Received PINGREQ from Android_1768672334894
+1768672491: Sending PINGRESP to Android_1768672334894
+1768672508: Client Android_1768672334894 closed its connection.
+1768672509: New connection from 192.168.65.1:61087 on port 1883.
+1768672509: New client connected from 192.168.65.1:61087 as Android_1768672506016 (p2, c1, k60).
+1768672509: No will message specified.
+1768672509: Sending CONNACK to Android_1768672506016 (0, 0)
+1768672569: Received PINGREQ from Android_1768672506016
+1768672569: Sending PINGRESP to Android_1768672506016
+1768672604: Client Android_1768672506016 closed its connection.
+1768672605: New connection from 192.168.65.1:23296 on port 1883.
+1768672605: New client connected from 192.168.65.1:23296 as Android_1768672602262 (p2, c1, k60).
+1768672605: No will message specified.
+1768672605: Sending CONNACK to Android_1768672602262 (0, 0)
+1768672665: Received PINGREQ from Android_1768672602262
+1768672665: Sending PINGRESP to Android_1768672602262
+1768672725: Received PINGREQ from Android_1768672602262
+1768672725: Sending PINGRESP to Android_1768672602262
+1768672761: Client Android_1768672602262 closed its connection.
+1768672762: New connection from 192.168.65.1:62144 on port 1883.
+1768672762: New client connected from 192.168.65.1:62144 as Android_1768672759104 (p2, c1, k60).
+1768672762: No will message specified.
+1768672762: Sending CONNACK to Android_1768672759104 (0, 0)
+1768672779: Received PUBLISH from Android_1768672759104 (d0, q1, r0, m1, 'event/1/sound_level', ... (17 bytes))
+1768672779: Sending PUBACK to Android_1768672759104 (m1, rc0)
+1768672785: Received PUBLISH from Android_1768672759104 (d0, q1, r0, m2, 'event/1/sound_level', ... (3 bytes))
+1768672785: Sending PUBACK to Android_1768672759104 (m2, rc0)
+1768672845: Received PINGREQ from Android_1768672759104
+1768672845: Sending PINGRESP to Android_1768672759104
+1768672857: Client Android_1768672759104 closed its connection.
+1768673357: New connection from 192.168.65.1:59394 on port 1883.
+1768673357: New client connected from 192.168.65.1:59394 as Android_1768673353781 (p2, c1, k60).
+1768673357: No will message specified.
+1768673357: Sending CONNACK to Android_1768673353781 (0, 0)
+1768673417: Received PINGREQ from Android_1768673353781
+1768673417: Sending PINGRESP to Android_1768673353781
+1768673477: Received PINGREQ from Android_1768673353781
+1768673477: Sending PINGRESP to Android_1768673353781
+1768673537: Received PINGREQ from Android_1768673353781
+1768673537: Sending PINGRESP to Android_1768673353781
+1768673597: Received PINGREQ from Android_1768673353781
+1768673597: Sending PINGRESP to Android_1768673353781
+1768673657: Received PINGREQ from Android_1768673353781
+1768673657: Sending PINGRESP to Android_1768673353781
+1768673703: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1768673717: Received PINGREQ from Android_1768673353781
+1768673717: Sending PINGRESP to Android_1768673353781
+1768673777: Received PINGREQ from Android_1768673353781
+1768673777: Sending PINGRESP to Android_1768673353781
+1768673837: Received PINGREQ from Android_1768673353781
+1768673837: Sending PINGRESP to Android_1768673353781
+1768673897: Received PINGREQ from Android_1768673353781
+1768673897: Sending PINGRESP to Android_1768673353781
+1768673957: Received PINGREQ from Android_1768673353781
+1768673957: Sending PINGRESP to Android_1768673353781
+1768674017: Received PINGREQ from Android_1768673353781
+1768674017: Sending PINGRESP to Android_1768673353781
+1768674077: Received PINGREQ from Android_1768673353781
+1768674077: Sending PINGRESP to Android_1768673353781
+1768674137: Received PINGREQ from Android_1768673353781
+1768674137: Sending PINGRESP to Android_1768673353781
+1768674197: Received PINGREQ from Android_1768673353781
+1768674197: Sending PINGRESP to Android_1768673353781
+1768674257: Received PINGREQ from Android_1768673353781
+1768674257: Sending PINGRESP to Android_1768673353781
+1768674317: Received PINGREQ from Android_1768673353781
+1768674317: Sending PINGRESP to Android_1768673353781
+1768674377: Received PINGREQ from Android_1768673353781
+1768674377: Sending PINGRESP to Android_1768673353781
+1768674437: Received PINGREQ from Android_1768673353781
+1768674437: Sending PINGRESP to Android_1768673353781
+1768674497: Received PINGREQ from Android_1768673353781
+1768674497: Sending PINGRESP to Android_1768673353781
+1768674557: Received PINGREQ from Android_1768673353781
+1768674557: Sending PINGRESP to Android_1768673353781
+1768674617: Received PINGREQ from Android_1768673353781
+1768674617: Sending PINGRESP to Android_1768673353781
+1768674677: Received PINGREQ from Android_1768673353781
+1768674677: Sending PINGRESP to Android_1768673353781
+1768674737: Received PINGREQ from Android_1768673353781
+1768674737: Sending PINGRESP to Android_1768673353781
+1768674797: Received PINGREQ from Android_1768673353781
+1768674797: Sending PINGRESP to Android_1768673353781
+1768674857: Received PINGREQ from Android_1768673353781
+1768674857: Sending PINGRESP to Android_1768673353781
+1768674917: Received PINGREQ from Android_1768673353781
+1768674917: Sending PINGRESP to Android_1768673353781
+1768674977: Received PINGREQ from Android_1768673353781
+1768674977: Sending PINGRESP to Android_1768673353781
+1768675037: Received PINGREQ from Android_1768673353781
+1768675037: Sending PINGRESP to Android_1768673353781
+1768675097: Received PINGREQ from Android_1768673353781
+1768675097: Sending PINGRESP to Android_1768673353781
+1768675157: Received PINGREQ from Android_1768673353781
+1768675157: Sending PINGRESP to Android_1768673353781
+1768675217: Received PINGREQ from Android_1768673353781
+1768675217: Sending PINGRESP to Android_1768673353781
+1768675277: Received PINGREQ from Android_1768673353781
+1768675277: Sending PINGRESP to Android_1768673353781
+1768675337: Received PINGREQ from Android_1768673353781
+1768675337: Sending PINGRESP to Android_1768673353781
+1768675397: Received PINGREQ from Android_1768673353781
+1768675397: Sending PINGRESP to Android_1768673353781
+1768675457: Received PINGREQ from Android_1768673353781
+1768675457: Sending PINGRESP to Android_1768673353781
+1768675504: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1768675517: Received PINGREQ from Android_1768673353781
+1768675517: Sending PINGRESP to Android_1768673353781
+1768675577: Received PINGREQ from Android_1768673353781
+1768675577: Sending PINGRESP to Android_1768673353781
+1768675637: Received PINGREQ from Android_1768673353781
+1768675637: Sending PINGRESP to Android_1768673353781
+1768675697: Received PINGREQ from Android_1768673353781
+1768675697: Sending PINGRESP to Android_1768673353781
+1768675757: Received PINGREQ from Android_1768673353781
+1768675757: Sending PINGRESP to Android_1768673353781
+1768675817: Received PINGREQ from Android_1768673353781
+1768675817: Sending PINGRESP to Android_1768673353781
+1768675877: Received PINGREQ from Android_1768673353781
+1768675877: Sending PINGRESP to Android_1768673353781
+1768675937: Received PINGREQ from Android_1768673353781
+1768675937: Sending PINGRESP to Android_1768673353781
+1768675997: Received PINGREQ from Android_1768673353781
+1768675997: Sending PINGRESP to Android_1768673353781
+1768676057: Received PINGREQ from Android_1768673353781
+1768676057: Sending PINGRESP to Android_1768673353781
+1768676117: Received PINGREQ from Android_1768673353781
+1768676117: Sending PINGRESP to Android_1768673353781
+1768676177: Received PINGREQ from Android_1768673353781
+1768676177: Sending PINGRESP to Android_1768673353781
+1768676237: Received PINGREQ from Android_1768673353781
+1768676237: Sending PINGRESP to Android_1768673353781
+1768676297: Received PINGREQ from Android_1768673353781
+1768676297: Sending PINGRESP to Android_1768673353781
+1768676357: Received PINGREQ from Android_1768673353781
+1768676357: Sending PINGRESP to Android_1768673353781
+1768676417: Received PINGREQ from Android_1768673353781
+1768676417: Sending PINGRESP to Android_1768673353781
+1768676477: Received PINGREQ from Android_1768673353781
+1768676477: Sending PINGRESP to Android_1768673353781
+1768676537: Received PINGREQ from Android_1768673353781
+1768676537: Sending PINGRESP to Android_1768673353781
+1768676597: Received PINGREQ from Android_1768673353781
+1768676597: Sending PINGRESP to Android_1768673353781
+1768676657: Received PINGREQ from Android_1768673353781
+1768676657: Sending PINGRESP to Android_1768673353781
+1768676717: Received PINGREQ from Android_1768673353781
+1768676717: Sending PINGRESP to Android_1768673353781
+1768676777: Received PINGREQ from Android_1768673353781
+1768676777: Sending PINGRESP to Android_1768673353781
+1768676837: Received PINGREQ from Android_1768673353781
+1768676837: Sending PINGRESP to Android_1768673353781
+1768676897: Received PINGREQ from Android_1768673353781
+1768676897: Sending PINGRESP to Android_1768673353781
+1768676957: Received PINGREQ from Android_1768673353781
+1768676957: Sending PINGRESP to Android_1768673353781
+1768677017: Received PINGREQ from Android_1768673353781
+1768677017: Sending PINGRESP to Android_1768673353781
+1768677077: Received PINGREQ from Android_1768673353781
+1768677077: Sending PINGRESP to Android_1768673353781
+1768677137: Received PINGREQ from Android_1768673353781
+1768677137: Sending PINGRESP to Android_1768673353781
+1768677197: Received PINGREQ from Android_1768673353781
+1768677197: Sending PINGRESP to Android_1768673353781
+1768677257: Received PINGREQ from Android_1768673353781
+1768677257: Sending PINGRESP to Android_1768673353781
+1768677305: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1768677317: Received PINGREQ from Android_1768673353781
+1768677317: Sending PINGRESP to Android_1768673353781
+1768677377: Received PINGREQ from Android_1768673353781
+1768677377: Sending PINGRESP to Android_1768673353781
+1768677437: Received PINGREQ from Android_1768673353781
+1768677437: Sending PINGRESP to Android_1768673353781
+1768677497: Received PINGREQ from Android_1768673353781
+1768677497: Sending PINGRESP to Android_1768673353781
+1768677557: Received PINGREQ from Android_1768673353781
+1768677557: Sending PINGRESP to Android_1768673353781
+1768677617: Received PINGREQ from Android_1768673353781
+1768677617: Sending PINGRESP to Android_1768673353781
+1768677677: Received PINGREQ from Android_1768673353781
+1768677677: Sending PINGRESP to Android_1768673353781
+1768677710: Client Android_1768673353781 closed its connection.
+1768677711: New connection from 192.168.65.1:37297 on port 1883.
+1768677712: New client connected from 192.168.65.1:37297 as Android_1768677708652 (p2, c1, k60).
+1768677712: No will message specified.
+1768677712: Sending CONNACK to Android_1768677708652 (0, 0)
+1768677772: Received PINGREQ from Android_1768677708652
+1768677772: Sending PINGRESP to Android_1768677708652
+1768677832: Received PINGREQ from Android_1768677708652
+1768677832: Sending PINGRESP to Android_1768677708652
+1768677892: Received PINGREQ from Android_1768677708652
+1768677892: Sending PINGRESP to Android_1768677708652
+1768677926: Client Android_1768677708652 closed its connection.
+1768677928: New connection from 192.168.65.1:57802 on port 1883.
+1768677928: New client connected from 192.168.65.1:57802 as Android_1768677924769 (p2, c1, k60).
+1768677928: No will message specified.
+1768677928: Sending CONNACK to Android_1768677924769 (0, 0)
+1768677988: Received PINGREQ from Android_1768677924769
+1768677988: Sending PINGRESP to Android_1768677924769
+1768678014: Client Android_1768677924769 closed its connection.
+1768678016: New connection from 192.168.65.1:45140 on port 1883.
+1768678016: New client connected from 192.168.65.1:45140 as Android_1768678012786 (p2, c1, k60).
+1768678016: No will message specified.
+1768678016: Sending CONNACK to Android_1768678012786 (0, 0)
+1768678052: Client Android_1768678012786 closed its connection.
+1768678054: New connection from 192.168.65.1:28343 on port 1883.
+1768678054: New client connected from 192.168.65.1:28343 as Android_1768678050787 (p2, c1, k60).
+1768678054: No will message specified.
+1768678054: Sending CONNACK to Android_1768678050787 (0, 0)
+1768678079: Received PUBLISH from Android_1768678050787 (d0, q1, r0, m1, 'event/3/sound_level', ... (17 bytes))
+1768678079: Sending PUBACK to Android_1768678050787 (m1, rc0)
+1768678084: Received PUBLISH from Android_1768678050787 (d0, q1, r0, m2, 'event/3/sound_level', ... (16 bytes))
+1768678084: Sending PUBACK to Android_1768678050787 (m2, rc0)
+1768678089: Received PUBLISH from Android_1768678050787 (d0, q1, r0, m3, 'event/3/sound_level', ... (3 bytes))
+1768678089: Sending PUBACK to Android_1768678050787 (m3, rc0)
+1768678090: Received PUBLISH from Android_1768678050787 (d0, q1, r0, m4, 'event/3/sound_level', ... (3 bytes))
+1768678090: Sending PUBACK to Android_1768678050787 (m4, rc0)
+1768678149: Received PUBLISH from Android_1768678050787 (d0, q1, r0, m5, 'event/3/sound_level', ... (3 bytes))
+1768678149: Sending PUBACK to Android_1768678050787 (m5, rc0)
+1768678154: Received PUBLISH from Android_1768678050787 (d0, q1, r0, m6, 'event/3/sound_level', ... (3 bytes))
+1768678154: Sending PUBACK to Android_1768678050787 (m6, rc0)
+1768678195: Client Android_1768678050787 closed its connection.
+1768678197: New connection from 192.168.65.1:24872 on port 1883.
+1768678197: New client connected from 192.168.65.1:24872 as Android_1768678193800 (p2, c1, k60).
+1768678197: No will message specified.
+1768678197: Sending CONNACK to Android_1768678193800 (0, 0)
+1768678209: Received PUBLISH from Android_1768678193800 (d0, q1, r0, m1, 'event/1/sound_level', ... (17 bytes))
+1768678209: Sending PUBACK to Android_1768678193800 (m1, rc0)
+1768678209: Received PUBLISH from Android_1768678193800 (d0, q1, r0, m2, 'event/1/temperature', ... (9 bytes))
+1768678209: Sending PUBACK to Android_1768678193800 (m2, rc0)
+1768678233: Received PUBLISH from Android_1768678193800 (d0, q1, r0, m3, 'event/1/sound_level', ... (17 bytes))
+1768678233: Sending PUBACK to Android_1768678193800 (m3, rc0)
+1768678233: Received PUBLISH from Android_1768678193800 (d0, q1, r0, m4, 'event/1/temperature', ... (9 bytes))
+1768678233: Sending PUBACK to Android_1768678193800 (m4, rc0)
+1768678293: Received PINGREQ from Android_1768678193800
+1768678293: Sending PINGRESP to Android_1768678193800
+1768678353: Received PINGREQ from Android_1768678193800
+1768678353: Sending PINGRESP to Android_1768678193800
+1768678413: Received PINGREQ from Android_1768678193800
+1768678413: Sending PINGRESP to Android_1768678193800
+1768678434: Client Android_1768678193800 closed its connection.
+1768678436: New connection from 192.168.65.1:43334 on port 1883.
+1768678437: New client connected from 192.168.65.1:43334 as Android_1768678433505 (p2, c1, k60).
+1768678437: No will message specified.
+1768678437: Sending CONNACK to Android_1768678433505 (0, 0)
+1768678444: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m1, 'event/1/sound_level', ... (3 bytes))
+1768678444: Sending PUBACK to Android_1768678433505 (m1, rc0)
+1768678446: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m2, 'event/1/sound_level', ... (17 bytes))
+1768678446: Sending PUBACK to Android_1768678433505 (m2, rc0)
+1768678446: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m3, 'event/1/temperature', ... (9 bytes))
+1768678446: Sending PUBACK to Android_1768678433505 (m3, rc0)
+1768678459: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m4, 'event/1/sound_level', ... (17 bytes))
+1768678459: Sending PUBACK to Android_1768678433505 (m4, rc0)
+1768678464: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m5, 'event/1/sound_level', ... (3 bytes))
+1768678464: Sending PUBACK to Android_1768678433505 (m5, rc0)
+1768678465: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m6, 'event/1/temperature', ... (9 bytes))
+1768678465: Sending PUBACK to Android_1768678433505 (m6, rc0)
+1768678465: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m7, 'event/1/sound_level', ... (17 bytes))
+1768678465: Sending PUBACK to Android_1768678433505 (m7, rc0)
+1768678525: Received PINGREQ from Android_1768678433505
+1768678525: Sending PINGRESP to Android_1768678433505
+1768678585: Received PINGREQ from Android_1768678433505
+1768678585: Sending PINGRESP to Android_1768678433505
+1768678645: Received PINGREQ from Android_1768678433505
+1768678645: Sending PINGRESP to Android_1768678433505
+1768678705: Received PINGREQ from Android_1768678433505
+1768678705: Sending PINGRESP to Android_1768678433505
+1768678765: Received PINGREQ from Android_1768678433505
+1768678765: Sending PINGRESP to Android_1768678433505
+1768678825: Received PINGREQ from Android_1768678433505
+1768678825: Sending PINGRESP to Android_1768678433505
+1768678885: Received PINGREQ from Android_1768678433505
+1768678885: Sending PINGRESP to Android_1768678433505
+1768678892: New connection from 172.21.0.3:58461 on port 1883.
+1768678892: New client connected from 172.21.0.3:58461 as event_sensor_listener (p5, c1, k60).
+1768678892: No will message specified.
+1768678892: Sending CONNACK to event_sensor_listener (0, 0)
+1768678892: Received SUBSCRIBE from event_sensor_listener
+1768678892: 	event/# (QoS 0)
+1768678892: event_sensor_listener 0 event/#
+1768678892: Sending SUBACK to event_sensor_listener
+1768678910: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m8, 'event/1/temperature', ... (9 bytes))
+1768678910: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768678910: Sending PUBACK to Android_1768678433505 (m8, rc0)
+1768678913: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m9, 'event/1/temperature', ... (9 bytes))
+1768678913: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768678913: Sending PUBACK to Android_1768678433505 (m9, rc0)
+1768678913: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m10, 'event/1/sound_level', ... (3 bytes))
+1768678913: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768678913: Sending PUBACK to Android_1768678433505 (m10, rc0)
+1768678952: Received PINGREQ from event_sensor_listener
+1768678952: Sending PINGRESP to event_sensor_listener
+1768678973: Received PINGREQ from Android_1768678433505
+1768678973: Sending PINGRESP to Android_1768678433505
+1768679012: Received PINGREQ from event_sensor_listener
+1768679012: Sending PINGRESP to event_sensor_listener
+1768679033: Received PINGREQ from Android_1768678433505
+1768679033: Sending PINGRESP to Android_1768678433505
+1768679072: Received PINGREQ from event_sensor_listener
+1768679072: Sending PINGRESP to event_sensor_listener
+1768679093: Received PINGREQ from Android_1768678433505
+1768679093: Sending PINGRESP to Android_1768678433505
+1768679106: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1768679133: Received PINGREQ from event_sensor_listener
+1768679133: Sending PINGRESP to event_sensor_listener
+1768679153: Received PINGREQ from Android_1768678433505
+1768679153: Sending PINGRESP to Android_1768678433505
+1768679193: Received PINGREQ from event_sensor_listener
+1768679193: Sending PINGRESP to event_sensor_listener
+1768679213: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m11, 'event/1/temperature', ... (9 bytes))
+1768679213: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768679213: Sending PUBACK to Android_1768678433505 (m11, rc0)
+1768679213: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m12, 'event/1/sound_level', ... (3 bytes))
+1768679213: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768679213: Sending PUBACK to Android_1768678433505 (m12, rc0)
+1768679253: Received PINGREQ from event_sensor_listener
+1768679253: Sending PINGRESP to event_sensor_listener
+1768679273: Received PINGREQ from Android_1768678433505
+1768679273: Sending PINGRESP to Android_1768678433505
+1768679313: Received PINGREQ from event_sensor_listener
+1768679313: Sending PINGRESP to event_sensor_listener
+1768679333: Received PINGREQ from Android_1768678433505
+1768679333: Sending PINGRESP to Android_1768678433505
+1768679374: Received PINGREQ from event_sensor_listener
+1768679374: Sending PINGRESP to event_sensor_listener
+1768679393: Received PINGREQ from Android_1768678433505
+1768679393: Sending PINGRESP to Android_1768678433505
+1768679434: Received PINGREQ from event_sensor_listener
+1768679434: Sending PINGRESP to event_sensor_listener
+1768679453: Received PINGREQ from Android_1768678433505
+1768679453: Sending PINGRESP to Android_1768678433505
+1768679494: Received PINGREQ from event_sensor_listener
+1768679494: Sending PINGRESP to event_sensor_listener
+1768679513: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m13, 'event/1/temperature', ... (9 bytes))
+1768679513: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768679513: Sending PUBACK to Android_1768678433505 (m13, rc0)
+1768679513: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m14, 'event/1/sound_level', ... (3 bytes))
+1768679513: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768679513: Sending PUBACK to Android_1768678433505 (m14, rc0)
+1768679555: Received PINGREQ from event_sensor_listener
+1768679555: Sending PINGRESP to event_sensor_listener
+1768679573: Received PINGREQ from Android_1768678433505
+1768679573: Sending PINGRESP to Android_1768678433505
+1768679615: Received PINGREQ from event_sensor_listener
+1768679615: Sending PINGRESP to event_sensor_listener
+1768679633: Received PINGREQ from Android_1768678433505
+1768679633: Sending PINGRESP to Android_1768678433505
+1768679676: Received PINGREQ from event_sensor_listener
+1768679676: Sending PINGRESP to event_sensor_listener
+1768679693: Received PINGREQ from Android_1768678433505
+1768679693: Sending PINGRESP to Android_1768678433505
+1768679736: Received PINGREQ from event_sensor_listener
+1768679736: Sending PINGRESP to event_sensor_listener
+1768679753: Received PINGREQ from Android_1768678433505
+1768679753: Sending PINGRESP to Android_1768678433505
+1768679796: Received PINGREQ from event_sensor_listener
+1768679796: Sending PINGRESP to event_sensor_listener
+1768679813: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m15, 'event/1/temperature', ... (9 bytes))
+1768679813: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768679813: Sending PUBACK to Android_1768678433505 (m15, rc0)
+1768679813: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m16, 'event/1/sound_level', ... (3 bytes))
+1768679813: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768679813: Sending PUBACK to Android_1768678433505 (m16, rc0)
+1768679857: Received PINGREQ from event_sensor_listener
+1768679857: Sending PINGRESP to event_sensor_listener
+1768679873: Received PINGREQ from Android_1768678433505
+1768679873: Sending PINGRESP to Android_1768678433505
+1768679917: Received PINGREQ from event_sensor_listener
+1768679917: Sending PINGRESP to event_sensor_listener
+1768679933: Received PINGREQ from Android_1768678433505
+1768679933: Sending PINGRESP to Android_1768678433505
+1768679978: Received PINGREQ from event_sensor_listener
+1768679978: Sending PINGRESP to event_sensor_listener
+1768679993: Received PINGREQ from Android_1768678433505
+1768679993: Sending PINGRESP to Android_1768678433505
+1768680038: Received PINGREQ from event_sensor_listener
+1768680038: Sending PINGRESP to event_sensor_listener
+1768680053: Received PINGREQ from Android_1768678433505
+1768680053: Sending PINGRESP to Android_1768678433505
+1768680098: Received PINGREQ from event_sensor_listener
+1768680098: Sending PINGRESP to event_sensor_listener
+1768680113: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m17, 'event/1/sound_level', ... (3 bytes))
+1768680113: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768680113: Sending PUBACK to Android_1768678433505 (m17, rc0)
+1768680113: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m18, 'event/1/temperature', ... (9 bytes))
+1768680113: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768680113: Sending PUBACK to Android_1768678433505 (m18, rc0)
+1768680159: Received PINGREQ from event_sensor_listener
+1768680159: Sending PINGRESP to event_sensor_listener
+1768680173: Received PINGREQ from Android_1768678433505
+1768680173: Sending PINGRESP to Android_1768678433505
+1768680219: Received PINGREQ from event_sensor_listener
+1768680219: Sending PINGRESP to event_sensor_listener
+1768680233: Received PINGREQ from Android_1768678433505
+1768680233: Sending PINGRESP to Android_1768678433505
+1768680280: Received PINGREQ from event_sensor_listener
+1768680280: Sending PINGRESP to event_sensor_listener
+1768680293: Received PINGREQ from Android_1768678433505
+1768680293: Sending PINGRESP to Android_1768678433505
+1768680340: Received PINGREQ from event_sensor_listener
+1768680340: Sending PINGRESP to event_sensor_listener
+1768680353: Received PINGREQ from Android_1768678433505
+1768680353: Sending PINGRESP to Android_1768678433505
+1768680400: Received PINGREQ from event_sensor_listener
+1768680400: Sending PINGRESP to event_sensor_listener
+1768680413: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m19, 'event/1/sound_level', ... (3 bytes))
+1768680413: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768680413: Sending PUBACK to Android_1768678433505 (m19, rc0)
+1768680413: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m20, 'event/1/temperature', ... (9 bytes))
+1768680413: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768680413: Sending PUBACK to Android_1768678433505 (m20, rc0)
+1768680461: Received PINGREQ from event_sensor_listener
+1768680461: Sending PINGRESP to event_sensor_listener
+1768680473: Received PINGREQ from Android_1768678433505
+1768680473: Sending PINGRESP to Android_1768678433505
+1768680521: Received PINGREQ from event_sensor_listener
+1768680521: Sending PINGRESP to event_sensor_listener
+1768680533: Received PINGREQ from Android_1768678433505
+1768680533: Sending PINGRESP to Android_1768678433505
+1768680582: Received PINGREQ from event_sensor_listener
+1768680582: Sending PINGRESP to event_sensor_listener
+1768680593: Received PINGREQ from Android_1768678433505
+1768680593: Sending PINGRESP to Android_1768678433505
+1768680642: Received PINGREQ from event_sensor_listener
+1768680642: Sending PINGRESP to event_sensor_listener
+1768680653: Received PINGREQ from Android_1768678433505
+1768680653: Sending PINGRESP to Android_1768678433505
+1768680702: Received PINGREQ from event_sensor_listener
+1768680702: Sending PINGRESP to event_sensor_listener
+1768680713: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m21, 'event/1/sound_level', ... (3 bytes))
+1768680713: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768680713: Sending PUBACK to Android_1768678433505 (m21, rc0)
+1768680713: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m22, 'event/1/temperature', ... (9 bytes))
+1768680713: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768680713: Sending PUBACK to Android_1768678433505 (m22, rc0)
+1768680713: Received PINGREQ from Android_1768678433505
+1768680713: Sending PINGRESP to Android_1768678433505
+1768680763: Received PINGREQ from event_sensor_listener
+1768680763: Sending PINGRESP to event_sensor_listener
+1768680773: Received PINGREQ from Android_1768678433505
+1768680773: Sending PINGRESP to Android_1768678433505
+1768680823: Received PINGREQ from event_sensor_listener
+1768680823: Sending PINGRESP to event_sensor_listener
+1768680833: Received PINGREQ from Android_1768678433505
+1768680833: Sending PINGRESP to Android_1768678433505
+1768680884: Received PINGREQ from event_sensor_listener
+1768680884: Sending PINGRESP to event_sensor_listener
+1768680893: Received PINGREQ from Android_1768678433505
+1768680893: Sending PINGRESP to Android_1768678433505
+1768680907: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1768680944: Received PINGREQ from event_sensor_listener
+1768680944: Sending PINGRESP to event_sensor_listener
+1768680953: Received PINGREQ from Android_1768678433505
+1768680953: Sending PINGRESP to Android_1768678433505
+1768681004: Received PINGREQ from event_sensor_listener
+1768681004: Sending PINGRESP to event_sensor_listener
+1768681013: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m23, 'event/1/sound_level', ... (3 bytes))
+1768681013: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768681013: Sending PUBACK to Android_1768678433505 (m23, rc0)
+1768681013: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m24, 'event/1/temperature', ... (9 bytes))
+1768681013: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768681013: Sending PUBACK to Android_1768678433505 (m24, rc0)
+1768681064: Received PINGREQ from event_sensor_listener
+1768681064: Sending PINGRESP to event_sensor_listener
+1768681073: Received PINGREQ from Android_1768678433505
+1768681073: Sending PINGRESP to Android_1768678433505
+1768681124: Received PINGREQ from event_sensor_listener
+1768681124: Sending PINGRESP to event_sensor_listener
+1768681133: Received PINGREQ from Android_1768678433505
+1768681133: Sending PINGRESP to Android_1768678433505
+1768681185: Received PINGREQ from event_sensor_listener
+1768681185: Sending PINGRESP to event_sensor_listener
+1768681193: Received PINGREQ from Android_1768678433505
+1768681193: Sending PINGRESP to Android_1768678433505
+1768681245: Received PINGREQ from event_sensor_listener
+1768681245: Sending PINGRESP to event_sensor_listener
+1768681253: Received PINGREQ from Android_1768678433505
+1768681253: Sending PINGRESP to Android_1768678433505
+1768681305: Received PINGREQ from event_sensor_listener
+1768681305: Sending PINGRESP to event_sensor_listener
+1768681313: Received PINGREQ from Android_1768678433505
+1768681313: Sending PINGRESP to Android_1768678433505
+1768681313: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m25, 'event/1/sound_level', ... (3 bytes))
+1768681313: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768681313: Sending PUBACK to Android_1768678433505 (m25, rc0)
+1768681313: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m26, 'event/1/temperature', ... (9 bytes))
+1768681313: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768681313: Sending PUBACK to Android_1768678433505 (m26, rc0)
+1768681365: Received PINGREQ from event_sensor_listener
+1768681365: Sending PINGRESP to event_sensor_listener
+1768681373: Received PINGREQ from Android_1768678433505
+1768681373: Sending PINGRESP to Android_1768678433505
+1768681425: Received PINGREQ from event_sensor_listener
+1768681425: Sending PINGRESP to event_sensor_listener
+1768681433: Received PINGREQ from Android_1768678433505
+1768681433: Sending PINGRESP to Android_1768678433505
+1768681486: Received PINGREQ from event_sensor_listener
+1768681486: Sending PINGRESP to event_sensor_listener
+1768681493: Received PINGREQ from Android_1768678433505
+1768681493: Sending PINGRESP to Android_1768678433505
+1768681546: Received PINGREQ from event_sensor_listener
+1768681546: Sending PINGRESP to event_sensor_listener
+1768681553: Received PINGREQ from Android_1768678433505
+1768681553: Sending PINGRESP to Android_1768678433505
+1768681606: Received PINGREQ from event_sensor_listener
+1768681606: Sending PINGRESP to event_sensor_listener
+1768681613: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m27, 'event/1/sound_level', ... (3 bytes))
+1768681613: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768681613: Sending PUBACK to Android_1768678433505 (m27, rc0)
+1768681613: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m28, 'event/1/temperature', ... (9 bytes))
+1768681613: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768681613: Sending PUBACK to Android_1768678433505 (m28, rc0)
+1768681666: Received PINGREQ from event_sensor_listener
+1768681666: Sending PINGRESP to event_sensor_listener
+1768681673: Received PINGREQ from Android_1768678433505
+1768681673: Sending PINGRESP to Android_1768678433505
+1768681726: Received PINGREQ from event_sensor_listener
+1768681726: Sending PINGRESP to event_sensor_listener
+1768681733: Received PINGREQ from Android_1768678433505
+1768681733: Sending PINGRESP to Android_1768678433505
+1768681787: Received PINGREQ from event_sensor_listener
+1768681787: Sending PINGRESP to event_sensor_listener
+1768681793: Received PINGREQ from Android_1768678433505
+1768681793: Sending PINGRESP to Android_1768678433505
+1768681847: Received PINGREQ from event_sensor_listener
+1768681847: Sending PINGRESP to event_sensor_listener
+1768681853: Received PINGREQ from Android_1768678433505
+1768681853: Sending PINGRESP to Android_1768678433505
+1768681907: Received PINGREQ from event_sensor_listener
+1768681907: Sending PINGRESP to event_sensor_listener
+1768681913: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m29, 'event/1/temperature', ... (9 bytes))
+1768681913: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768681913: Sending PUBACK to Android_1768678433505 (m29, rc0)
+1768681913: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m30, 'event/1/sound_level', ... (3 bytes))
+1768681913: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768681913: Sending PUBACK to Android_1768678433505 (m30, rc0)
+1768681967: Received PINGREQ from event_sensor_listener
+1768681967: Sending PINGRESP to event_sensor_listener
+1768681973: Received PINGREQ from Android_1768678433505
+1768681973: Sending PINGRESP to Android_1768678433505
+1768681974: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m31, 'event/1/temperature', ... (9 bytes))
+1768681974: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768681974: Sending PUBACK to Android_1768678433505 (m31, rc0)
+1768681975: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m32, 'event/1/sound_level', ... (3 bytes))
+1768681975: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768681975: Sending PUBACK to Android_1768678433505 (m32, rc0)
+1768681975: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m33, 'event/1/temperature', ... (9 bytes))
+1768681975: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768681975: Sending PUBACK to Android_1768678433505 (m33, rc0)
+1768682028: Received PINGREQ from event_sensor_listener
+1768682028: Sending PINGRESP to event_sensor_listener
+1768682035: Received PINGREQ from Android_1768678433505
+1768682035: Sending PINGRESP to Android_1768678433505
+1768682083: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m34, 'event/1/sound_level', ... (3 bytes))
+1768682083: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682083: Sending PUBACK to Android_1768678433505 (m34, rc0)
+1768682084: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m35, 'event/1/sound_level', ... (17 bytes))
+1768682084: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (17 bytes))
+1768682084: Sending PUBACK to Android_1768678433505 (m35, rc0)
+1768682084: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m36, 'event/1/temperature', ... (8 bytes))
+1768682084: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (8 bytes))
+1768682084: Sending PUBACK to Android_1768678433505 (m36, rc0)
+1768682089: Received PINGREQ from event_sensor_listener
+1768682089: Sending PINGRESP to event_sensor_listener
+1768682092: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m37, 'event/1/sound_level', ... (3 bytes))
+1768682092: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682092: Sending PUBACK to Android_1768678433505 (m37, rc0)
+1768682093: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m38, 'event/1/sound_level', ... (17 bytes))
+1768682093: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (17 bytes))
+1768682093: Sending PUBACK to Android_1768678433505 (m38, rc0)
+1768682093: Received PUBLISH from Android_1768678433505 (d0, q1, r0, m39, 'event/1/temperature', ... (9 bytes))
+1768682093: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768682093: Sending PUBACK to Android_1768678433505 (m39, rc0)
+1768682149: Received PINGREQ from event_sensor_listener
+1768682149: Sending PINGRESP to event_sensor_listener
+1768682153: Received PINGREQ from Android_1768678433505
+1768682153: Sending PINGRESP to Android_1768678433505
+1768682209: Received PINGREQ from event_sensor_listener
+1768682209: Sending PINGRESP to event_sensor_listener
+1768682213: Received PINGREQ from Android_1768678433505
+1768682213: Sending PINGRESP to Android_1768678433505
+1768682221: Client Android_1768678433505 closed its connection.
+1768682223: New connection from 192.168.65.1:47256 on port 1883.
+1768682223: New client connected from 192.168.65.1:47256 as Android_1768682219861 (p2, c1, k60).
+1768682223: No will message specified.
+1768682223: Sending CONNACK to Android_1768682219861 (0, 0)
+1768682231: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m1, 'event/1/sound_level', ... (3 bytes))
+1768682231: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682231: Sending PUBACK to Android_1768682219861 (m1, rc0)
+1768682233: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m2, 'event/1/temperature', ... (9 bytes))
+1768682233: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768682233: Sending PUBACK to Android_1768682219861 (m2, rc0)
+1768682233: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m3, 'event/1/sound_level', ... (3 bytes))
+1768682233: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682233: Sending PUBACK to Android_1768682219861 (m3, rc0)
+1768682236: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m4, 'event/1/temperature', ... (9 bytes))
+1768682236: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768682236: Sending PUBACK to Android_1768682219861 (m4, rc0)
+1768682237: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m5, 'event/1/sound_level', ... (3 bytes))
+1768682237: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682237: Sending PUBACK to Android_1768682219861 (m5, rc0)
+1768682237: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m6, 'event/1/temperature', ... (9 bytes))
+1768682237: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768682237: Sending PUBACK to Android_1768682219861 (m6, rc0)
+1768682245: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m7, 'event/1/sound_level', ... (3 bytes))
+1768682245: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682245: Sending PUBACK to Android_1768682219861 (m7, rc0)
+1768682245: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m8, 'event/1/sound_level', ... (3 bytes))
+1768682245: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682245: Sending PUBACK to Android_1768682219861 (m8, rc0)
+1768682245: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m9, 'event/1/temperature', ... (9 bytes))
+1768682245: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768682245: Sending PUBACK to Android_1768682219861 (m9, rc0)
+1768682258: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m10, 'event/3/sound_level', ... (3 bytes))
+1768682258: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/sound_level', ... (3 bytes))
+1768682258: Sending PUBACK to Android_1768682219861 (m10, rc0)
+1768682266: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m11, 'event/1/sound_level', ... (3 bytes))
+1768682266: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682266: Sending PUBACK to Android_1768682219861 (m11, rc0)
+1768682266: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m12, 'event/1/sound_level', ... (3 bytes))
+1768682266: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682266: Sending PUBACK to Android_1768682219861 (m12, rc0)
+1768682266: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m13, 'event/1/temperature', ... (9 bytes))
+1768682266: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768682266: Sending PUBACK to Android_1768682219861 (m13, rc0)
+1768682269: Received PINGREQ from event_sensor_listener
+1768682269: Sending PINGRESP to event_sensor_listener
+1768682284: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m14, 'event/1/sound_level', ... (3 bytes))
+1768682284: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682284: Sending PUBACK to Android_1768682219861 (m14, rc0)
+1768682284: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m15, 'event/1/sound_level', ... (3 bytes))
+1768682284: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682284: Sending PUBACK to Android_1768682219861 (m15, rc0)
+1768682284: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m16, 'event/1/temperature', ... (8 bytes))
+1768682284: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (8 bytes))
+1768682284: Sending PUBACK to Android_1768682219861 (m16, rc0)
+1768682291: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m17, 'event/1/temperature', ... (8 bytes))
+1768682291: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (8 bytes))
+1768682291: Sending PUBACK to Android_1768682219861 (m17, rc0)
+1768682292: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m18, 'event/1/sound_level', ... (3 bytes))
+1768682292: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682292: Sending PUBACK to Android_1768682219861 (m18, rc0)
+1768682292: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m19, 'event/1/temperature', ... (8 bytes))
+1768682292: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (8 bytes))
+1768682292: Sending PUBACK to Android_1768682219861 (m19, rc0)
+1768682309: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m20, 'event/1/sound_level', ... (3 bytes))
+1768682309: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682309: Sending PUBACK to Android_1768682219861 (m20, rc0)
+1768682309: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m21, 'event/1/temperature', ... (8 bytes))
+1768682309: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (8 bytes))
+1768682309: Sending PUBACK to Android_1768682219861 (m21, rc0)
+1768682309: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m22, 'event/1/sound_level', ... (3 bytes))
+1768682309: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682309: Sending PUBACK to Android_1768682219861 (m22, rc0)
+1768682309: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m23, 'event/1/temperature', ... (8 bytes))
+1768682309: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (8 bytes))
+1768682309: Sending PUBACK to Android_1768682219861 (m23, rc0)
+1768682317: Received PUBLISH from Android_1768682219861 (d0, q1, r0, m24, 'event/3/sound_level', ... (3 bytes))
+1768682317: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/sound_level', ... (3 bytes))
+1768682317: Sending PUBACK to Android_1768682219861 (m24, rc0)
+1768682330: Received PINGREQ from event_sensor_listener
+1768682330: Sending PINGRESP to event_sensor_listener
+1768682377: Received PINGREQ from Android_1768682219861
+1768682377: Sending PINGRESP to Android_1768682219861
+1768682390: Received PINGREQ from event_sensor_listener
+1768682390: Sending PINGRESP to event_sensor_listener
+1768682437: Received PINGREQ from Android_1768682219861
+1768682437: Sending PINGRESP to Android_1768682219861
+1768682451: Received PINGREQ from event_sensor_listener
+1768682451: Sending PINGRESP to event_sensor_listener
+1768682497: Received PINGREQ from Android_1768682219861
+1768682497: Sending PINGRESP to Android_1768682219861
+1768682511: Received PINGREQ from event_sensor_listener
+1768682511: Sending PINGRESP to event_sensor_listener
+1768682557: Received PINGREQ from Android_1768682219861
+1768682557: Sending PINGRESP to Android_1768682219861
+1768682571: Received PINGREQ from event_sensor_listener
+1768682571: Sending PINGRESP to event_sensor_listener
+1768682617: Received PINGREQ from Android_1768682219861
+1768682617: Sending PINGRESP to Android_1768682219861
+1768682631: Received PINGREQ from event_sensor_listener
+1768682631: Sending PINGRESP to event_sensor_listener
+1768682662: Client Android_1768682219861 closed its connection.
+1768682663: New connection from 192.168.65.1:20121 on port 1883.
+1768682664: New client connected from 192.168.65.1:20121 as Android_1768682660651 (p2, c1, k60).
+1768682664: No will message specified.
+1768682664: Sending CONNACK to Android_1768682660651 (0, 0)
+1768682674: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m1, 'event/2/announcement', ... (4 bytes))
+1768682674: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/2/announcement', ... (4 bytes))
+1768682674: Sending PUBACK to Android_1768682660651 (m1, rc0)
+1768682674: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m2, 'event/1/announcement', ... (4 bytes))
+1768682674: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/announcement', ... (4 bytes))
+1768682674: Sending PUBACK to Android_1768682660651 (m2, rc0)
+1768682674: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m3, 'announcement/global', ... (4 bytes))
+1768682674: Sending PUBACK to Android_1768682660651 (m3, rc0)
+1768682674: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m4, 'event/3/announcement', ... (4 bytes))
+1768682674: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/announcement', ... (4 bytes))
+1768682674: Sending PUBACK to Android_1768682660651 (m4, rc0)
+1768682684: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m5, 'event/1/announcement', ... (3 bytes))
+1768682684: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/announcement', ... (3 bytes))
+1768682684: Sending PUBACK to Android_1768682660651 (m5, rc0)
+1768682684: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m6, 'announcement/global', ... (3 bytes))
+1768682684: Sending PUBACK to Android_1768682660651 (m6, rc0)
+1768682684: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m7, 'event/3/announcement', ... (3 bytes))
+1768682684: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/announcement', ... (3 bytes))
+1768682684: Sending PUBACK to Android_1768682660651 (m7, rc0)
+1768682684: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m8, 'event/2/announcement', ... (3 bytes))
+1768682684: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/2/announcement', ... (3 bytes))
+1768682684: Sending PUBACK to Android_1768682660651 (m8, rc0)
+1768682692: Received PINGREQ from event_sensor_listener
+1768682692: Sending PINGRESP to event_sensor_listener
+1768682695: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m9, 'event/1/sound_level', ... (3 bytes))
+1768682695: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682695: Sending PUBACK to Android_1768682660651 (m9, rc0)
+1768682695: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m10, 'event/1/sound_level', ... (3 bytes))
+1768682695: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682695: Sending PUBACK to Android_1768682660651 (m10, rc0)
+1768682695: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m11, 'event/1/temperature', ... (9 bytes))
+1768682695: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768682695: Sending PUBACK to Android_1768682660651 (m11, rc0)
+1768682708: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1768682712: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m12, 'announcement/global', ... (6 bytes))
+1768682712: Sending PUBACK to Android_1768682660651 (m12, rc0)
+1768682712: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m14, 'event/2/announcement', ... (6 bytes))
+1768682712: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/2/announcement', ... (6 bytes))
+1768682712: Sending PUBACK to Android_1768682660651 (m14, rc0)
+1768682712: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m15, 'event/3/announcement', ... (6 bytes))
+1768682712: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/announcement', ... (6 bytes))
+1768682712: Sending PUBACK to Android_1768682660651 (m15, rc0)
+1768682712: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m13, 'event/1/announcement', ... (6 bytes))
+1768682712: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/announcement', ... (6 bytes))
+1768682712: Sending PUBACK to Android_1768682660651 (m13, rc0)
+1768682721: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m16, 'event/1/sound_level', ... (3 bytes))
+1768682721: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682721: Sending PUBACK to Android_1768682660651 (m16, rc0)
+1768682721: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m17, 'event/1/sound_level', ... (3 bytes))
+1768682721: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682721: Sending PUBACK to Android_1768682660651 (m17, rc0)
+1768682721: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m18, 'event/1/temperature', ... (8 bytes))
+1768682721: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (8 bytes))
+1768682721: Sending PUBACK to Android_1768682660651 (m18, rc0)
+1768682723: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m19, 'event/1/temperature', ... (8 bytes))
+1768682723: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (8 bytes))
+1768682723: Sending PUBACK to Android_1768682660651 (m19, rc0)
+1768682726: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m20, 'event/1/temperature', ... (8 bytes))
+1768682726: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (8 bytes))
+1768682726: Sending PUBACK to Android_1768682660651 (m20, rc0)
+1768682726: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m21, 'event/1/sound_level', ... (3 bytes))
+1768682726: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682726: Sending PUBACK to Android_1768682660651 (m21, rc0)
+1768682726: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m22, 'event/1/temperature', ... (8 bytes))
+1768682726: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (8 bytes))
+1768682726: Sending PUBACK to Android_1768682660651 (m22, rc0)
+1768682741: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m23, 'event/1/sound_level', ... (3 bytes))
+1768682741: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682741: Sending PUBACK to Android_1768682660651 (m23, rc0)
+1768682741: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m24, 'event/1/sound_level', ... (3 bytes))
+1768682741: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682741: Sending PUBACK to Android_1768682660651 (m24, rc0)
+1768682741: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m25, 'event/1/temperature', ... (8 bytes))
+1768682741: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (8 bytes))
+1768682741: Sending PUBACK to Android_1768682660651 (m25, rc0)
+1768682753: Received PINGREQ from event_sensor_listener
+1768682753: Sending PINGRESP to event_sensor_listener
+1768682756: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m26, 'event/1/sound_level', ... (3 bytes))
+1768682756: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682756: Sending PUBACK to Android_1768682660651 (m26, rc0)
+1768682756: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m27, 'event/1/sound_level', ... (3 bytes))
+1768682756: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768682756: Sending PUBACK to Android_1768682660651 (m27, rc0)
+1768682756: Received PUBLISH from Android_1768682660651 (d0, q1, r0, m28, 'event/1/temperature', ... (9 bytes))
+1768682756: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768682756: Sending PUBACK to Android_1768682660651 (m28, rc0)
+1768682813: Received PINGREQ from event_sensor_listener
+1768682813: Sending PINGRESP to event_sensor_listener
+1768682816: Received PINGREQ from Android_1768682660651
+1768682816: Sending PINGRESP to Android_1768682660651
+1768682874: Received PINGREQ from event_sensor_listener
+1768682874: Sending PINGRESP to event_sensor_listener
+1768682876: Received PINGREQ from Android_1768682660651
+1768682876: Sending PINGRESP to Android_1768682660651
+1768682934: Received PINGREQ from event_sensor_listener
+1768682934: Sending PINGRESP to event_sensor_listener
+1768682936: Received PINGREQ from Android_1768682660651
+1768682936: Sending PINGRESP to Android_1768682660651
+1768682994: Received PINGREQ from event_sensor_listener
+1768682994: Sending PINGRESP to event_sensor_listener
+1768682996: Received PINGREQ from Android_1768682660651
+1768682996: Sending PINGRESP to Android_1768682660651
+1768683054: Received PINGREQ from event_sensor_listener
+1768683054: Sending PINGRESP to event_sensor_listener
+1768683056: Received PINGREQ from Android_1768682660651
+1768683056: Sending PINGRESP to Android_1768682660651
+1768683063: Client Android_1768682660651 closed its connection.
+1768683065: New connection from 192.168.65.1:41809 on port 1883.
+1768683065: New client connected from 192.168.65.1:41809 as Android_1768683061783 (p2, c1, k60).
+1768683065: No will message specified.
+1768683065: Sending CONNACK to Android_1768683061783 (0, 0)
+1768683065: Received SUBSCRIBE from Android_1768683061783
+1768683065: 	event/+/temperature (QoS 1)
+1768683065: Android_1768683061783 1 event/+/temperature
+1768683065: Sending SUBACK to Android_1768683061783
+1768683065: Received SUBSCRIBE from Android_1768683061783
+1768683065: 	event/+/sound_level (QoS 1)
+1768683065: Android_1768683061783 1 event/+/sound_level
+1768683065: Sending SUBACK to Android_1768683061783
+1768683072: Received PUBLISH from Android_1768683061783 (d0, q1, r0, m3, 'event/1/sound_level', ... (3 bytes))
+1768683072: Sending PUBLISH to Android_1768683061783 (d0, q1, r0, m1, 'event/1/sound_level', ... (3 bytes))
+1768683072: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768683072: Sending PUBACK to Android_1768683061783 (m3, rc0)
+1768683072: Received PUBLISH from Android_1768683061783 (d0, q1, r0, m4, 'event/1/sound_level', ... (3 bytes))
+1768683072: Sending PUBLISH to Android_1768683061783 (d0, q1, r0, m2, 'event/1/sound_level', ... (3 bytes))
+1768683072: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768683072: Sending PUBACK to Android_1768683061783 (m4, rc0)
+1768683072: Received PUBLISH from Android_1768683061783 (d0, q1, r0, m5, 'event/1/temperature', ... (7 bytes))
+1768683072: Sending PUBLISH to Android_1768683061783 (d0, q1, r0, m3, 'event/1/temperature', ... (7 bytes))
+1768683072: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (7 bytes))
+1768683072: Sending PUBACK to Android_1768683061783 (m5, rc0)
+1768683072: Received PUBACK from Android_1768683061783 (Mid: 1, RC:0)
+1768683072: Received PUBACK from Android_1768683061783 (Mid: 2, RC:0)
+1768683072: Received PUBACK from Android_1768683061783 (Mid: 3, RC:0)
+1768683115: Received PINGREQ from event_sensor_listener
+1768683115: Sending PINGRESP to event_sensor_listener
+1768683132: Received PINGREQ from Android_1768683061783
+1768683132: Sending PINGRESP to Android_1768683061783
+1768683175: Received PINGREQ from event_sensor_listener
+1768683175: Sending PINGRESP to event_sensor_listener
+1768683192: Received PINGREQ from Android_1768683061783
+1768683192: Sending PINGRESP to Android_1768683061783
+1768683233: Client Android_1768683061783 closed its connection.
+1768683234: New connection from 192.168.65.1:23965 on port 1883.
+1768683235: New client connected from 192.168.65.1:23965 as Android_1768683231664 (p2, c1, k60).
+1768683235: No will message specified.
+1768683235: Sending CONNACK to Android_1768683231664 (0, 0)
+1768683235: Received SUBSCRIBE from Android_1768683231664
+1768683235: 	event/+/temperature (QoS 1)
+1768683235: Android_1768683231664 1 event/+/temperature
+1768683235: Sending SUBACK to Android_1768683231664
+1768683235: Received SUBSCRIBE from Android_1768683231664
+1768683235: 	event/+/sound_level (QoS 1)
+1768683235: Android_1768683231664 1 event/+/sound_level
+1768683235: Sending SUBACK to Android_1768683231664
+1768683235: Received PINGREQ from event_sensor_listener
+1768683235: Sending PINGRESP to event_sensor_listener
+1768683241: Received PUBLISH from Android_1768683231664 (d0, q1, r0, m3, 'event/1/sound_level', ... (3 bytes))
+1768683241: Sending PUBLISH to Android_1768683231664 (d0, q1, r0, m1, 'event/1/sound_level', ... (3 bytes))
+1768683241: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768683241: Sending PUBACK to Android_1768683231664 (m3, rc0)
+1768683241: Received PUBLISH from Android_1768683231664 (d0, q1, r0, m4, 'event/1/sound_level', ... (3 bytes))
+1768683241: Sending PUBLISH to Android_1768683231664 (d0, q1, r0, m2, 'event/1/sound_level', ... (3 bytes))
+1768683241: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768683241: Sending PUBACK to Android_1768683231664 (m4, rc0)
+1768683241: Received PUBLISH from Android_1768683231664 (d0, q1, r0, m5, 'event/1/temperature', ... (9 bytes))
+1768683241: Sending PUBLISH to Android_1768683231664 (d0, q1, r0, m3, 'event/1/temperature', ... (9 bytes))
+1768683241: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683241: Sending PUBACK to Android_1768683231664 (m5, rc0)
+1768683241: Received PUBACK from Android_1768683231664 (Mid: 1, RC:0)
+1768683241: Received PUBACK from Android_1768683231664 (Mid: 2, RC:0)
+1768683241: Received PUBACK from Android_1768683231664 (Mid: 3, RC:0)
+1768683243: Received PUBLISH from Android_1768683231664 (d0, q1, r0, m6, 'event/1/temperature', ... (9 bytes))
+1768683243: Sending PUBLISH to Android_1768683231664 (d0, q1, r0, m4, 'event/1/temperature', ... (9 bytes))
+1768683243: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683243: Sending PUBACK to Android_1768683231664 (m6, rc0)
+1768683243: Received PUBACK from Android_1768683231664 (Mid: 4, RC:0)
+1768683243: Received PUBLISH from Android_1768683231664 (d0, q1, r0, m7, 'event/1/sound_level', ... (3 bytes))
+1768683243: Sending PUBLISH to Android_1768683231664 (d0, q1, r0, m5, 'event/1/sound_level', ... (3 bytes))
+1768683243: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768683243: Sending PUBACK to Android_1768683231664 (m7, rc0)
+1768683243: Received PUBLISH from Android_1768683231664 (d0, q1, r0, m8, 'event/1/temperature', ... (9 bytes))
+1768683243: Sending PUBLISH to Android_1768683231664 (d0, q1, r0, m6, 'event/1/temperature', ... (9 bytes))
+1768683243: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683243: Sending PUBACK to Android_1768683231664 (m8, rc0)
+1768683243: Received PUBACK from Android_1768683231664 (Mid: 5, RC:0)
+1768683243: Received PUBACK from Android_1768683231664 (Mid: 6, RC:0)
+1768683244: Received PUBLISH from Android_1768683231664 (d0, q1, r0, m9, 'event/1/sound_level', ... (17 bytes))
+1768683244: Sending PUBLISH to Android_1768683231664 (d0, q1, r0, m7, 'event/1/sound_level', ... (17 bytes))
+1768683244: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (17 bytes))
+1768683244: Sending PUBACK to Android_1768683231664 (m9, rc0)
+1768683244: Received PUBACK from Android_1768683231664 (Mid: 7, RC:0)
+1768683245: Received PUBLISH from Android_1768683231664 (d0, q1, r0, m10, 'event/1/sound_level', ... (17 bytes))
+1768683245: Sending PUBLISH to Android_1768683231664 (d0, q1, r0, m8, 'event/1/sound_level', ... (17 bytes))
+1768683245: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (17 bytes))
+1768683245: Sending PUBACK to Android_1768683231664 (m10, rc0)
+1768683245: Received PUBLISH from Android_1768683231664 (d0, q1, r0, m11, 'event/1/temperature', ... (9 bytes))
+1768683245: Sending PUBLISH to Android_1768683231664 (d0, q1, r0, m9, 'event/1/temperature', ... (9 bytes))
+1768683245: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683245: Sending PUBACK to Android_1768683231664 (m11, rc0)
+1768683245: Received PUBACK from Android_1768683231664 (Mid: 8, RC:0)
+1768683245: Received PUBACK from Android_1768683231664 (Mid: 9, RC:0)
+1768683296: Received PINGREQ from event_sensor_listener
+1768683296: Sending PINGRESP to event_sensor_listener
+1768683305: Received PINGREQ from Android_1768683231664
+1768683305: Sending PINGRESP to Android_1768683231664
+1768683336: Received PUBLISH from Android_1768683231664 (d0, q1, r0, m12, 'event/3/sound_level', ... (3 bytes))
+1768683336: Sending PUBLISH to Android_1768683231664 (d0, q1, r0, m10, 'event/3/sound_level', ... (3 bytes))
+1768683336: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/sound_level', ... (3 bytes))
+1768683336: Sending PUBACK to Android_1768683231664 (m12, rc0)
+1768683336: Received PUBACK from Android_1768683231664 (Mid: 10, RC:0)
+1768683346: Received PUBLISH from Android_1768683231664 (d0, q1, r0, m13, 'event/3/sound_level', ... (3 bytes))
+1768683346: Sending PUBLISH to Android_1768683231664 (d0, q1, r0, m11, 'event/3/sound_level', ... (3 bytes))
+1768683346: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/sound_level', ... (3 bytes))
+1768683346: Sending PUBACK to Android_1768683231664 (m13, rc0)
+1768683346: Received PUBACK from Android_1768683231664 (Mid: 11, RC:0)
+1768683347: Received PUBLISH from Android_1768683231664 (d0, q1, r0, m14, 'event/3/sound_level', ... (17 bytes))
+1768683347: Sending PUBLISH to Android_1768683231664 (d0, q1, r0, m12, 'event/3/sound_level', ... (17 bytes))
+1768683347: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/sound_level', ... (17 bytes))
+1768683347: Sending PUBACK to Android_1768683231664 (m14, rc0)
+1768683347: Received PUBLISH from Android_1768683231664 (d0, q1, r0, m15, 'event/3/temperature', ... (8 bytes))
+1768683347: Sending PUBLISH to Android_1768683231664 (d0, q1, r0, m13, 'event/3/temperature', ... (8 bytes))
+1768683347: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/temperature', ... (8 bytes))
+1768683347: Sending PUBACK to Android_1768683231664 (m15, rc0)
+1768683347: Received PUBACK from Android_1768683231664 (Mid: 12, RC:0)
+1768683347: Received PUBACK from Android_1768683231664 (Mid: 13, RC:0)
+1768683350: Received PUBLISH from Android_1768683231664 (d0, q1, r0, m16, 'event/3/temperature', ... (8 bytes))
+1768683350: Sending PUBLISH to Android_1768683231664 (d0, q1, r0, m14, 'event/3/temperature', ... (8 bytes))
+1768683350: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/temperature', ... (8 bytes))
+1768683350: Sending PUBACK to Android_1768683231664 (m16, rc0)
+1768683350: Received PUBACK from Android_1768683231664 (Mid: 14, RC:0)
+1768683350: Received PUBLISH from Android_1768683231664 (d0, q1, r0, m17, 'event/3/sound_level', ... (3 bytes))
+1768683350: Sending PUBLISH to Android_1768683231664 (d0, q1, r0, m15, 'event/3/sound_level', ... (3 bytes))
+1768683350: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/sound_level', ... (3 bytes))
+1768683350: Sending PUBACK to Android_1768683231664 (m17, rc0)
+1768683350: Received PUBLISH from Android_1768683231664 (d0, q1, r0, m18, 'event/3/temperature', ... (8 bytes))
+1768683350: Sending PUBLISH to Android_1768683231664 (d0, q1, r0, m16, 'event/3/temperature', ... (8 bytes))
+1768683350: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/temperature', ... (8 bytes))
+1768683350: Sending PUBACK to Android_1768683231664 (m18, rc0)
+1768683350: Received PUBACK from Android_1768683231664 (Mid: 15, RC:0)
+1768683350: Received PUBACK from Android_1768683231664 (Mid: 16, RC:0)
+1768683352: Received PUBLISH from Android_1768683231664 (d0, q1, r0, m19, 'event/3/temperature', ... (8 bytes))
+1768683352: Sending PUBLISH to Android_1768683231664 (d0, q1, r0, m17, 'event/3/temperature', ... (8 bytes))
+1768683352: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/temperature', ... (8 bytes))
+1768683352: Sending PUBACK to Android_1768683231664 (m19, rc0)
+1768683352: Received PUBACK from Android_1768683231664 (Mid: 17, RC:0)
+1768683352: Received PUBLISH from Android_1768683231664 (d0, q1, r0, m20, 'event/3/sound_level', ... (3 bytes))
+1768683352: Sending PUBLISH to Android_1768683231664 (d0, q1, r0, m18, 'event/3/sound_level', ... (3 bytes))
+1768683352: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/sound_level', ... (3 bytes))
+1768683352: Sending PUBACK to Android_1768683231664 (m20, rc0)
+1768683352: Received PUBLISH from Android_1768683231664 (d0, q1, r0, m21, 'event/3/temperature', ... (8 bytes))
+1768683352: Sending PUBLISH to Android_1768683231664 (d0, q1, r0, m19, 'event/3/temperature', ... (8 bytes))
+1768683352: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/temperature', ... (8 bytes))
+1768683352: Sending PUBACK to Android_1768683231664 (m21, rc0)
+1768683352: Received PUBACK from Android_1768683231664 (Mid: 18, RC:0)
+1768683352: Received PUBACK from Android_1768683231664 (Mid: 19, RC:0)
+1768683356: Received PINGREQ from event_sensor_listener
+1768683356: Sending PINGRESP to event_sensor_listener
+1768683412: Received PINGREQ from Android_1768683231664
+1768683412: Sending PINGRESP to Android_1768683231664
+1768683417: Received PINGREQ from event_sensor_listener
+1768683417: Sending PINGRESP to event_sensor_listener
+1768683462: Client Android_1768683231664 closed its connection.
+1768683463: New connection from 192.168.65.1:35723 on port 1883.
+1768683464: New client connected from 192.168.65.1:35723 as Android_1768683460657 (p2, c1, k60).
+1768683464: No will message specified.
+1768683464: Sending CONNACK to Android_1768683460657 (0, 0)
+1768683464: Received SUBSCRIBE from Android_1768683460657
+1768683464: 	event/+/temperature (QoS 1)
+1768683464: Android_1768683460657 1 event/+/temperature
+1768683464: Sending SUBACK to Android_1768683460657
+1768683464: Received SUBSCRIBE from Android_1768683460657
+1768683464: 	event/+/sound_level (QoS 1)
+1768683464: Android_1768683460657 1 event/+/sound_level
+1768683464: Sending SUBACK to Android_1768683460657
+1768683469: Received PUBLISH from Android_1768683460657 (d0, q1, r0, m3, 'event/1/sound_level', ... (3 bytes))
+1768683469: Sending PUBLISH to Android_1768683460657 (d0, q1, r0, m1, 'event/1/sound_level', ... (3 bytes))
+1768683469: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768683469: Sending PUBACK to Android_1768683460657 (m3, rc0)
+1768683469: Received PUBLISH from Android_1768683460657 (d0, q1, r0, m4, 'event/1/sound_level', ... (3 bytes))
+1768683469: Sending PUBLISH to Android_1768683460657 (d0, q1, r0, m2, 'event/1/sound_level', ... (3 bytes))
+1768683469: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768683469: Sending PUBACK to Android_1768683460657 (m4, rc0)
+1768683469: Received PUBLISH from Android_1768683460657 (d0, q1, r0, m5, 'event/1/temperature', ... (9 bytes))
+1768683469: Sending PUBLISH to Android_1768683460657 (d0, q1, r0, m3, 'event/1/temperature', ... (9 bytes))
+1768683469: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683469: Sending PUBACK to Android_1768683460657 (m5, rc0)
+1768683469: Received PUBACK from Android_1768683460657 (Mid: 1, RC:0)
+1768683469: Received PUBACK from Android_1768683460657 (Mid: 2, RC:0)
+1768683469: Received PUBACK from Android_1768683460657 (Mid: 3, RC:0)
+1768683477: Received PINGREQ from event_sensor_listener
+1768683477: Sending PINGRESP to event_sensor_listener
+1768683484: Received PUBLISH from Android_1768683460657 (d0, q1, r0, m6, 'event/1/temperature', ... (9 bytes))
+1768683484: Sending PUBLISH to Android_1768683460657 (d0, q1, r0, m4, 'event/1/temperature', ... (9 bytes))
+1768683484: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683484: Sending PUBACK to Android_1768683460657 (m6, rc0)
+1768683484: Received PUBACK from Android_1768683460657 (Mid: 4, RC:0)
+1768683485: Received PUBLISH from Android_1768683460657 (d0, q1, r0, m7, 'event/1/sound_level', ... (3 bytes))
+1768683485: Sending PUBLISH to Android_1768683460657 (d0, q1, r0, m5, 'event/1/sound_level', ... (3 bytes))
+1768683485: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768683485: Sending PUBACK to Android_1768683460657 (m7, rc0)
+1768683485: Received PUBLISH from Android_1768683460657 (d0, q1, r0, m8, 'event/1/temperature', ... (9 bytes))
+1768683485: Sending PUBLISH to Android_1768683460657 (d0, q1, r0, m6, 'event/1/temperature', ... (9 bytes))
+1768683485: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683485: Sending PUBACK to Android_1768683460657 (m8, rc0)
+1768683485: Received PUBACK from Android_1768683460657 (Mid: 5, RC:0)
+1768683485: Received PUBACK from Android_1768683460657 (Mid: 6, RC:0)
+1768683486: Received PUBLISH from Android_1768683460657 (d0, q1, r0, m9, 'event/1/sound_level', ... (17 bytes))
+1768683486: Sending PUBLISH to Android_1768683460657 (d0, q1, r0, m7, 'event/1/sound_level', ... (17 bytes))
+1768683486: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (17 bytes))
+1768683486: Sending PUBACK to Android_1768683460657 (m9, rc0)
+1768683486: Received PUBACK from Android_1768683460657 (Mid: 7, RC:0)
+1768683487: Received PUBLISH from Android_1768683460657 (d0, q1, r0, m10, 'event/1/sound_level', ... (17 bytes))
+1768683487: Sending PUBLISH to Android_1768683460657 (d0, q1, r0, m8, 'event/1/sound_level', ... (17 bytes))
+1768683487: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (17 bytes))
+1768683487: Sending PUBACK to Android_1768683460657 (m10, rc0)
+1768683487: Received PUBLISH from Android_1768683460657 (d0, q1, r0, m11, 'event/1/temperature', ... (9 bytes))
+1768683487: Sending PUBLISH to Android_1768683460657 (d0, q1, r0, m9, 'event/1/temperature', ... (9 bytes))
+1768683487: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683487: Sending PUBACK to Android_1768683460657 (m11, rc0)
+1768683487: Received PUBACK from Android_1768683460657 (Mid: 8, RC:0)
+1768683487: Received PUBACK from Android_1768683460657 (Mid: 9, RC:0)
+1768683516: Client Android_1768683460657 closed its connection.
+1768683517: New connection from 192.168.65.1:54009 on port 1883.
+1768683517: New client connected from 192.168.65.1:54009 as Android_1768683514169 (p2, c1, k60).
+1768683517: No will message specified.
+1768683517: Sending CONNACK to Android_1768683514169 (0, 0)
+1768683517: Received SUBSCRIBE from Android_1768683514169
+1768683517: 	event/+/temperature (QoS 1)
+1768683517: Android_1768683514169 1 event/+/temperature
+1768683517: Sending SUBACK to Android_1768683514169
+1768683517: Received SUBSCRIBE from Android_1768683514169
+1768683517: 	event/+/sound_level (QoS 1)
+1768683517: Android_1768683514169 1 event/+/sound_level
+1768683517: Sending SUBACK to Android_1768683514169
+1768683522: Received PUBLISH from Android_1768683514169 (d0, q1, r0, m3, 'event/1/sound_level', ... (3 bytes))
+1768683522: Sending PUBLISH to Android_1768683514169 (d0, q1, r0, m1, 'event/1/sound_level', ... (3 bytes))
+1768683522: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768683522: Sending PUBACK to Android_1768683514169 (m3, rc0)
+1768683522: Received PUBLISH from Android_1768683514169 (d0, q1, r0, m4, 'event/1/temperature', ... (9 bytes))
+1768683522: Sending PUBLISH to Android_1768683514169 (d0, q1, r0, m2, 'event/1/temperature', ... (9 bytes))
+1768683522: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683522: Sending PUBACK to Android_1768683514169 (m4, rc0)
+1768683522: Received PUBLISH from Android_1768683514169 (d0, q1, r0, m5, 'event/1/sound_level', ... (3 bytes))
+1768683522: Sending PUBLISH to Android_1768683514169 (d0, q1, r0, m3, 'event/1/sound_level', ... (3 bytes))
+1768683522: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768683522: Sending PUBACK to Android_1768683514169 (m5, rc0)
+1768683522: Received PUBACK from Android_1768683514169 (Mid: 1, RC:0)
+1768683522: Received PUBACK from Android_1768683514169 (Mid: 2, RC:0)
+1768683522: Received PUBACK from Android_1768683514169 (Mid: 3, RC:0)
+1768683524: Received PUBLISH from Android_1768683514169 (d0, q1, r0, m6, 'event/1/temperature', ... (9 bytes))
+1768683524: Sending PUBLISH to Android_1768683514169 (d0, q1, r0, m4, 'event/1/temperature', ... (9 bytes))
+1768683524: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683524: Sending PUBACK to Android_1768683514169 (m6, rc0)
+1768683525: Received PUBACK from Android_1768683514169 (Mid: 4, RC:0)
+1768683525: Received PUBLISH from Android_1768683514169 (d0, q1, r0, m7, 'event/1/temperature', ... (9 bytes))
+1768683525: Sending PUBLISH to Android_1768683514169 (d0, q1, r0, m5, 'event/1/temperature', ... (9 bytes))
+1768683525: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683525: Sending PUBACK to Android_1768683514169 (m7, rc0)
+1768683525: Received PUBLISH from Android_1768683514169 (d0, q1, r0, m8, 'event/1/sound_level', ... (3 bytes))
+1768683525: Sending PUBLISH to Android_1768683514169 (d0, q1, r0, m6, 'event/1/sound_level', ... (3 bytes))
+1768683525: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768683525: Sending PUBACK to Android_1768683514169 (m8, rc0)
+1768683525: Received PUBACK from Android_1768683514169 (Mid: 5, RC:0)
+1768683525: Received PUBACK from Android_1768683514169 (Mid: 6, RC:0)
+1768683526: Received PUBLISH from Android_1768683514169 (d0, q1, r0, m9, 'event/1/temperature', ... (9 bytes))
+1768683526: Sending PUBLISH to Android_1768683514169 (d0, q1, r0, m7, 'event/1/temperature', ... (9 bytes))
+1768683526: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683526: Sending PUBACK to Android_1768683514169 (m9, rc0)
+1768683526: Received PUBACK from Android_1768683514169 (Mid: 7, RC:0)
+1768683526: Received PUBLISH from Android_1768683514169 (d0, q1, r0, m10, 'event/1/sound_level', ... (3 bytes))
+1768683526: Sending PUBLISH to Android_1768683514169 (d0, q1, r0, m8, 'event/1/sound_level', ... (3 bytes))
+1768683526: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768683526: Sending PUBACK to Android_1768683514169 (m10, rc0)
+1768683526: Received PUBLISH from Android_1768683514169 (d0, q1, r0, m11, 'event/1/temperature', ... (9 bytes))
+1768683526: Sending PUBLISH to Android_1768683514169 (d0, q1, r0, m9, 'event/1/temperature', ... (9 bytes))
+1768683526: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683526: Sending PUBACK to Android_1768683514169 (m11, rc0)
+1768683526: Received PUBACK from Android_1768683514169 (Mid: 8, RC:0)
+1768683526: Received PUBACK from Android_1768683514169 (Mid: 9, RC:0)
+1768683527: Received PUBLISH from Android_1768683514169 (d0, q1, r0, m12, 'event/1/sound_level', ... (17 bytes))
+1768683527: Sending PUBLISH to Android_1768683514169 (d0, q1, r0, m10, 'event/1/sound_level', ... (17 bytes))
+1768683527: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (17 bytes))
+1768683527: Sending PUBACK to Android_1768683514169 (m12, rc0)
+1768683527: Received PUBACK from Android_1768683514169 (Mid: 10, RC:0)
+1768683527: Received PUBLISH from Android_1768683514169 (d0, q1, r0, m13, 'event/1/sound_level', ... (17 bytes))
+1768683527: Sending PUBLISH to Android_1768683514169 (d0, q1, r0, m11, 'event/1/sound_level', ... (17 bytes))
+1768683527: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (17 bytes))
+1768683527: Sending PUBACK to Android_1768683514169 (m13, rc0)
+1768683527: Received PUBLISH from Android_1768683514169 (d0, q1, r0, m14, 'event/1/temperature', ... (9 bytes))
+1768683527: Sending PUBLISH to Android_1768683514169 (d0, q1, r0, m12, 'event/1/temperature', ... (9 bytes))
+1768683527: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683527: Sending PUBACK to Android_1768683514169 (m14, rc0)
+1768683527: Received PUBACK from Android_1768683514169 (Mid: 11, RC:0)
+1768683527: Received PUBACK from Android_1768683514169 (Mid: 12, RC:0)
+1768683538: Received PINGREQ from event_sensor_listener
+1768683538: Sending PINGRESP to event_sensor_listener
+1768683541: Received PUBLISH from Android_1768683514169 (d0, q1, r0, m15, 'event/3/sound_level', ... (3 bytes))
+1768683541: Sending PUBLISH to Android_1768683514169 (d0, q1, r0, m13, 'event/3/sound_level', ... (3 bytes))
+1768683541: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/sound_level', ... (3 bytes))
+1768683541: Sending PUBACK to Android_1768683514169 (m15, rc0)
+1768683541: Received PUBACK from Android_1768683514169 (Mid: 13, RC:0)
+1768683541: Received PUBLISH from Android_1768683514169 (d0, q1, r0, m16, 'event/3/sound_level', ... (3 bytes))
+1768683541: Sending PUBLISH to Android_1768683514169 (d0, q1, r0, m14, 'event/3/sound_level', ... (3 bytes))
+1768683541: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/sound_level', ... (3 bytes))
+1768683541: Sending PUBACK to Android_1768683514169 (m16, rc0)
+1768683541: Received PUBLISH from Android_1768683514169 (d0, q1, r0, m17, 'event/3/temperature', ... (6 bytes))
+1768683541: Sending PUBLISH to Android_1768683514169 (d0, q1, r0, m15, 'event/3/temperature', ... (6 bytes))
+1768683541: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/temperature', ... (6 bytes))
+1768683541: Sending PUBACK to Android_1768683514169 (m17, rc0)
+1768683541: Received PUBACK from Android_1768683514169 (Mid: 14, RC:0)
+1768683541: Received PUBACK from Android_1768683514169 (Mid: 15, RC:0)
+1768683544: Client Android_1768683514169 closed its connection.
+1768683545: New connection from 192.168.65.1:62799 on port 1883.
+1768683546: New client connected from 192.168.65.1:62799 as Android_1768683542519 (p2, c1, k60).
+1768683546: No will message specified.
+1768683546: Sending CONNACK to Android_1768683542519 (0, 0)
+1768683546: Received SUBSCRIBE from Android_1768683542519
+1768683546: 	event/+/temperature (QoS 1)
+1768683546: Android_1768683542519 1 event/+/temperature
+1768683546: Sending SUBACK to Android_1768683542519
+1768683546: Received SUBSCRIBE from Android_1768683542519
+1768683546: 	event/+/sound_level (QoS 1)
+1768683546: Android_1768683542519 1 event/+/sound_level
+1768683546: Sending SUBACK to Android_1768683542519
+1768683552: Received PUBLISH from Android_1768683542519 (d0, q1, r0, m3, 'event/1/sound_level', ... (3 bytes))
+1768683552: Sending PUBLISH to Android_1768683542519 (d0, q1, r0, m1, 'event/1/sound_level', ... (3 bytes))
+1768683552: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768683552: Sending PUBACK to Android_1768683542519 (m3, rc0)
+1768683553: Received PUBLISH from Android_1768683542519 (d0, q1, r0, m4, 'event/1/sound_level', ... (3 bytes))
+1768683553: Sending PUBLISH to Android_1768683542519 (d0, q1, r0, m2, 'event/1/sound_level', ... (3 bytes))
+1768683553: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768683553: Sending PUBACK to Android_1768683542519 (m4, rc0)
+1768683553: Received PUBLISH from Android_1768683542519 (d0, q1, r0, m5, 'event/1/temperature', ... (9 bytes))
+1768683553: Sending PUBLISH to Android_1768683542519 (d0, q1, r0, m3, 'event/1/temperature', ... (9 bytes))
+1768683553: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683553: Sending PUBACK to Android_1768683542519 (m5, rc0)
+1768683553: Received PUBACK from Android_1768683542519 (Mid: 1, RC:0)
+1768683553: Received PUBACK from Android_1768683542519 (Mid: 2, RC:0)
+1768683553: Received PUBACK from Android_1768683542519 (Mid: 3, RC:0)
+1768683559: Received PUBLISH from Android_1768683542519 (d0, q1, r0, m6, 'event/3/sound_level', ... (3 bytes))
+1768683559: Sending PUBLISH to Android_1768683542519 (d0, q1, r0, m4, 'event/3/sound_level', ... (3 bytes))
+1768683559: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/sound_level', ... (3 bytes))
+1768683559: Sending PUBACK to Android_1768683542519 (m6, rc0)
+1768683559: Received PUBLISH from Android_1768683542519 (d0, q1, r0, m7, 'event/3/sound_level', ... (3 bytes))
+1768683559: Sending PUBLISH to Android_1768683542519 (d0, q1, r0, m5, 'event/3/sound_level', ... (3 bytes))
+1768683559: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/sound_level', ... (3 bytes))
+1768683559: Sending PUBACK to Android_1768683542519 (m7, rc0)
+1768683559: Received PUBLISH from Android_1768683542519 (d0, q1, r0, m8, 'event/3/temperature', ... (9 bytes))
+1768683559: Sending PUBLISH to Android_1768683542519 (d0, q1, r0, m6, 'event/3/temperature', ... (9 bytes))
+1768683559: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/temperature', ... (9 bytes))
+1768683559: Sending PUBACK to Android_1768683542519 (m8, rc0)
+1768683559: Received PUBACK from Android_1768683542519 (Mid: 4, RC:0)
+1768683559: Received PUBACK from Android_1768683542519 (Mid: 5, RC:0)
+1768683559: Received PUBACK from Android_1768683542519 (Mid: 6, RC:0)
+1768683582: Client Android_1768683542519 closed its connection.
+1768683584: New connection from 192.168.65.1:55674 on port 1883.
+1768683584: New client connected from 192.168.65.1:55674 as Android_1768683580738 (p2, c1, k60).
+1768683584: No will message specified.
+1768683584: Sending CONNACK to Android_1768683580738 (0, 0)
+1768683584: Received SUBSCRIBE from Android_1768683580738
+1768683584: 	event/+/temperature (QoS 1)
+1768683584: Android_1768683580738 1 event/+/temperature
+1768683584: Sending SUBACK to Android_1768683580738
+1768683584: Received SUBSCRIBE from Android_1768683580738
+1768683584: 	event/+/sound_level (QoS 1)
+1768683584: Android_1768683580738 1 event/+/sound_level
+1768683584: Sending SUBACK to Android_1768683580738
+1768683591: Client Android_1768683580738 closed its connection.
+1768683593: New connection from 192.168.65.1:57405 on port 1883.
+1768683593: New client connected from 192.168.65.1:57405 as Android_1768683589965 (p2, c1, k60).
+1768683593: No will message specified.
+1768683593: Sending CONNACK to Android_1768683589965 (0, 0)
+1768683593: Received SUBSCRIBE from Android_1768683589965
+1768683593: 	event/+/temperature (QoS 1)
+1768683593: Android_1768683589965 1 event/+/temperature
+1768683593: Sending SUBACK to Android_1768683589965
+1768683593: Received SUBSCRIBE from Android_1768683589965
+1768683593: 	event/+/sound_level (QoS 1)
+1768683593: Android_1768683589965 1 event/+/sound_level
+1768683593: Sending SUBACK to Android_1768683589965
+1768683597: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m3, 'event/3/sound_level', ... (3 bytes))
+1768683597: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m1, 'event/3/sound_level', ... (3 bytes))
+1768683597: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/sound_level', ... (3 bytes))
+1768683597: Sending PUBACK to Android_1768683589965 (m3, rc0)
+1768683597: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m4, 'event/3/sound_level', ... (3 bytes))
+1768683597: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m2, 'event/3/sound_level', ... (3 bytes))
+1768683597: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/sound_level', ... (3 bytes))
+1768683597: Sending PUBACK to Android_1768683589965 (m4, rc0)
+1768683597: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m5, 'event/3/temperature', ... (8 bytes))
+1768683597: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m3, 'event/3/temperature', ... (8 bytes))
+1768683597: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/temperature', ... (8 bytes))
+1768683597: Sending PUBACK to Android_1768683589965 (m5, rc0)
+1768683597: Received PUBACK from Android_1768683589965 (Mid: 1, RC:0)
+1768683597: Received PUBACK from Android_1768683589965 (Mid: 2, RC:0)
+1768683597: Received PUBACK from Android_1768683589965 (Mid: 3, RC:0)
+1768683599: Received PINGREQ from event_sensor_listener
+1768683599: Sending PINGRESP to event_sensor_listener
+1768683604: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m6, 'event/1/sound_level', ... (3 bytes))
+1768683604: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m4, 'event/1/sound_level', ... (3 bytes))
+1768683604: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768683604: Sending PUBACK to Android_1768683589965 (m6, rc0)
+1768683604: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m7, 'event/1/sound_level', ... (3 bytes))
+1768683604: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m5, 'event/1/sound_level', ... (3 bytes))
+1768683604: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768683604: Sending PUBACK to Android_1768683589965 (m7, rc0)
+1768683604: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m8, 'event/1/temperature', ... (9 bytes))
+1768683604: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m6, 'event/1/temperature', ... (9 bytes))
+1768683604: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683604: Sending PUBACK to Android_1768683589965 (m8, rc0)
+1768683604: Received PUBACK from Android_1768683589965 (Mid: 4, RC:0)
+1768683604: Received PUBACK from Android_1768683589965 (Mid: 5, RC:0)
+1768683604: Received PUBACK from Android_1768683589965 (Mid: 6, RC:0)
+1768683605: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m9, 'event/1/temperature', ... (9 bytes))
+1768683605: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m7, 'event/1/temperature', ... (9 bytes))
+1768683605: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683605: Sending PUBACK to Android_1768683589965 (m9, rc0)
+1768683605: Received PUBACK from Android_1768683589965 (Mid: 7, RC:0)
+1768683606: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m10, 'event/1/sound_level', ... (3 bytes))
+1768683606: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m8, 'event/1/sound_level', ... (3 bytes))
+1768683606: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768683606: Sending PUBACK to Android_1768683589965 (m10, rc0)
+1768683606: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m11, 'event/1/temperature', ... (9 bytes))
+1768683606: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m9, 'event/1/temperature', ... (9 bytes))
+1768683606: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683606: Sending PUBACK to Android_1768683589965 (m11, rc0)
+1768683606: Received PUBACK from Android_1768683589965 (Mid: 8, RC:0)
+1768683606: Received PUBACK from Android_1768683589965 (Mid: 9, RC:0)
+1768683607: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m12, 'event/1/temperature', ... (9 bytes))
+1768683607: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m10, 'event/1/temperature', ... (9 bytes))
+1768683607: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683607: Sending PUBACK to Android_1768683589965 (m12, rc0)
+1768683607: Received PUBACK from Android_1768683589965 (Mid: 10, RC:0)
+1768683607: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m13, 'event/1/temperature', ... (9 bytes))
+1768683607: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m11, 'event/1/temperature', ... (9 bytes))
+1768683607: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683607: Sending PUBACK to Android_1768683589965 (m13, rc0)
+1768683607: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m14, 'event/1/sound_level', ... (3 bytes))
+1768683607: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m12, 'event/1/sound_level', ... (3 bytes))
+1768683607: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768683607: Sending PUBACK to Android_1768683589965 (m14, rc0)
+1768683607: Received PUBACK from Android_1768683589965 (Mid: 11, RC:0)
+1768683607: Received PUBACK from Android_1768683589965 (Mid: 12, RC:0)
+1768683608: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m15, 'event/1/temperature', ... (9 bytes))
+1768683608: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m13, 'event/1/temperature', ... (9 bytes))
+1768683608: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683608: Sending PUBACK to Android_1768683589965 (m15, rc0)
+1768683608: Received PUBACK from Android_1768683589965 (Mid: 13, RC:0)
+1768683608: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m16, 'event/1/temperature', ... (9 bytes))
+1768683608: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m14, 'event/1/temperature', ... (9 bytes))
+1768683608: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683608: Sending PUBACK to Android_1768683589965 (m16, rc0)
+1768683608: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m17, 'event/1/sound_level', ... (3 bytes))
+1768683608: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m15, 'event/1/sound_level', ... (3 bytes))
+1768683608: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768683608: Sending PUBACK to Android_1768683589965 (m17, rc0)
+1768683608: Received PUBACK from Android_1768683589965 (Mid: 14, RC:0)
+1768683608: Received PUBACK from Android_1768683589965 (Mid: 15, RC:0)
+1768683610: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m18, 'event/1/sound_level', ... (17 bytes))
+1768683610: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m16, 'event/1/sound_level', ... (17 bytes))
+1768683610: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (17 bytes))
+1768683610: Sending PUBACK to Android_1768683589965 (m18, rc0)
+1768683610: Received PUBACK from Android_1768683589965 (Mid: 16, RC:0)
+1768683610: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m19, 'event/1/sound_level', ... (17 bytes))
+1768683610: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m17, 'event/1/sound_level', ... (17 bytes))
+1768683610: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (17 bytes))
+1768683610: Sending PUBACK to Android_1768683589965 (m19, rc0)
+1768683610: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m20, 'event/1/temperature', ... (9 bytes))
+1768683610: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m18, 'event/1/temperature', ... (9 bytes))
+1768683610: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683610: Sending PUBACK to Android_1768683589965 (m20, rc0)
+1768683610: Received PUBACK from Android_1768683589965 (Mid: 17, RC:0)
+1768683610: Received PUBACK from Android_1768683589965 (Mid: 18, RC:0)
+1768683612: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m21, 'event/1/temperature', ... (9 bytes))
+1768683612: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m19, 'event/1/temperature', ... (9 bytes))
+1768683612: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683612: Sending PUBACK to Android_1768683589965 (m21, rc0)
+1768683612: Received PUBACK from Android_1768683589965 (Mid: 19, RC:0)
+1768683613: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m22, 'event/1/sound_level', ... (3 bytes))
+1768683613: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m20, 'event/1/sound_level', ... (3 bytes))
+1768683613: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768683613: Sending PUBACK to Android_1768683589965 (m22, rc0)
+1768683613: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m23, 'event/1/temperature', ... (9 bytes))
+1768683613: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m21, 'event/1/temperature', ... (9 bytes))
+1768683613: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (9 bytes))
+1768683613: Sending PUBACK to Android_1768683589965 (m23, rc0)
+1768683613: Received PUBACK from Android_1768683589965 (Mid: 20, RC:0)
+1768683613: Received PUBACK from Android_1768683589965 (Mid: 21, RC:0)
+1768683655: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m24, 'event/1/sound_level', ... (3 bytes))
+1768683655: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m22, 'event/1/sound_level', ... (3 bytes))
+1768683655: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768683655: Sending PUBACK to Android_1768683589965 (m24, rc0)
+1768683655: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m25, 'event/1/sound_level', ... (3 bytes))
+1768683655: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m23, 'event/1/sound_level', ... (3 bytes))
+1768683655: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/sound_level', ... (3 bytes))
+1768683655: Sending PUBACK to Android_1768683589965 (m25, rc0)
+1768683655: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m26, 'event/1/temperature', ... (8 bytes))
+1768683655: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m24, 'event/1/temperature', ... (8 bytes))
+1768683655: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/1/temperature', ... (8 bytes))
+1768683655: Sending PUBACK to Android_1768683589965 (m26, rc0)
+1768683655: Received PUBACK from Android_1768683589965 (Mid: 22, RC:0)
+1768683655: Received PUBACK from Android_1768683589965 (Mid: 23, RC:0)
+1768683655: Received PUBACK from Android_1768683589965 (Mid: 24, RC:0)
+1768683660: Received PINGREQ from event_sensor_listener
+1768683660: Sending PINGRESP to event_sensor_listener
+1768683715: Received PINGREQ from Android_1768683589965
+1768683715: Sending PINGRESP to Android_1768683589965
+1768683720: Received PINGREQ from event_sensor_listener
+1768683720: Sending PINGRESP to event_sensor_listener
+1768683775: Received PINGREQ from Android_1768683589965
+1768683775: Sending PINGRESP to Android_1768683589965
+1768683780: Received PINGREQ from event_sensor_listener
+1768683780: Sending PINGRESP to event_sensor_listener
+1768683835: Received PINGREQ from Android_1768683589965
+1768683835: Sending PINGRESP to Android_1768683589965
+1768683841: Received PINGREQ from event_sensor_listener
+1768683841: Sending PINGRESP to event_sensor_listener
+1768683870: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m27, 'event/3/sound_level', ... (3 bytes))
+1768683870: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m25, 'event/3/sound_level', ... (3 bytes))
+1768683870: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/sound_level', ... (3 bytes))
+1768683870: Sending PUBACK to Android_1768683589965 (m27, rc0)
+1768683870: Received PUBACK from Android_1768683589965 (Mid: 25, RC:0)
+1768683870: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m28, 'event/3/temperature', ... (9 bytes))
+1768683870: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m26, 'event/3/temperature', ... (9 bytes))
+1768683870: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/temperature', ... (9 bytes))
+1768683870: Sending PUBACK to Android_1768683589965 (m28, rc0)
+1768683870: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m29, 'event/3/sound_level', ... (3 bytes))
+1768683870: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m27, 'event/3/sound_level', ... (3 bytes))
+1768683870: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/sound_level', ... (3 bytes))
+1768683870: Sending PUBACK to Android_1768683589965 (m29, rc0)
+1768683870: Received PUBACK from Android_1768683589965 (Mid: 26, RC:0)
+1768683870: Received PUBACK from Android_1768683589965 (Mid: 27, RC:0)
+1768683882: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m30, 'event/3/sound_level', ... (3 bytes))
+1768683882: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m28, 'event/3/sound_level', ... (3 bytes))
+1768683882: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/sound_level', ... (3 bytes))
+1768683882: Sending PUBACK to Android_1768683589965 (m30, rc0)
+1768683882: Received PUBACK from Android_1768683589965 (Mid: 28, RC:0)
+1768683882: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m31, 'event/3/sound_level', ... (3 bytes))
+1768683882: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m29, 'event/3/sound_level', ... (3 bytes))
+1768683882: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/sound_level', ... (3 bytes))
+1768683882: Sending PUBACK to Android_1768683589965 (m31, rc0)
+1768683882: Received PUBLISH from Android_1768683589965 (d0, q1, r0, m32, 'event/3/temperature', ... (9 bytes))
+1768683882: Sending PUBLISH to Android_1768683589965 (d0, q1, r0, m30, 'event/3/temperature', ... (9 bytes))
+1768683882: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/temperature', ... (9 bytes))
+1768683882: Sending PUBACK to Android_1768683589965 (m32, rc0)
+1768683882: Received PUBACK from Android_1768683589965 (Mid: 29, RC:0)
+1768683882: Received PUBACK from Android_1768683589965 (Mid: 30, RC:0)
+1768683901: Received PINGREQ from event_sensor_listener
+1768683901: Sending PINGRESP to event_sensor_listener
+1768683942: Received PINGREQ from Android_1768683589965
+1768683942: Sending PINGRESP to Android_1768683589965
+1768683962: Received PINGREQ from event_sensor_listener
+1768683962: Sending PINGRESP to event_sensor_listener
+1768684002: Received PINGREQ from Android_1768683589965
+1768684002: Sending PINGRESP to Android_1768683589965
+1768684022: Received PINGREQ from event_sensor_listener
+1768684022: Sending PINGRESP to event_sensor_listener
+1768684062: Received PINGREQ from Android_1768683589965
+1768684062: Sending PINGRESP to Android_1768683589965
+1768684082: Received PINGREQ from event_sensor_listener
+1768684082: Sending PINGRESP to event_sensor_listener
+1768684122: Received PINGREQ from Android_1768683589965
+1768684122: Sending PINGRESP to Android_1768683589965
+1768684142: Received PINGREQ from event_sensor_listener
+1768684142: Sending PINGRESP to event_sensor_listener
+1768684182: Received PINGREQ from Android_1768683589965
+1768684182: Sending PINGRESP to Android_1768683589965
+1768684203: Received PINGREQ from event_sensor_listener
+1768684203: Sending PINGRESP to event_sensor_listener
+1768684242: Received PINGREQ from Android_1768683589965
+1768684242: Sending PINGRESP to Android_1768683589965
+1768684263: Received PINGREQ from event_sensor_listener
+1768684263: Sending PINGRESP to event_sensor_listener
+1768684302: Received PINGREQ from Android_1768683589965
+1768684302: Sending PINGRESP to Android_1768683589965
+1768684323: Received PINGREQ from event_sensor_listener
+1768684323: Sending PINGRESP to event_sensor_listener
+1768684362: Received PINGREQ from Android_1768683589965
+1768684362: Sending PINGRESP to Android_1768683589965
+1768684383: Received PINGREQ from event_sensor_listener
+1768684383: Sending PINGRESP to event_sensor_listener
+1768684410: mosquitto version 2.0.22 starting
+1768684410: Config loaded from /mosquitto/config/mosquitto.conf.
+1768684410: Opening ipv4 listen socket on port 1883.
+1768684410: Opening ipv6 listen socket on port 1883.
+1768684410: Opening websockets listen socket on port 9001.
+1768684410: mosquitto version 2.0.22 running
+1768684414: New connection from 172.21.0.3:33081 on port 1883.
+1768684414: New client connected from 172.21.0.3:33081 as event_sensor_listener (p5, c1, k60).
+1768684414: No will message specified.
+1768684414: Sending CONNACK to event_sensor_listener (0, 0)
+1768684414: Received SUBSCRIBE from event_sensor_listener
+1768684414: 	event/# (QoS 0)
+1768684414: event_sensor_listener 0 event/#
+1768684414: Sending SUBACK to event_sensor_listener
+1768684431: New connection from 192.168.65.1:57235 on port 1883.
+1768684431: New client connected from 192.168.65.1:57235 as Android_1768684428096 (p2, c1, k60).
+1768684431: No will message specified.
+1768684431: Sending CONNACK to Android_1768684428096 (0, 0)
+1768684431: Received SUBSCRIBE from Android_1768684428096
+1768684431: 	event/+/temperature (QoS 1)
+1768684431: Android_1768684428096 1 event/+/temperature
+1768684431: Sending SUBACK to Android_1768684428096
+1768684431: Received SUBSCRIBE from Android_1768684428096
+1768684431: 	event/+/sound_level (QoS 1)
+1768684431: Android_1768684428096 1 event/+/sound_level
+1768684431: Sending SUBACK to Android_1768684428096
+1768684431: Received SUBSCRIBE from Android_1768684428096
+1768684431: 	announcement/global (QoS 1)
+1768684431: Android_1768684428096 1 announcement/global
+1768684431: Sending SUBACK to Android_1768684428096
+1768684431: Received SUBSCRIBE from Android_1768684428096
+1768684431: 	event/+/announcement (QoS 1)
+1768684431: Android_1768684428096 1 event/+/announcement
+1768684431: Sending SUBACK to Android_1768684428096
+1768684439: Received PUBLISH from Android_1768684428096 (d0, q1, r0, m5, 'event/3/sound_level', ... (3 bytes))
+1768684439: Sending PUBLISH to Android_1768684428096 (d0, q1, r0, m1, 'event/3/sound_level', ... (3 bytes))
+1768684439: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/sound_level', ... (3 bytes))
+1768684439: Sending PUBACK to Android_1768684428096 (m5, rc0)
+1768684439: Received PUBLISH from Android_1768684428096 (d0, q1, r0, m6, 'event/3/sound_level', ... (3 bytes))
+1768684439: Sending PUBLISH to Android_1768684428096 (d0, q1, r0, m2, 'event/3/sound_level', ... (3 bytes))
+1768684439: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/sound_level', ... (3 bytes))
+1768684439: Sending PUBACK to Android_1768684428096 (m6, rc0)
+1768684439: Received PUBLISH from Android_1768684428096 (d0, q1, r0, m7, 'event/3/temperature', ... (9 bytes))
+1768684439: Sending PUBLISH to Android_1768684428096 (d0, q1, r0, m3, 'event/3/temperature', ... (9 bytes))
+1768684439: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/temperature', ... (9 bytes))
+1768684439: Sending PUBACK to Android_1768684428096 (m7, rc0)
+1768684439: Received PUBACK from Android_1768684428096 (Mid: 1, RC:0)
+1768684439: Received PUBACK from Android_1768684428096 (Mid: 2, RC:0)
+1768684439: Received PUBACK from Android_1768684428096 (Mid: 3, RC:0)
+1768684442: Received PUBLISH from Android_1768684428096 (d0, q1, r0, m8, 'event/3/temperature', ... (9 bytes))
+1768684442: Sending PUBLISH to Android_1768684428096 (d0, q1, r0, m4, 'event/3/temperature', ... (9 bytes))
+1768684442: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/temperature', ... (9 bytes))
+1768684442: Sending PUBACK to Android_1768684428096 (m8, rc0)
+1768684442: Received PUBACK from Android_1768684428096 (Mid: 4, RC:0)
+1768684443: Received PUBLISH from Android_1768684428096 (d0, q1, r0, m9, 'event/3/temperature', ... (9 bytes))
+1768684443: Sending PUBLISH to Android_1768684428096 (d0, q1, r0, m5, 'event/3/temperature', ... (9 bytes))
+1768684443: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/temperature', ... (9 bytes))
+1768684443: Sending PUBACK to Android_1768684428096 (m9, rc0)
+1768684443: Received PUBLISH from Android_1768684428096 (d0, q1, r0, m10, 'event/3/sound_level', ... (3 bytes))
+1768684443: Sending PUBLISH to Android_1768684428096 (d0, q1, r0, m6, 'event/3/sound_level', ... (3 bytes))
+1768684443: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/sound_level', ... (3 bytes))
+1768684443: Sending PUBACK to Android_1768684428096 (m10, rc0)
+1768684443: Received PUBACK from Android_1768684428096 (Mid: 5, RC:0)
+1768684443: Received PUBACK from Android_1768684428096 (Mid: 6, RC:0)
+1768684474: Received PINGREQ from event_sensor_listener
+1768684474: Sending PINGRESP to event_sensor_listener
+1768684477: Client Android_1768684428096 closed its connection.
+1768684534: Received PINGREQ from event_sensor_listener
+1768684534: Sending PINGRESP to event_sensor_listener
+1768684594: Received PINGREQ from event_sensor_listener
+1768684594: Sending PINGRESP to event_sensor_listener
+1768684655: Received PINGREQ from event_sensor_listener
+1768684655: Sending PINGRESP to event_sensor_listener
+1768684715: Received PINGREQ from event_sensor_listener
+1768684715: Sending PINGRESP to event_sensor_listener
+1768684775: Received PINGREQ from event_sensor_listener
+1768684775: Sending PINGRESP to event_sensor_listener
+1768684831: New connection from 192.168.65.1:44988 on port 1883.
+1768684831: New client connected from 192.168.65.1:44988 as Android_1768684831542 (p2, c1, k60).
+1768684831: No will message specified.
+1768684831: Sending CONNACK to Android_1768684831542 (0, 0)
+1768684831: Received SUBSCRIBE from Android_1768684831542
+1768684831: 	event/+/temperature (QoS 1)
+1768684831: Android_1768684831542 1 event/+/temperature
+1768684831: Sending SUBACK to Android_1768684831542
+1768684831: Received SUBSCRIBE from Android_1768684831542
+1768684831: 	event/+/sound_level (QoS 1)
+1768684831: Android_1768684831542 1 event/+/sound_level
+1768684831: Sending SUBACK to Android_1768684831542
+1768684831: Received SUBSCRIBE from Android_1768684831542
+1768684831: 	announcement/global (QoS 1)
+1768684831: Android_1768684831542 1 announcement/global
+1768684831: Sending SUBACK to Android_1768684831542
+1768684831: Received SUBSCRIBE from Android_1768684831542
+1768684831: 	event/+/announcement (QoS 1)
+1768684831: Android_1768684831542 1 event/+/announcement
+1768684831: Sending SUBACK to Android_1768684831542
+1768684835: Received PINGREQ from event_sensor_listener
+1768684835: Sending PINGRESP to event_sensor_listener
+1768684840: Received PUBLISH from Android_1768684831542 (d0, q1, r0, m5, 'event/3/sound_level', ... (3 bytes))
+1768684840: Sending PUBLISH to Android_1768684831542 (d0, q1, r0, m1, 'event/3/sound_level', ... (3 bytes))
+1768684840: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/sound_level', ... (3 bytes))
+1768684840: Sending PUBACK to Android_1768684831542 (m5, rc0)
+1768684840: Received PUBLISH from Android_1768684831542 (d0, q1, r0, m6, 'event/3/temperature', ... (9 bytes))
+1768684840: Sending PUBLISH to Android_1768684831542 (d0, q1, r0, m2, 'event/3/temperature', ... (9 bytes))
+1768684840: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/temperature', ... (9 bytes))
+1768684840: Sending PUBACK to Android_1768684831542 (m6, rc0)
+1768684840: Received PUBLISH from Android_1768684831542 (d0, q1, r0, m7, 'event/3/sound_level', ... (3 bytes))
+1768684840: Sending PUBLISH to Android_1768684831542 (d0, q1, r0, m3, 'event/3/sound_level', ... (3 bytes))
+1768684840: Sending PUBLISH to event_sensor_listener (d0, q0, r0, m0, 'event/3/sound_level', ... (3 bytes))
+1768684840: Sending PUBACK to Android_1768684831542 (m7, rc0)
+1768684840: Received PUBACK from Android_1768684831542 (Mid: 1, RC:0)
+1768684840: Received PUBACK from Android_1768684831542 (Mid: 2, RC:0)
+1768684840: Received PUBACK from Android_1768684831542 (Mid: 3, RC:0)
+1768684863: Client Android_1768684831542 closed its connection.

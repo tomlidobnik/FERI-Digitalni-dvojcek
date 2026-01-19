@@ -24,3 +24,10 @@ venv/
 **/key.pem
 
 **/.idea/*
+
+# Mosquito files
+**/mosquito.db
+**/mosquito.db-shm
+**/mosquito.db-wal
+**/mosquito.log
+mosquitto/log/mosquitto.log
