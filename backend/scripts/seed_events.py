@@ -86,7 +86,7 @@ def ensure_locations(conn: sqlite3.Connection, count: int = 5) -> list[int]:
     
     for i in range(count):
         jitter_lat = base_lat + random.uniform(-0.03, 0.03)
-        jitter_lon = base_lon + random.uniform(-0.03, 0.03)
+        jitter_lon = base_lon + random.uniform(-0.03, 0.0=3)
         
         location_name = random.choice(location_names)
         

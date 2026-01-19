@@ -42,6 +42,8 @@ public class VectorMapRenderer {
     private float targetZoom = 1f;
     private EventDto hoveredEvent = null;
     private float targetScale = 1f;
+    private boolean closingEventWindow = false;
+
 
 
     private SpriteBatch batch;
@@ -158,7 +160,7 @@ public class VectorMapRenderer {
             float scaleX = viewport.getWorldWidth() / mapWidth;
             float scaleY = viewport.getWorldHeight() / mapHeight;
 
-            minScale = Math.min(scaleX, scaleY);
+            minScale = Math.min(scaleX, scaleY) * 2f;
             maxScale = minScale * 20f;
             scale = minScale * 1.2f;
 
@@ -287,9 +289,17 @@ public class VectorMapRenderer {
         batch.end();
 
         stage.act(delta);
-        if (eventWindowVisible) {
+        if (eventWindowVisible && !closingEventWindow) {
             eventWindowAlpha = Math.min(1f, eventWindowAlpha + delta * 3f);
             eventWindow.getColor().a = eventWindowAlpha;
+        } else if (closingEventWindow) {
+            eventWindowAlpha = Math.max(0f, eventWindowAlpha - delta * 3f);
+            eventWindow.getColor().a = eventWindowAlpha;
+            if (eventWindowAlpha == 0f) {
+                eventWindowVisible = false;
+                closingEventWindow = false;
+                eventWindow.setVisible(false);
+            }
         }
         stage.draw();
     }
@@ -365,6 +375,15 @@ public class VectorMapRenderer {
         eventWindow.setVisible(false);
         eventWindow.setMovable(true);
 
+        TextButton closeButton = new TextButton("X", skin);
+        closeButton.addListener(event -> {
+            closingEventWindow = true;
+            return true;
+        });
+
+        eventWindow.getTitleTable().add().expandX();
+        eventWindow.getTitleTable().add(closeButton).right().padRight(5);
+
         titleLabel = new Label("", skin);
         descLabel = new Label("", skin);
         timeLabel = new Label("", skin);
@@ -380,8 +399,11 @@ public class VectorMapRenderer {
         content.add(tagLabel).left().padTop(5).row();
 
         eventWindow.add(content).expand().fill();
+
         stage.addActor(eventWindow);
     }
+
+
     private void createFilterUI() {
         filterWindow = new Window("Filter", skin);
         filterWindow.setSize(200, 80);
