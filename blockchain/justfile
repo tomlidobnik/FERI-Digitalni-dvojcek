@@ -1,0 +1,36 @@
+#!/usr/bin/env just --justfile
+
+build:
+    echo "Building blockchain_mpi..."
+    mkdir -p build
+    mpicxx -std=c++17 -O3 -march=native -Wall -Wextra \
+        -I/opt/homebrew/opt/openssl@3/include \
+        -L/opt/homebrew/opt/openssl@3/lib \
+        main.cpp -o build/blockchain_mpi \
+        -lssl -lcrypto -lpthread
+    echo "✓ Build complete: ./build/blockchain_mpi"
+
+clean:
+    echo "Cleaning build artifacts..."
+    rm -rf build *.png *.txt
+    echo "✓ Clean complete"
+
+serve: build
+    echo "Starting blockchain API on http://localhost:8001"
+    uv run api.py
+
+run: build
+    echo "Running blockchain (threaded)..."
+    ./build/blockchain_mpi
+
+run-mpi N="4": build
+    echo "Running blockchain with {{N}} MPI nodes..."
+    mpirun -n {{N}} ./build/blockchain_mpi
+
+benchmark: build
+    echo "Running performance benchmark..."
+    uv run performance_analysis.py
+
+benchmark-full: build
+    echo "Running comprehensive performance benchmark..."
+    uv run performance_analysis_full.py
