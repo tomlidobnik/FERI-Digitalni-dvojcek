@@ -74,6 +74,11 @@ public class VectorMapRenderer {
     private final Color activeColorB = new Color(0.2f, 0f, 0.6f, 1f);
     private final Color tempColor = new Color();
 
+    private String activeTagFilter = "ALL";
+
+    private SelectBox<String> tagSelectBox;
+    private Window filterWindow;
+
     public VectorMapRenderer(OrthographicCamera camera, float screenWidth, float screenHeight) {
         this.camera = camera;
         shapeRenderer = new ShapeRenderer();
@@ -93,6 +98,7 @@ public class VectorMapRenderer {
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
         createEventWindow();
+        createFilterUI();
 
     }
 
@@ -200,6 +206,7 @@ public class VectorMapRenderer {
         float baseSize = 48f;
 
         for (EventDto e : events) {
+            if (!shouldRenderEvent(e)) continue;
             if (e.location_fk == null) continue;
             LocationDto loc = locationById.get(e.location_fk);
             if (loc == null) continue;
@@ -247,6 +254,11 @@ public class VectorMapRenderer {
         stage.draw();
     }
 
+    private boolean shouldRenderEvent(EventDto e) {
+        if (activeTagFilter.equals("ALL")) return true;
+        if (e.tag == null) return false;
+        return e.tag.equalsIgnoreCase(activeTagFilter);
+    }
 
     private void draw(float[] verts) {
         for (int i = 0; i < verts.length - 2; i += 2) {
@@ -317,6 +329,31 @@ public class VectorMapRenderer {
         eventWindow.add(content).expand().fill();
         stage.addActor(eventWindow);
     }
+    private void createFilterUI() {
+        filterWindow = new Window("Filter", skin);
+        filterWindow.setSize(200, 80);
+        filterWindow.setMovable(false);
+
+        filterWindow.setPosition(
+                stage.getViewport().getWorldWidth() - 220,
+                stage.getViewport().getWorldHeight() - 100
+        );
+
+        tagSelectBox = new SelectBox<>(skin);
+        tagSelectBox.setItems("ALL", "fun", "education", "sports");
+        tagSelectBox.setSelected("ALL");
+
+        tagSelectBox.addListener(event -> {
+            activeTagFilter = tagSelectBox.getSelected();
+            return false;
+        });
+
+        filterWindow.add(new Label("Show events:", skin)).left().row();
+        filterWindow.add(tagSelectBox).width(160);
+
+        stage.addActor(filterWindow);
+    }
+
 
     private boolean isEventActive(EventDto e) {
         LocalDateTime now = LocalDateTime.now();
