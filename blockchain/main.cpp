@@ -11,7 +11,7 @@
 #include <chrono>
 #include <openssl/sha.h>
 #include <mpi.h>
-#include <pthread.h>
+#include <omp.h>
 #include <algorithm>
 
 using namespace std;
@@ -27,11 +27,8 @@ int NUM_THREADS = 0;
 
 atomic<bool> mining_complete(false);
 atomic<unsigned long long> found_nonce(0);
-mutex blockchain_mutex;
 string mining_result_hash;
-
-unsigned long long mpi_start_nonce = 0;
-unsigned long long mpi_end_nonce = ULLONG_MAX;
+mutex blockchain_mutex;
 
 string sha256(const string &input)
 {
@@ -249,44 +246,9 @@ public:
     }
 };
 
-void *mine_thread(void *arg)
+Block mine_block_omp(Block &new_block, int num_threads)
 {
-    Block *block = (Block *)arg;
-    unsigned long long thread_id = (unsigned long long)pthread_self();
-
-    unsigned long long range_size = mpi_end_nonce - mpi_start_nonce;
-    unsigned long long start_nonce = mpi_start_nonce + (thread_id % range_size);
-    unsigned long long nonce = start_nonce;
-
-    while (!mining_complete && nonce < mpi_end_nonce)
-    {
-        string hash = block->calculate_hash(nonce);
-        int leading_zeros = count_leading_zeros(hash);
-
-        if (leading_zeros >= block->difficulty)
-        {
-            mining_complete = true;
-            found_nonce = nonce;
-            mining_result_hash = hash;
-            break;
-        }
-
-        nonce++;
-
-        if ((nonce - start_nonce) % 100000 == 0)
-        {
-            if (mining_complete || nonce >= mpi_end_nonce)
-                break;
-        }
-    }
-
-    return nullptr;
-}
-
-Block mine_block_threaded(Block &new_block)
-{
-    int num_threads = (NUM_THREADS > 0) ? NUM_THREADS : thread::hardware_concurrency();
-    cout << "Mining with " << num_threads << " threads..." << endl;
+    cout << "Mining with " << num_threads << " OpenMP threads..." << endl;
 
     mining_complete = false;
     found_nonce = 0;
@@ -294,15 +256,35 @@ Block mine_block_threaded(Block &new_block)
 
     auto start_time = chrono::high_resolution_clock::now();
 
-    vector<pthread_t> threads(num_threads);
-    for (int i = 0; i < num_threads; i++)
-    {
-        pthread_create(&threads[i], nullptr, mine_thread, (void *)&new_block);
-    }
+    omp_set_num_threads(num_threads);
 
-    for (int i = 0; i < num_threads; i++)
+    const int batch_size = 500; // 500 nonces za eno iteracijo thread-a
+
+    #pragma omp parallel
     {
-        pthread_join(threads[i], nullptr);
+        unsigned long long local_nonce = omp_get_thread_num();
+        string local_hash;
+
+        while (!mining_complete.load(memory_order_relaxed))
+        {
+            for (int i = 0; i < batch_size; i++)
+            {
+                local_hash = new_block.calculate_hash(local_nonce);
+
+                if (count_leading_zeros(local_hash) >= new_block.difficulty)
+                {
+                    bool expected = false;
+                    if (mining_complete.compare_exchange_strong(expected, true))
+                    {
+                        found_nonce = local_nonce;
+                        mining_result_hash = local_hash;
+                    }
+                    break;
+                }
+
+                local_nonce += num_threads;
+            }
+        }
     }
 
     auto end_time = chrono::high_resolution_clock::now();
@@ -312,63 +294,6 @@ Block mine_block_threaded(Block &new_block)
     new_block.hash = mining_result_hash;
 
     cout << "Block mined in " << duration.count() << " ms with nonce: " << found_nonce << endl;
-
-    return new_block;
-}
-
-Block mine_block_mpi(Block &new_block, int rank, int size)
-{
-    int num_threads_per_node = (NUM_THREADS > 0) ? NUM_THREADS : thread::hardware_concurrency();
-
-    unsigned long long nonce_per_process = ULLONG_MAX / size;
-    mpi_start_nonce = rank * nonce_per_process;
-    mpi_end_nonce = (rank == size - 1) ? ULLONG_MAX : (rank + 1) * nonce_per_process;
-
-    cout << "Rank " << rank << " mining nonces from " << mpi_start_nonce << " to " << mpi_end_nonce << endl;
-
-    mining_complete = false;
-    found_nonce = 0;
-    mining_result_hash = "";
-
-    auto start_time = chrono::high_resolution_clock::now();
-
-    vector<pthread_t> threads(num_threads_per_node);
-    for (int i = 0; i < num_threads_per_node; i++)
-    {
-        pthread_create(&threads[i], nullptr, mine_thread, (void *)&new_block);
-    }
-
-    for (int i = 0; i < num_threads_per_node; i++)
-    {
-        pthread_join(threads[i], nullptr);
-    }
-
-    auto end_time = chrono::high_resolution_clock::now();
-    auto duration = chrono::duration_cast<chrono::milliseconds>(end_time - start_time);
-
-    struct MineResult
-    {
-        unsigned long long nonce;
-        int rank;
-        int found;
-    } local_result, global_result;
-
-    local_result.nonce = found_nonce;
-    local_result.rank = rank;
-    local_result.found = (found_nonce > 0) ? 1 : 0;
-
-    MPI_Allreduce(&local_result, &global_result, 1, MPI_UNSIGNED_LONG_LONG, MPI_MIN, MPI_COMM_WORLD);
-
-    unsigned long long winning_nonce = found_nonce;
-    MPI_Bcast(&winning_nonce, 1, MPI_UNSIGNED_LONG_LONG, global_result.rank, MPI_COMM_WORLD);
-
-    new_block.nonce = winning_nonce;
-    new_block.hash = new_block.calculate_hash(winning_nonce);
-
-    if (rank == 0 || found_nonce > 0)
-    {
-        cout << "Rank " << rank << " finished in " << duration.count() << " ms" << endl;
-    }
 
     return new_block;
 }
@@ -405,11 +330,11 @@ int main(int argc, char *argv[])
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    int num_blocks_to_mine = 10;
+    int num_blocks_to_mine = 20;
 
     for (int i = 1; i < argc; i++)
     {
-        if (strcmp(argv[i], "--fixed-difficulty") == 0)
+        if (strcmp(argv[i], "--fixed-difficulty") == 0) // nastavljanje konstantne zahtevnosti (za benchmarking)
         {
             FIXED_DIFFICULTY = true;
         }
@@ -440,44 +365,228 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (rank == 0)
+    int hardware_threads = thread::hardware_concurrency();
+    int threads_per_node = 0;
+
+    if (size == 1) // uporabimo samo en node
     {
-        cout << "=== BLOCKCHAIN WITH MPI MINING ===" << endl;
-        cout << "Running on " << size << " nodes" << endl;
-        cout << "Threads per node: " << thread::hardware_concurrency() << endl;
+        threads_per_node = (NUM_THREADS > 0) ? NUM_THREADS : hardware_threads;
+        
+        if (rank == 0)
+        {
+            cout << "=== BLOCKCHAIN WITH SINGLE NODE ===" << endl;
+            cout << "Using " << threads_per_node << " threads" << endl;
+        }
+    }
+    else // več nodov in delamo po princupu client-server
+    {
+        if (NUM_THREADS > 0)
+        {
+            if (rank == 0)
+            {
+                cout << "=== BLOCKCHAIN WITH MPI CLIENT-SERVER ===" << endl;
+                cout << "Running on " << size << " nodes" << endl;
+                cout << "Manual thread configuration: " << NUM_THREADS << " threads per client node" << endl;
+                cout << "Server will coordinate only (no mining)" << endl;
+                threads_per_node = 0;
+            }
+            else
+            {
+                threads_per_node = NUM_THREADS;
+                cout << "Rank " << rank << " (client) ready with " << threads_per_node << " threads" << endl;
+            }
+        }
+        else
+        {
+            // Avtomatska razporeditev
+            int client_nodes = size - 1;
+            threads_per_node = (hardware_threads - 1) / client_nodes;
+            int remainder = (hardware_threads - 1) % client_nodes;
+
+            if (rank == 0)
+            {
+                cout << "=== BLOCKCHAIN WITH MPI CLIENT-SERVER ===" << endl;
+                cout << "Running on " << size << " nodes" << endl;
+                cout << "Hardware threads available: " << hardware_threads << endl;
+                cout << "Client threads per node: " << threads_per_node << endl;
+                
+                int server_threads = remainder + 1;
+                if (server_threads > 1)
+                {
+                    cout << "Server threads: " << server_threads << endl;
+                    threads_per_node = server_threads;
+                }
+                else
+                {
+                    cout << "Server will coordinate only (no mining)" << endl;
+                    threads_per_node = 0;
+                }
+            }
+            else
+            {
+                cout << "Rank " << rank << " (client) ready with " << threads_per_node << " threads" << endl;
+            }
+        }
     }
 
     Blockchain blockchain;
 
-    if (rank == 0)
+    if (size == 1) // uporabimo samo en node (klasicni OMP)
     {
-        cout << "\n--- Mining Blocks ---" << endl;
-
-        for (int i = 1; i <= num_blocks_to_mine; i++)
+        if (rank == 0)
         {
-            int difficulty = blockchain.get_current_difficulty();
-            cout << "\nMining block " << i << " with difficulty " << difficulty << "..." << endl;
+            cout << "\n--- Mining Blocks (Single Node) ---" << endl;
 
-            Block new_block(i, "Block data " + to_string(i), time(nullptr),
-                            blockchain.get_last_block().hash, difficulty);
-
-            new_block = mine_block_threaded(new_block);
-
-            if (blockchain.add_block(new_block))
+            for (int i = 1; i <= num_blocks_to_mine; i++)
             {
-                cout << "Block added successfully!" << endl;
+                int difficulty = blockchain.get_current_difficulty();
+                cout << "\nMining block " << i << " with difficulty " << difficulty << "..." << endl;
+
+                Block new_block(i, "Block data " + to_string(i), time(nullptr),
+                                blockchain.get_last_block().hash, difficulty);
+
+                new_block = mine_block_omp(new_block, threads_per_node);
+
+                if (blockchain.add_block(new_block))
+                {
+                    cout << "Block added successfully!" << endl;
+                }
+                else
+                {
+                    cout << "Block validation failed!" << endl;
+                }
             }
-            else
+
+            print_blockchain(blockchain);
+        }
+    }
+    else // client-server MPI pristop
+    {
+        if (rank == 0) // server
+        {
+            cout << "\n--- Mining Blocks (Server Mode) ---" << endl;
+
+            for (int i = 1; i <= num_blocks_to_mine; i++)
             {
-                cout << "Block validation failed!" << endl;
+                int difficulty = blockchain.get_current_difficulty();
+                cout << "\nMining block " << i << " with difficulty " << difficulty << "..." << endl;
+
+                Block new_block(i, "Block data " + to_string(i), time(nullptr),
+                                blockchain.get_last_block().hash, difficulty);
+
+                char data_buffer[256];
+                strncpy(data_buffer, new_block.data.c_str(), 255);
+                data_buffer[255] = '\0';
+
+                for (int r = 1; r < size; r++) // posiljanje blokov clientom
+                {
+                    MPI_Send(&new_block.index, 1, MPI_INT, r, 0, MPI_COMM_WORLD);
+                    MPI_Send(data_buffer, 256, MPI_CHAR, r, 0, MPI_COMM_WORLD);
+                    MPI_Send(&new_block.timestamp, 1, MPI_LONG, r, 0, MPI_COMM_WORLD);
+                    MPI_Send(new_block.prev_hash.c_str(), 65, MPI_CHAR, r, 0, MPI_COMM_WORLD);
+                    MPI_Send(&new_block.difficulty, 1, MPI_INT, r, 0, MPI_COMM_WORLD);
+                }
+
+                mining_complete = false;
+                found_nonce = 0;
+                mining_result_hash = "";
+
+                if (threads_per_node > 0) // kopanje ce ima niti na serverju
+                {
+                    cout << "Server also mining with " << threads_per_node << " threads..." << endl;
+                    auto server_start = chrono::high_resolution_clock::now();
+                    
+                    new_block = mine_block_omp(new_block, threads_per_node);
+                    
+                    auto server_end = chrono::high_resolution_clock::now();
+                    auto server_duration = chrono::duration_cast<chrono::milliseconds>(server_end - server_start);
+                    cout << "Server finished mining in " << server_duration.count() << " ms" << endl;
+                }
+                else
+                {
+                    unsigned long long winning_nonce = 0;
+                    int winning_rank = -1;
+                    
+                    for (int r = 1; r < size; r++)
+                    {
+                        unsigned long long client_nonce;
+                        MPI_Recv(&client_nonce, 1, MPI_UNSIGNED_LONG_LONG, r, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                        
+                        if (winning_rank == -1 || client_nonce > 0)
+                        {
+                            // prvi ki najde ali prvi odgovor
+                            string hash = new_block.calculate_hash(client_nonce);
+                            int leading_zeros = count_leading_zeros(hash);
+                            
+                            if (leading_zeros >= new_block.difficulty)
+                            {
+                                winning_nonce = client_nonce;
+                                winning_rank = r;
+                                cout << "Client rank " << r << " found nonce: " << client_nonce << endl;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    new_block.nonce = winning_nonce;
+                    new_block.hash = new_block.calculate_hash(winning_nonce);
+                }
+
+                if (blockchain.add_block(new_block))
+                {
+                    cout << "Block added successfully!" << endl;
+                }
+                else
+                {
+                    cout << "Block validation failed!" << endl;
+                }
+            }
+
+            // pošiljanje signala za konec
+            int end_signal = -1;
+            for (int r = 1; r < size; r++)
+            {
+                MPI_Send(&end_signal, 1, MPI_INT, r, 0, MPI_COMM_WORLD);
+            }
+
+            print_blockchain(blockchain);
+        }
+        else // client -> prjema delo in ga paralelno izvaja, glede na stevilo niti, ki jih imamo
+        {
+            cout << "Client rank " << rank << " waiting for work..." << endl;
+
+            while (true)
+            {
+                int index;
+                MPI_Recv(&index, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+                if (index == -1)
+                {
+                    cout << "Rank " << rank << " received end signal" << endl;
+                    break;
+                }
+
+                char data_buffer[256];
+                long timestamp;
+                char prev_hash_buffer[65];
+                int difficulty;
+
+                MPI_Recv(data_buffer, 256, MPI_CHAR, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                MPI_Recv(&timestamp, 1, MPI_LONG, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                MPI_Recv(prev_hash_buffer, 65, MPI_CHAR, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                MPI_Recv(&difficulty, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+                Block new_block(index, string(data_buffer), timestamp, string(prev_hash_buffer), difficulty);
+
+                cout << "Rank " << rank << " mining block " << index << " with difficulty " << difficulty << endl;
+
+                new_block = mine_block_omp(new_block, threads_per_node);
+
+                // Pošiljanje rezultata nazaj serverju
+                MPI_Send(&new_block.nonce, 1, MPI_UNSIGNED_LONG_LONG, 0, 0, MPI_COMM_WORLD);
             }
         }
-
-        print_blockchain(blockchain);
     }
-
-    int chain_size = blockchain.get_chain().size();
-    MPI_Bcast(&chain_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
     MPI_Finalize();
 
