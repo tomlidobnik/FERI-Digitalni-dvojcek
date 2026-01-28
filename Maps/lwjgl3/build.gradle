@@ -28,6 +28,7 @@ if (JavaVersion.current().isJava9Compatible()) {
 }
 
 dependencies {
+  implementation "com.google.code.gson:gson:2.10.1"
   implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
   implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
   implementation "com.badlogicgames.gdx:gdx-lwjgl3-angle:$gdxVersion"

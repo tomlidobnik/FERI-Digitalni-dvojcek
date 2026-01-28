@@ -12,12 +12,18 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import si.um.feri.copycats.api.EventRepository;
+import si.um.feri.copycats.api.LocationRepository;
 import si.um.feri.copycats.render.MapRenderer;
+import si.um.feri.copycats.utils.EventMarker;
 import si.um.feri.copycats.utils.MapRasterTiles;
+import si.um.feri.copycats.utils.MarkerIconRegistry;
 import si.um.feri.copycats.utils.ZoomXY;
 import si.um.feri.copycats.utils.Constants;
 import si.um.feri.copycats.utils.Marker;
@@ -30,13 +36,14 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
 
     private OrthographicCamera camera;
     private MapRenderer renderer;
+    private Viewport viewport;
 
     private ZoomXY beginTile;
     private ZoomXY[] tileZone;
 
     private final List<Marker> MARKERS = new ArrayList<>();
 
-    private final Geolocation CENTER_GEOLOCATION = new Geolocation(46.5547, 15.6459);
+    private final Geolocation CENTER_GEOLOCATION = new Geolocation(46.561396, 15.643631);
 
     private final Vector3 tmp = new Vector3();
 
@@ -56,11 +63,14 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
     @Override
     public void create() {
         batch = new SpriteBatch();
-        placeholder = new Texture(Gdx.files.internal("placeholder.png"));
-
+        MarkerIconRegistry.load();
+        LocationRepository.load(EventRepository::load);
         renderer = new MapRenderer();
 
-        camera = new OrthographicCamera(Constants.MAP_WIDTH, Constants.MAP_HEIGHT);
+        camera = new OrthographicCamera();
+        viewport = new ScreenViewport(camera);
+        viewport.apply();
+
         camera.position.set(Constants.MAP_WIDTH / 2f, Constants.MAP_HEIGHT / 2f, 0);
         camera.update();
 
@@ -75,10 +85,6 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
 
         beginTile = new ZoomXY(Constants.ZOOM, centerTile.x - offsetX, centerTile.y - offsetY);
         tileZone = MapRasterTiles.getTileZoneCoords(centerTile, Constants.NUM_TILES_X, Constants.NUM_TILES_Y);
-
-        MARKERS.add(new Marker(MarkerType.PLACEHOLDER, 46.5547, 15.6459, placeholder));
-        MARKERS.add(new Marker(MarkerType.PLACEHOLDER2, 46.5555, 15.6465, placeholder));
-        MARKERS.add(new Marker(MarkerType.PLACEHOLDER, 46.5539, 15.6440, placeholder));
 
         Gdx.app.log("Maps", "placeholderLoaded=" + (placeholder != null));
         for (int i = 0; i < MARKERS.size(); i++) {
@@ -96,16 +102,18 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
             beginTile.y,
             Constants.MAP_HEIGHT
         );
+
         camera.position.set(centerPixel.x, centerPixel.y, 0);
         camera.update();
+        camera.zoom = 4f;
         Gdx.app.log("Maps", "Centered camera on centerPixel=" + centerPixel + " cameraPos=" + camera.position + " zoom=" + camera.zoom);
 
-        zoomStartValue = camera.zoom;
-        zoomTargetValue = Math.max(MIN_ZOOM, zoomStartValue * 0.5f);
-        zoomElapsed = 0f;
-        zoomAnimating = false;
-        zoomStarted = false;
-        timeSinceStart = 0f;
+//        zoomStartValue = camera.zoom;
+//        zoomTargetValue = Math.max(MIN_ZOOM, zoomStartValue * 0.5f);
+//        zoomElapsed = 0f;
+//        zoomAnimating = false;
+//        zoomStarted = false;
+//        timeSinceStart = 0f;
 
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(new InputAdapter() {
@@ -151,11 +159,10 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
         batch.begin();
         renderer.drawTiles(batch, camera, tileZone, beginTile, Constants.MAP_HEIGHT);
 
-        for (int i = 0; i < MARKERS.size(); i++) {
-            Marker m = MARKERS.get(i);
+        for (EventMarker em : EventRepository.MARKERS) {
             Vector2 pos = MapRasterTiles.getPixelPosition(
-                m.lokacija.lat,
-                m.lokacija.lng,
+                em.location.latitude,
+                em.location.longitude,
                 MapRasterTiles.TILE_SIZE,
                 Constants.ZOOM,
                 beginTile.x,
@@ -163,8 +170,7 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
                 Constants.MAP_HEIGHT
             );
 
-            renderer.drawMarker(batch, camera, m.icon, pos, 128f, false);
-
+            renderer.drawMarker(batch, camera, em.icon, pos, 128f, false);
         }
         batch.end();
     }
@@ -197,14 +203,11 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
 
     @Override
     public boolean pan(float x, float y, float deltaX, float deltaY) {
-        float scaleX = (float) Constants.MAP_WIDTH / (float) Gdx.graphics.getWidth();
-        float scaleY = (float) Constants.MAP_HEIGHT / (float) Gdx.graphics.getHeight();
-
-        camera.translate(-deltaX * scaleX * camera.zoom, deltaY * scaleY * camera.zoom);
-
+        camera.translate(-deltaX * camera.zoom, deltaY * camera.zoom);
         clampCamera();
         return true;
     }
+
 
     @Override public boolean panStop(float x, float y, int pointer, int button) { return false; }
 
@@ -224,6 +227,7 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
     @Override
     public void dispose() {
         batch.dispose();
+
         if (placeholder != null) placeholder.dispose();
     }
 
@@ -249,4 +253,11 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
             camera.position.y = MathUtils.clamp(camera.position.y, halfH, Constants.MAP_HEIGHT - halfH);
         }
     }
+
+    @Override
+    public void resize(int width, int height) {
+        viewport.update(width, height, false);
+        clampCamera();
+    }
+
 }
