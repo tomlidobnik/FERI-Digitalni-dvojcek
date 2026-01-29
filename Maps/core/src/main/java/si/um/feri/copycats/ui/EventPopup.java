@@ -19,17 +19,15 @@ public class EventPopup extends Window {
     private final Label descriptionValue;
 
     public EventPopup(Skin skin) {
-        super("Podrobnosti o dogodkušžŠČ", skin);
+        super("Podrobnosti o dogodku", skin);
 
         setModal(true);
         setMovable(false);
         setResizable(false);
 
-        pad(20);
         defaults().pad(6).left();
 
         getTitleLabel().setAlignment(Align.center);
-        getTitleTable().getCell(getTitleLabel()).padBottom(5);
 
 
         // Labels
@@ -52,7 +50,25 @@ public class EventPopup extends Window {
         descriptionValue = new Label("", skin);
         descriptionValue.setWrap(true);
 
+        float fontScale = 1.4f;
+        float fontScaleLabel = 1.1f;
+
+        nameLabel.setFontScale(fontScaleLabel);
+        startTimeLabel.setFontScale(fontScaleLabel);
+        endTimeLabel.setFontScale(fontScaleLabel);
+        publicLabel.setFontScale(fontScaleLabel);
+        tagLabel.setFontScale(fontScaleLabel);
+        descLabel.setFontScale(fontScaleLabel);
+
+        nameValue.setFontScale(fontScale);
+        startTimeValue.setFontScale(fontScale);
+        endTimeValue.setFontScale(fontScale);
+        publicValue.setFontScale(fontScale);
+        tagValue.setFontScale(fontScale);
+        descriptionValue.setFontScale(fontScale);
+
         TextButton closeBtn = new TextButton("Zapri", skin);
+        closeBtn.padTop(10).padBottom(10).padLeft(20).padRight(20);
         closeBtn.addListener(e -> {
             if (e.toString().equals("touchDown")) {
                 hide();

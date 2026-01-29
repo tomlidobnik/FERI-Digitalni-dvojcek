@@ -14,7 +14,7 @@ public class EventRepository {
 
     public static final Array<EventMarker> MARKERS = new Array<>();
 
-    public static void load() {
+    public static void load(Runnable onDone) {
         ApiService.get("/event/all", new Net.HttpResponseListener() {
             @Override
             public void handleHttpResponse(Net.HttpResponse res) {
@@ -22,6 +22,7 @@ public class EventRepository {
                 EventDto[] events = new Json().fromJson(EventDto[].class, json);
 
                 Gdx.app.postRunnable(() -> {
+                    MARKERS.clear(); // clear old markers
                     for (EventDto e : events) {
                         LocationDto loc = LocationRepository.LOCATIONS.get(e.location_fk);
                         if (loc == null) continue;
@@ -32,17 +33,20 @@ public class EventRepository {
                         marker.type = MarkerType.fromTag(e.tag);
                         marker.icon = MarkerIconRegistry.get(marker.type);
 
-
                         MARKERS.add(marker);
                     }
+                    if (onDone != null) onDone.run();
                 });
             }
 
-            @Override public void failed(Throwable t) {
+            @Override
+            public void failed(Throwable t) {
                 Gdx.app.error("API", "Failed to load events", t);
             }
 
-            @Override public void cancelled() {}
+            @Override
+            public void cancelled() {}
         });
     }
+
 }

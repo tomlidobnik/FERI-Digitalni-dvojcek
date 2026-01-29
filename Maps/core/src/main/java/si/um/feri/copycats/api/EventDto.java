@@ -31,4 +31,17 @@ public class EventDto implements Json.Serializable {
     public void write(Json json) {
 
     }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof EventDto)) return false;
+        EventDto other = (EventDto) o;
+        return id == other.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
 }
