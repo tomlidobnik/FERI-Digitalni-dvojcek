@@ -4,13 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.net.HttpRequestBuilder;
 import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.JsonWriter;
 
 public class AuthService {
 
     private static String token;
 
-    /** Fetch token if not already cached */
     public static void getToken(Runnable onSuccess) {
         if (token != null) {
             onSuccess.run();
@@ -18,48 +17,49 @@ public class AuthService {
         }
 
         Json json = new Json();
+        json.setOutputType(JsonWriter.OutputType.json);
 
-        // Build JSON body
-        ObjectMap<String, String> body = new ObjectMap<>();
-        body.put("username", "janez");
-        body.put("password", "1234");
+        LoginRequest body = new LoginRequest();
+        body.username = "janez";
+        body.password = "1234";
 
-        // Build HTTP POST request
-        Net.HttpRequest http = new HttpRequestBuilder()
+        String payload = json.toJson(body);
+        Gdx.app.log("AUTH", "Sending JSON: " + payload);
+
+        Net.HttpRequest request = new HttpRequestBuilder()
             .newRequest()
             .method(Net.HttpMethods.POST)
             .url("http://0.0.0.0:8000/api/user/token")
             .header("Content-Type", "application/json")
-            .content(json.toJson(body)) // Convert ObjectMap to proper JSON
+            .content(payload)
             .build();
 
-        Gdx.net.sendHttpRequest(http, new Net.HttpResponseListener() {
+        Gdx.net.sendHttpRequest(request, new Net.HttpResponseListener() {
             @Override
             public void handleHttpResponse(Net.HttpResponse response) {
                 String raw = response.getResultAsString();
                 Gdx.app.log("AUTH", "Raw response: " + raw);
 
-                try {
-                    TokenResponse res = json.fromJson(TokenResponse.class, raw);
-                    token = res.token; // Extract the "token" field
-                    Gdx.app.log("AUTH", "Token fetched: " + token);
-                    onSuccess.run();
-                } catch (Exception e) {
-                    Gdx.app.error("AUTH", "Token parse failed", e);
+                if (!raw.contains("\"token\"")) {
+                    Gdx.app.error("AUTH", "Token missing in response");
+                    return;
                 }
+
+                TokenResponse tr = json.fromJson(TokenResponse.class, raw);
+                token = tr.token;
+
+                Gdx.app.log("AUTH", "Token OK");
+                onSuccess.run();
             }
 
-            @Override
-            public void failed(Throwable t) {
-                Gdx.app.error("AUTH", "Token fetch failed", t);
+            @Override public void failed(Throwable t) {
+                Gdx.app.error("AUTH", "Token request failed", t);
             }
 
-            @Override
-            public void cancelled() {}
+            @Override public void cancelled() {}
         });
     }
 
-    /** Get current bearer string */
     public static String getBearer() {
         return "Bearer " + token;
     }

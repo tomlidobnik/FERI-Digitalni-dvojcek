@@ -7,4 +7,5 @@ public class EventUpdateRequest {
     public String start_date;
     public String end_date;
     public int location_fk;
+    public String tag;
 }

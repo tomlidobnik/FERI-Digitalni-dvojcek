@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonWriter;
 
 import si.um.feri.copycats.api.*;
 
@@ -179,6 +180,7 @@ public class EventPopup extends Window {
 
     private void updateEvent(String title, String desc, String start, String end) {
         AuthService.getToken(() -> {
+
             EventUpdateRequest req = new EventUpdateRequest();
             req.id = currentEvent.id;
             req.title = title;
@@ -186,29 +188,48 @@ public class EventPopup extends Window {
             req.start_date = start;
             req.end_date = end;
             req.location_fk = currentEvent.location_fk;
+            req.tag = currentEvent.tag;
 
             Json json = new Json();
-            HttpRequestBuilder b = new HttpRequestBuilder();
+            json.setOutputType(JsonWriter.OutputType.json);
 
-            Net.HttpRequest http = b.newRequest()
+            String payload = json.toJson(req);
+            Gdx.app.log("EVENT", "Sending JSON: " + payload);
+
+            Net.HttpRequest http = new HttpRequestBuilder()
+                .newRequest()
                 .method(Net.HttpMethods.PUT)
                 .url("http://0.0.0.0:8000/api/event/update")
                 .header("Authorization", AuthService.getBearer())
                 .header("Content-Type", "application/json")
-                .content(json.toJson(req))
+                .content(payload)
                 .build();
 
             Gdx.net.sendHttpRequest(http, new Net.HttpResponseListener() {
-                @Override public void handleHttpResponse(Net.HttpResponse res) {
-                    Gdx.app.log("EVENT", "Updated successfully");
+                @Override
+                public void handleHttpResponse(Net.HttpResponse res) {
+                    Gdx.app.log("EVENT", "Raw response: " + res.getResultAsString());
+                    Gdx.app.log("EVENT", "Event updated successfully");
+
+                    currentEvent.title = title;
+                    currentEvent.description = desc;
+                    currentEvent.start_date = start;
+                    currentEvent.end_date = end;
+
+                    show(currentEvent);
                 }
-                @Override public void failed(Throwable t) {
+
+                @Override
+                public void failed(Throwable t) {
                     Gdx.app.error("EVENT", "Update failed", t);
                 }
+
                 @Override public void cancelled() {}
             });
         });
     }
+
+
 
     public void hide() {
         addAction(Actions.sequence(
