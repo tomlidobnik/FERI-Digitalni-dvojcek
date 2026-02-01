@@ -48,4 +48,14 @@ public class MapRenderer {
         spriteBatch.draw(icon, pos.x - size / 2f, pos.y - size / 2f, size, size);
     }
 
+    public void drawMarker(SpriteBatch spriteBatch, OrthographicCamera camera, Texture icon, Vector2 pos, float baseSize, boolean scaleWithCamera, float scale) {
+        if (icon == null || pos == null || spriteBatch == null || camera == null) return;
+
+        float size = baseSize * scale;
+        if (scaleWithCamera) size /= camera.zoom;
+
+        spriteBatch.setProjectionMatrix(camera.combined);
+        spriteBatch.draw(icon, pos.x - size / 2f, pos.y - size / 2f, size, size);
+    }
+
 }

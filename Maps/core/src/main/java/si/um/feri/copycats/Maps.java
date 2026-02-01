@@ -25,6 +25,9 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import com.badlogic.gdx.graphics.Color;
 
 import java.util.HashMap;
 import java.util.List;
@@ -214,12 +217,13 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
 
     @Override
     public void render() {
-
         float delta = Gdx.graphics.getDeltaTime();
 
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
         clampCamera();
         camera.update();
+
+        updateMarkerAnimations(delta);
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
@@ -236,7 +240,13 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
                 beginTile.y,
                 Constants.MAP_HEIGHT
             );
-            renderer.drawMarker(batch, camera, em.icon, pos, 128f, false);
+
+            if (em.isCurrentlyActive) {
+                float scale = em.breathingAnimation.getCurrentScale();
+                renderer.drawMarker(batch, camera, em.icon, pos, 128f, false, scale);
+            } else {
+                renderer.drawMarker(batch, camera, em.icon, pos, 128f, false);
+            }
         }
 
         batch.end();
@@ -244,7 +254,6 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
         stage.act(delta);
         stage.draw();
     }
-
     // Marker click
     @Override
     public boolean touchDown(float x, float y, int pointer, int button) {
@@ -337,6 +346,7 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
         Gdx.app.log("MAP", "Exited pick-location mode");
     }
 
+    // refresh after addition
     public void reloadEverything() {
         LocationRepository.load(() -> {
             EventRepository.load(() -> {
@@ -359,6 +369,28 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
         });
     }
 
+    // Currently active animation
+    private boolean isEventCurrentlyActive(EventDto event) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+            LocalDateTime start = LocalDateTime.parse(event.start_date, formatter);
+            LocalDateTime end = LocalDateTime.parse(event.end_date, formatter);
+            LocalDateTime now = LocalDateTime.now();
+
+            return !now.isBefore(start) && !now.isAfter(end);
+        } catch (Exception e) {
+            Gdx.app.error("Maps", "Error parsing dates for event: " + event.title, e);
+            return false;
+        }
+    }
+    private void updateMarkerAnimations(float delta) {
+        for (EventMarker em : visibleMarkers) {
+            em.isCurrentlyActive = isEventCurrentlyActive(em.event);
+            if (em.isCurrentlyActive) {
+                em.breathingAnimation.update(delta);
+            }
+        }
+    }
 
     // Camera
     private void clampCamera() {
