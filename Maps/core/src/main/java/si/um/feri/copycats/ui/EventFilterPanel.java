@@ -74,7 +74,7 @@ public class EventFilterPanel {
             Gdx.graphics.getWidth() - table.getWidth() - 20,
             Gdx.graphics.getHeight() - table.getHeight() - 20
         );
-        
+
         applyFilter();
     }
 
@@ -100,5 +100,16 @@ public class EventFilterPanel {
 
         onFilterChanged.accept(filtered);
     }
+    public Table getTable() {
+        return table;
+    }
+
+    public void setEvents(Array<EventDto> events) {
+        this.allEvents.clear();
+        this.allEvents.addAll(events);
+        applyFilter();
+    }
+
+
 }
 

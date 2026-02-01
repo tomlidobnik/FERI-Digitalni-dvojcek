@@ -4,29 +4,40 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.Net;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import si.um.feri.copycats.api.AuthService;
 import si.um.feri.copycats.api.EventDto;
 import si.um.feri.copycats.api.EventRepository;
+import si.um.feri.copycats.api.LocationDto;
 import si.um.feri.copycats.api.LocationRepository;
 import si.um.feri.copycats.render.MapRenderer;
+import si.um.feri.copycats.ui.CreateEventDialog;
 import si.um.feri.copycats.ui.EventFilterPanel;
 import si.um.feri.copycats.ui.EventPopup;
 import si.um.feri.copycats.utils.Constants;
@@ -34,6 +45,7 @@ import si.um.feri.copycats.utils.EventMarker;
 import si.um.feri.copycats.utils.Geolocation;
 import si.um.feri.copycats.utils.MapRasterTiles;
 import si.um.feri.copycats.utils.MarkerIconRegistry;
+import si.um.feri.copycats.utils.MarkerType;
 import si.um.feri.copycats.utils.ZoomXY;
 
 public class Maps extends ApplicationAdapter implements GestureDetector.GestureListener {
@@ -60,6 +72,17 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
     private final Geolocation CENTER = new Geolocation(46.561396, 15.643631);
     private EventFilterPanel filterPanel;
     private Array<EventMarker> visibleMarkers;
+    private TextButton addEventButton;
+
+    private boolean pickingLocation = false;
+    private Table pickLocationBanner;
+    private Vector2 pickedLatLng = null;
+    private Vector2 pickedPixel = null;
+
+    private final Map<EventDto, Rectangle> eventHitboxes = new HashMap<>();
+    private final Array<EventMarker> markers = new Array<>();
+
+    private CreateEventDialog createEventDialog;
 
 
     @Override
@@ -90,7 +113,64 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
                 return true;
             }
         });
+        mux.addProcessor(new InputAdapter() {
+            @Override
+            public boolean keyDown(int keycode) {
+                if (pickingLocation && keycode == com.badlogic.gdx.Input.Keys.ESCAPE) {
+                    exitPickLocationMode();
+                    Gdx.app.log("PICK", "Pick-location cancelled via ESC");
+                    return true;
+                }
+                return false;
+            }
+        });
+
         Gdx.input.setInputProcessor(mux);
+
+        addEventButton = new TextButton("+", skin2);
+        addEventButton.getLabel().setFontScale(2f);
+        addEventButton.setSize(60, 60);
+
+        addEventButton.setPosition(
+            stage.getViewport().getWorldWidth() - 80,
+            20
+        );
+
+        addEventButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                enterPickLocationMode();
+            }
+        });
+
+
+        stage.addActor(addEventButton);
+
+        pickLocationBanner = new Table(skin2);
+        pickLocationBanner.setBackground("window");
+
+        Label bannerLabel = new Label("Izberi lokacijo", skin2);
+        bannerLabel.setFontScale(1.2f);
+
+        pickLocationBanner.add(bannerLabel).pad(10, 20, 10, 20);
+        pickLocationBanner.pack();
+
+        pickLocationBanner.setPosition(
+            20,
+            stage.getViewport().getWorldHeight() - pickLocationBanner.getHeight() - 20
+        );
+
+        pickLocationBanner.setVisible(false);
+        stage.addActor(pickLocationBanner);
+
+        createEventDialog = new CreateEventDialog(
+            skin2,
+            stage,
+            event -> ((Maps) Gdx.app.getApplicationListener()).reloadEverything()
+        );
+
+
+
 
         // Tile setup
         ZoomXY centerTile = MapRasterTiles.getTileNumber(CENTER.lat, CENTER.lng, Constants.ZOOM);
@@ -132,8 +212,6 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
         });
     }
 
-
-
     @Override
     public void render() {
 
@@ -173,6 +251,34 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
         tmp.set(x, y, 0);
         camera.unproject(tmp);
 
+        if (pickingLocation) {
+            Geolocation geo = MapRasterTiles.getLatLngFromPixel(
+                tmp.x,
+                tmp.y,
+                MapRasterTiles.TILE_SIZE,
+                Constants.ZOOM,
+                beginTile.x,
+                beginTile.y,
+                Constants.MAP_HEIGHT
+            );
+
+            pickedLatLng = new Vector2((float) geo.lat, (float) geo.lng);
+
+            Gdx.app.log("PICK",
+                "Picked location -> lat=" + geo.lat + ", lng=" + geo.lng
+            );
+
+            exitPickLocationMode();
+
+            eventPopup.hide();
+            createEventDialog.show((float) geo.lat, (float) geo.lng);
+
+            camera.position.set(tmp.x, tmp.y, 0);
+            camera.update();
+
+            return true;
+        }
+
         for (EventMarker em : visibleMarkers) {
             Vector2 pos = MapRasterTiles.getPixelPosition(
                 em.location.latitude,
@@ -204,6 +310,53 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
                 visibleMarkers.add(em);
             }
         }
+    }
+
+    // Pick location mode
+    private void enterPickLocationMode() {
+        pickingLocation = true;
+        pickLocationBanner.setVisible(true);
+        pickLocationBanner.toFront();
+
+        Gdx.graphics.setSystemCursor(
+            com.badlogic.gdx.graphics.Cursor.SystemCursor.Crosshair
+        );
+
+        Gdx.app.log("MAP", "Entered pick-location mode");
+    }
+
+
+    private void exitPickLocationMode() {
+        pickingLocation = false;
+        pickLocationBanner.setVisible(false);
+
+        Gdx.graphics.setSystemCursor(
+            com.badlogic.gdx.graphics.Cursor.SystemCursor.Arrow
+        );
+
+        Gdx.app.log("MAP", "Exited pick-location mode");
+    }
+
+    public void reloadEverything() {
+        LocationRepository.load(() -> {
+            EventRepository.load(() -> {
+                Gdx.app.postRunnable(() -> {
+                    visibleMarkers.clear();
+                    visibleMarkers.addAll(EventRepository.MARKERS);
+
+                    Array<EventDto> allEvents = new Array<>();
+                    for (EventMarker em : EventRepository.MARKERS) {
+                        allEvents.add(em.event);
+                    }
+
+                    if (filterPanel != null) {
+                        filterPanel.setEvents(allEvents);
+                    }
+
+                    Gdx.app.log("MAP", "Everything reloaded: " + visibleMarkers.size);
+                });
+            });
+        });
     }
 
 
@@ -253,12 +406,46 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
     public void resize(int width, int height) {
         viewport.update(width, height, false);
         stage.getViewport().update(width, height, true);
+
+        if (addEventButton != null) {
+            addEventButton.setPosition(
+                stage.getViewport().getWorldWidth() - 80,
+                20
+            );
+        }
+
+        if (pickLocationBanner != null) {
+            pickLocationBanner.setPosition(
+                20,
+                stage.getViewport().getWorldHeight()
+                    - pickLocationBanner.getHeight() - 20
+            );
+        }
+
+        if (filterPanel != null && filterPanel.getTable() != null) {
+            Table t = filterPanel.getTable();
+            t.setPosition(
+                stage.getViewport().getWorldWidth() - t.getWidth() - 20,
+                stage.getViewport().getWorldHeight() - t.getHeight() - 20
+            );
+        }
+
+        if (createEventDialog != null) {
+            Table t = createEventDialog.dialogTable;
+            t.setPosition(
+                stage.getViewport().getWorldWidth()/2 - t.getWidth()/2,
+                stage.getViewport().getWorldHeight()/2 - t.getHeight()/2
+            );
+        }
+
     }
+
 
     @Override
     public void dispose() {
         batch.dispose();
         stage.dispose();
         skin.dispose();
+        skin2.dispose();
     }
 }

@@ -258,4 +258,32 @@ public class MapRasterTiles {
         );
     }
 
+    public static Geolocation getLatLngFromPixel(
+        float pixelX,
+        float pixelY,
+        int tileSize,
+        int zoom,
+        int beginTileX,
+        int beginTileY,
+        int height
+    ) {
+        double scale = Math.pow(2, zoom);
+
+        double worldY =
+            ((height - pixelY) + (beginTileY * tileSize)) / scale;
+
+        double worldX =
+            (pixelX + (beginTileX * tileSize)) / scale;
+
+        double lng = (worldX / tileSize - 0.5) * 360.0;
+
+        double latRad =
+            Math.atan(Math.sinh(Math.PI * (1 - 2 * worldY / tileSize)));
+
+        double lat = Math.toDegrees(latRad);
+
+        return new Geolocation(lat, lng);
+    }
+
+
 }
