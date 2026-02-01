@@ -3,11 +3,13 @@
 build:
     echo "Building blockchain_mpi..."
     mkdir -p build
-    mpicxx -std=c++17 -O3 -march=native -Wall -Wextra \
+    mpicxx -std=c++17 -O3 -march=native -Wall -Wextra -Xpreprocessor -fopenmp \
         -I/opt/homebrew/opt/openssl@3/include \
+        -I/opt/homebrew/opt/libomp/include \
         -L/opt/homebrew/opt/openssl@3/lib \
+        -L/opt/homebrew/opt/libomp/lib \
         main.cpp -o build/blockchain_mpi \
-        -lssl -lcrypto -lpthread
+        -lssl -lcrypto -lomp
     echo "✓ Build complete: ./build/blockchain_mpi"
 
 clean:
@@ -34,3 +36,11 @@ benchmark: build
 benchmark-full: build
     echo "Running comprehensive performance benchmark..."
     uv run performance_analysis_full.py
+
+benchmark-mpi: build
+    echo "Running MPI benchmark (1-8 nodes)..."
+    uv run benchmark_mpi.py
+
+benchmark-comprehensive: build
+    echo "Running comprehensive nodes×threads benchmark..."
+    uv run benchmark_nodes_threads.py
