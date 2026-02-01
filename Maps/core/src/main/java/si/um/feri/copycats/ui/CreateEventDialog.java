@@ -44,7 +44,7 @@ public class CreateEventDialog {
         Label.LabelStyle labelStyle = new Label.LabelStyle(skin.get("default", Label.LabelStyle.class));
         labelStyle.fontColor = Color.WHITE;
         Label dialogTitle = new Label("Dodajanje dogodka", labelStyle);
-        dialogTitle.setFontScale(1.5f);
+        dialogTitle.setFontScale(1f);
         dialogTitle.setColor(Color.WHITE);
 
         dialogTable.add(dialogTitle).padTop(-12).padBottom(30).row();
@@ -92,7 +92,7 @@ public class CreateEventDialog {
         // Buttons
         Table buttonTable = new Table();
         createEventButton = new TextButton("Ustvari", skin);
-        cancelEventButton = new TextButton("Prekliči", skin);
+        cancelEventButton = new TextButton("Zapri", skin);
         buttonTable.add(createEventButton).padRight(20);
         buttonTable.add(cancelEventButton);
 

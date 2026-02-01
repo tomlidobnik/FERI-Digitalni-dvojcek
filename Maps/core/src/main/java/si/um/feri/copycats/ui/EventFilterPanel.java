@@ -41,7 +41,7 @@ public class EventFilterPanel {
         labelStyle.fontColor = Color.WHITE;
 
         Label title = new Label("Filtriranje", labelStyle);
-        title.setFontScale(1.2f);
+        //title.setFontScale(1.2f);
         table.add(title).center().padBottom(10).row();
 
 
@@ -49,7 +49,7 @@ public class EventFilterPanel {
         tagSelect = new SelectBox<>(skin);
         tagSelect.setItems("Vsi", "Sport", "Zabava", "Izobrazba");
         Label categoryLabel = new Label("Kategorija:", skin);
-        categoryLabel.setFontScale(1.3f);
+        //categoryLabel.setFontScale(1.3f);
         table.add(categoryLabel).left().padBottom(5).row();
         table.add(tagSelect).width(150).padBottom(10).row();
 

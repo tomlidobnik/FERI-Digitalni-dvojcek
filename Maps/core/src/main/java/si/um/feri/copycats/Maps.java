@@ -7,6 +7,8 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -110,6 +112,7 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
         stage = new Stage(new ScreenViewport());
         skin = new Skin(Gdx.files.internal("skin/cloud-form-ui.json"));
         skin2 = new Skin(Gdx.files.internal("skin2/expee-ui.json"));
+        updateSkinWithSlovenianFonts();
         eventPopup = new EventPopup(skin2);
         stage.addActor(eventPopup);
 
@@ -162,7 +165,7 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
         pickLocationBanner.setBackground("window");
 
         Label bannerLabel = new Label("Izberi lokacijo", skin2);
-        bannerLabel.setFontScale(1.2f);
+        bannerLabel.setFontScale(1f);
 
         pickLocationBanner.add(bannerLabel).pad(10, 20, 10, 20);
         pickLocationBanner.pack();
@@ -673,6 +676,44 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
         camera.position.y = MathUtils.clamp(
             camera.position.y, halfH, Constants.MAP_HEIGHT - halfH
         );
+    }
+
+    // Slo font
+    private void updateSkinWithSlovenianFonts() {
+        try {
+            FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
+                Gdx.files.internal("fonts/OpenSans-Regular.ttf"));
+
+            FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
+            param.size = 16;
+            param.characters = FreeTypeFontGenerator.DEFAULT_CHARS + "ščžŠČŽ";
+
+            BitmapFont sloFont = generator.generateFont(param);
+
+            Label.LabelStyle defaultStyle = skin2.get(Label.LabelStyle.class);
+            if (defaultStyle != null) {
+                if (defaultStyle.font != null) {
+                    defaultStyle.font.dispose();
+                }
+                defaultStyle.font = sloFont;
+            }
+
+            skin2.add("font", sloFont, BitmapFont.class);
+
+            FreeTypeFontGenerator.FreeTypeFontParameter titleParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
+            titleParam.size = 24;
+            titleParam.characters = FreeTypeFontGenerator.DEFAULT_CHARS + "ščžŠČŽ";
+
+            BitmapFont titleFont = generator.generateFont(titleParam);
+            skin2.add("title", titleFont, BitmapFont.class);
+
+            generator.dispose();
+
+            Gdx.app.log("FONT", "Updated skin with Slovenian fonts");
+
+        } catch (Exception e) {
+            Gdx.app.error("FONT", "Failed to update fonts", e);
+        }
     }
 
     private void zoomTowardsMouse(float amountY) {

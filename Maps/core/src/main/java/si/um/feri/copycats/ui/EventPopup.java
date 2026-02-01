@@ -38,11 +38,11 @@ public class EventPopup extends Window {
         setMovable(false);
         setResizable(false);
 
-        defaults().pad(6).left();
+        defaults().pad(9).left();
         getTitleLabel().setAlignment(Align.center);
 
-        float valueScale = 1.4f;
-        float labelScale = 1.1f;
+        float valueScale = 1f;
+        float labelScale = 1f;
 
         Label nameLabel = new Label("Dogodek:", skin);
         nameLabel.setFontScale(labelScale);
@@ -173,7 +173,7 @@ public class EventPopup extends Window {
         d.getContentTable().add(endField).width(420).row();
 
         d.button("Shrani", true);
-        d.button("Prekliči", false);
+        d.button("Preklic", false);
 
         d.show(getStage());
     }
