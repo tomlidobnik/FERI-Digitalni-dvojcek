@@ -71,9 +71,9 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
 
     private final Vector3 tmp = new Vector3();
 
-    private static final float MIN_ZOOM = 0.05f;
-    private static final float MAX_ZOOM = 5.0f;
-    private static final float WHEEL_ZOOM_FACTOR = 1.15f;
+    private static final float MIN_ZOOM = 0.5f;
+    private static final float MAX_ZOOM = 10.0f;
+    private static final float WHEEL_ZOOM_FACTOR = 1.1f;
 
     private final Geolocation CENTER = new Geolocation(46.561396, 15.643631);
     private EventFilterPanel filterPanel;
