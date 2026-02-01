@@ -5,6 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Net;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -49,8 +51,9 @@ import si.um.feri.copycats.utils.Geolocation;
 import si.um.feri.copycats.utils.MapRasterTiles;
 import si.um.feri.copycats.utils.MarkerIconRegistry;
 import si.um.feri.copycats.utils.MarkerType;
+import si.um.feri.copycats.utils.SimulationManager;
 import si.um.feri.copycats.utils.ZoomXY;
-
+import si.um.feri.copycats.utils.Character;
 public class Maps extends ApplicationAdapter implements GestureDetector.GestureListener {
 
     private SpriteBatch batch;
@@ -86,6 +89,12 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
     private final Array<EventMarker> markers = new Array<>();
 
     private CreateEventDialog createEventDialog;
+    private SimulationManager simulationManager;
+    private TextButton simulationButton;
+    private boolean simulationActive = false;
+    private float simulationSpawnTimer = 0f;
+    private Texture characterPlaceholderTexture;
+    private Array<Texture> characterTextures;
 
 
     @Override
@@ -166,14 +175,32 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
         pickLocationBanner.setVisible(false);
         stage.addActor(pickLocationBanner);
 
+        simulationManager = new SimulationManager();
+
+        // Sim button
+        simulationButton = new TextButton("Simulacija", skin2);
+        simulationButton.setSize(120, 60);
+        simulationButton.setPosition(
+            stage.getViewport().getWorldWidth() - 210,
+            20
+        );
+
+        simulationButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                toggleSimulation();
+            }
+        });
+
+        stage.addActor(simulationButton);
+        loadCharacterTextures();
+
+
         createEventDialog = new CreateEventDialog(
             skin2,
             stage,
             event -> ((Maps) Gdx.app.getApplicationListener()).reloadEverything()
         );
-
-
-
 
         // Tile setup
         ZoomXY centerTile = MapRasterTiles.getTileNumber(CENTER.lat, CENTER.lng, Constants.ZOOM);
@@ -225,11 +252,18 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
 
         updateMarkerAnimations(delta);
 
+        // Update sim
+        if (simulationActive) {
+            updateSimulation(delta);
+            drawSimulationDebug();
+        }
+
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
         renderer.drawTiles(batch, camera, tileZone, beginTile, Constants.MAP_HEIGHT);
 
+        // Draw events
         for (EventMarker em : visibleMarkers) {
             Vector2 pos = MapRasterTiles.getPixelPosition(
                 em.location.latitude,
@@ -249,11 +283,128 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
             }
         }
 
+        // Draw simulation characters
+        if (simulationActive) {
+            drawSimulationCharacters();
+            drawEventDebugPositions();
+
+        }
+
         batch.end();
 
         stage.act(delta);
         stage.draw();
     }
+
+    private void drawSimulationCharacters() {
+        for (Character character : simulationManager.getCharacters()) {
+            if (character.texture != null) {
+                float size = 24f;
+                batch.draw(
+                    character.texture,
+                    character.position.x - size/2,
+                    character.position.y - size/2,
+                    size,
+                    size
+                );
+            }
+        }
+    }
+
+    private void loadCharacterTextures() {
+        characterTextures = new Array<>();
+
+        try {
+            for (int i = 1; i <= 3; i++) {
+                String path = "characters/character" + i + ".png";
+                if (Gdx.files.internal(path).exists()) {
+                    Texture texture = new Texture(Gdx.files.internal(path));
+                    characterTextures.add(texture);
+                    Gdx.app.log("SIM", "Loaded character texture: " + path);
+                } else {
+                    Gdx.app.log("SIM", "Character texture not found: " + path);
+                }
+            }
+
+            if (characterTextures.size == 0) {
+                Gdx.app.log("SIM", "No character images found, generating default");
+                createCharacterTextures();
+            } else {
+                characterPlaceholderTexture = characterTextures.first();
+            }
+
+        } catch (Exception e) {
+            Gdx.app.error("SIM", "Failed to load character textures", e);
+            createCharacterTextures();
+        }
+    }
+
+    private void createCharacterTextures() {
+        characterTextures = new Array<>();
+
+        for (int i = 0; i < 3; i++) {
+            characterTextures.add(createCharacterTexture(i));
+        }
+
+        characterPlaceholderTexture = characterTextures.first();
+    }
+
+    private Texture createCharacterTexture(int variant) {
+        int size = 32;
+        Pixmap pixmap = new Pixmap(size, size, Pixmap.Format.RGBA8888);
+
+        pixmap.setColor(0, 0, 0, 0);
+        pixmap.fill();
+
+        Color[] colors = {
+            new Color(0.9f, 0.3f, 0.3f, 1f),
+            new Color(0.3f, 0.9f, 0.3f, 1f),
+            new Color(0.3f, 0.3f, 0.9f, 1f)
+        };
+
+        Color bodyColor = colors[variant % colors.length];
+
+        pixmap.setColor(bodyColor);
+        pixmap.fillCircle(size/2, size/4, size/8);
+        pixmap.drawLine(size/2, size/4 + size/8, size/2, size * 3/4);
+        pixmap.drawLine(size/2 - 6, size/2, size/2 + 6, size/2);
+        pixmap.drawLine(size/2, size * 3/4, size/2 - 5, size - 4);
+        pixmap.drawLine(size/2, size * 3/4, size/2 + 5, size - 4);
+
+        Texture texture = new Texture(pixmap);
+        pixmap.dispose();
+        return texture;
+    }
+
+    private void updateSimulation(float delta) {
+        simulationManager.update(delta);
+
+        simulationSpawnTimer += delta;
+        if (simulationSpawnTimer >= 0.5f) {
+            simulationSpawnTimer = 0f;
+
+            int totalCharsSpawned = 0;
+
+            for (EventMarker em : visibleMarkers) {
+                if (!em.isCurrentlyActive) continue;
+
+                Integer popularity = simulationManager.getEventPopularity().get(em.event.id);
+                if (popularity == null) continue;
+                int charsToSpawn = MathUtils.random(0, popularity / 4);
+                totalCharsSpawned += charsToSpawn;
+
+                for (int i = 0; i < charsToSpawn; i++) {
+                    spawnCharacterForEvent(em);
+                }
+            }
+
+            if (totalCharsSpawned > 0) {
+                Gdx.app.debug("SIM", "Spawned " + totalCharsSpawned + " characters");
+                Gdx.app.debug("SIM", "Total characters: " + simulationManager.getCharacters().size);
+            }
+        }
+    }
+
     // Marker click
     @Override
     public boolean touchDown(float x, float y, int pointer, int button) {
@@ -392,6 +543,125 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
         }
     }
 
+    // Simulation
+    private void toggleSimulation() {
+        simulationActive = !simulationActive;
+
+        if (simulationActive) {
+            Array<EventMarker> activeEvents = new Array<>();
+            for (EventMarker em : visibleMarkers) {
+                if (em.isCurrentlyActive) {
+                    activeEvents.add(em);
+                }
+            }
+            simulationManager.startSimulation(activeEvents);
+            simulationButton.setText("Zaustavi");
+            simulationSpawnTimer = 0f;
+
+            for (EventMarker em : activeEvents) {
+                Integer pop = simulationManager.getEventPopularity().get(em.event.id);
+                Gdx.app.debug("SIM", "Event '" + em.event.title + "' popularity: " + pop);
+
+                Vector2 eventPos = MapRasterTiles.getPixelPosition(
+                    em.location.latitude,
+                    em.location.longitude,
+                    MapRasterTiles.TILE_SIZE,
+                    Constants.ZOOM,
+                    beginTile.x,
+                    beginTile.y,
+                    Constants.MAP_HEIGHT
+                );
+                Gdx.app.debug("SIM", "Event '" + em.event.title + "' position: " + eventPos);
+                Gdx.app.debug("SIM", "Event location: lat=" + em.location.latitude + ", lng=" + em.location.longitude);
+            }
+
+            Gdx.app.debug("SIM", "MAP_WIDTH: " + Constants.MAP_WIDTH + ", MAP_HEIGHT: " + Constants.MAP_HEIGHT);
+            Gdx.app.debug("SIM", "Camera position: " + camera.position);
+            Gdx.app.debug("SIM", "Camera zoom: " + camera.zoom);
+            Gdx.app.log("SIM", "Simulation started with " + activeEvents.size + " active events");
+        } else {
+            simulationManager.stopSimulation();
+            simulationButton.setText("Simulacija");
+            simulationSpawnTimer = 0f;
+            Gdx.app.log("SIM", "Simulation stopped");
+        }
+    }
+
+    private void drawSimulationDebug() {
+        int charCount = simulationManager.getCharacters().size;
+
+        if (charCount > 0) {
+            Gdx.app.debug("SIM", "Drawing " + charCount + " characters");
+
+            if (charCount > 0) {
+                Character firstChar = simulationManager.getCharacters().get(0);
+                Gdx.app.debug("SIM", "First char at: " + firstChar.position +
+                    " Target: " + firstChar.targetPosition +
+                    " Arrived: " + firstChar.arrived);
+            }
+        }
+    }
+    private void spawnCharacterForEvent(EventMarker eventMarker) {
+        Vector2 eventPos = MapRasterTiles.getPixelPosition(
+            eventMarker.location.latitude,
+            eventMarker.location.longitude,
+            MapRasterTiles.TILE_SIZE,
+            Constants.ZOOM,
+            beginTile.x,
+            beginTile.y,
+            Constants.MAP_HEIGHT
+        );
+
+        float spawnDistance = MathUtils.random(200f, 400f);
+        float spawnAngle = MathUtils.random(0f, 360f) * MathUtils.degRad;
+
+        float spawnX = eventPos.x + (float)Math.cos(spawnAngle) * spawnDistance;
+        float spawnY = eventPos.y + (float)Math.sin(spawnAngle) * spawnDistance;
+
+        spawnX = MathUtils.clamp(spawnX, 0f, Constants.MAP_WIDTH);
+        spawnY = MathUtils.clamp(spawnY, 0f, Constants.MAP_HEIGHT);
+
+        Vector2 spawnPos = new Vector2(spawnX, spawnY);
+
+        Texture characterTex;
+        if (characterTextures != null && characterTextures.size > 0) {
+            characterTex = characterTextures.get(MathUtils.random(characterTextures.size - 1));
+        } else {
+            characterTex = characterPlaceholderTexture;
+        }
+
+        Character character = new Character(spawnPos, eventPos, characterTex);
+        simulationManager.getCharacters().add(character);
+    }
+
+    private void drawEventDebugPositions() {
+        Color originalColor = batch.getColor();
+
+        for (EventMarker em : visibleMarkers) {
+            if (!em.isCurrentlyActive) continue;
+
+            Vector2 pos = MapRasterTiles.getPixelPosition(
+                em.location.latitude,
+                em.location.longitude,
+                MapRasterTiles.TILE_SIZE,
+                Constants.ZOOM,
+                beginTile.x,
+                beginTile.y,
+                Constants.MAP_HEIGHT
+            );
+
+//            batch.setColor(Color.RED);
+//
+//            float crossSize = 20f;
+//            batch.draw(characterPlaceholderTexture, pos.x - crossSize/2, pos.y - 2, crossSize, 4);
+//            batch.draw(characterPlaceholderTexture, pos.x - 2, pos.y - crossSize/2, 4, crossSize);
+
+            Gdx.app.debug("SIM-DEBUG", "Event '" + em.event.title + "' at screen pos: " + pos);
+        }
+
+        batch.setColor(Color.WHITE);
+    }
+
     // Camera
     private void clampCamera() {
         float halfW = camera.viewportWidth * camera.zoom / 2f;
@@ -446,6 +716,13 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
             );
         }
 
+        if (simulationButton != null) {
+            simulationButton.setPosition(
+                stage.getViewport().getWorldWidth() - 210,
+                20
+            );
+        }
+
         if (pickLocationBanner != null) {
             pickLocationBanner.setPosition(
                 20,
@@ -479,5 +756,17 @@ public class Maps extends ApplicationAdapter implements GestureDetector.GestureL
         stage.dispose();
         skin.dispose();
         skin2.dispose();
+        if (simulationManager != null) {
+            simulationManager.dispose();
+        }
+        if (characterTextures != null) {
+            for (Texture tex : characterTextures) {
+                tex.dispose();
+            }
+            characterTextures.clear();
+        }
+        if (characterPlaceholderTexture != null) {
+            characterPlaceholderTexture.dispose();
+        }
     }
 }

@@ -84,7 +84,7 @@ public class CreateEventDialog {
         // Tag select box
         Label tagLabel = new Label("Kategorija:", skin);
         tagSelectBox = new SelectBox<>(skin);
-        tagSelectBox.setItems("None", "Sport", "Izobrazba", "Zabava");
+        tagSelectBox.setItems("Brez", "Sport", "Izobrazba", "Zabava");
 
         dialogTable.add(tagLabel).left().padBottom(5).row();
         dialogTable.add(tagSelectBox).width(200).padBottom(25).row();
@@ -133,7 +133,7 @@ public class CreateEventDialog {
         startDateField.setText("");
         endDateField.setText("");
         visibilitySelectBox.setSelected("Javno");
-        tagSelectBox.setSelected("None");
+        tagSelectBox.setSelected("Brez");
     }
 
     public void hide() {
